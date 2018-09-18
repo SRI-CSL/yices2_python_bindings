@@ -1,6 +1,6 @@
 # a hack? until I rewrite the yices.py
 # import sys
-import yices
+import yices_api as yapi
 
-#sys.stderr.write('yices.yices_init() called by Yices/__init__.py\n')
-yices.yices_init()
+#sys.stderr.write('yapi.yices_init() called by Yices/__init__.py\n')
+yapi.yices_init()

@@ -1,12 +1,12 @@
-import yices
+import yices_api as yapi
 
 
 class Status(object):
 
-    IDLE         = yices.STATUS_IDLE
-    SEARCHING    = yices.STATUS_SEARCHING
-    UNKNOWN      = yices.STATUS_UNKNOWN
-    SAT          = yices.STATUS_SAT
-    UNSAT        = yices.STATUS_UNSAT
-    INTERRUPTED  = yices.STATUS_INTERRUPTED
-    ERROR        = yices.STATUS_ERROR
+    IDLE         = yapi.STATUS_IDLE
+    SEARCHING    = yapi.STATUS_SEARCHING
+    UNKNOWN      = yapi.STATUS_UNKNOWN
+    SAT          = yapi.STATUS_SAT
+    UNSAT        = yapi.STATUS_UNSAT
+    INTERRUPTED  = yapi.STATUS_INTERRUPTED
+    ERROR        = yapi.STATUS_ERROR

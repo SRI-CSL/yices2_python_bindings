@@ -1,14 +1,14 @@
-import yices
+import yices_api as yapi
 
 
 class Yval(object):
 
-    UNKNOWN = yices.YVAL_UNKNOWN
-    BOOL = yices.YVAL_BOOL
-    RATIONAL = yices.YVAL_RATIONAL
-    ALGEBRAIC = yices.YVAL_ALGEBRAIC
-    BV = yices.YVAL_BV
-    SCALAR = yices.YVAL_SCALAR
-    TUPLE = yices.YVAL_TUPLE
-    FUNCTION = yices.YVAL_FUNCTION
-    MAPPING = yices.YVAL_MAPPING
+    UNKNOWN   = yapi.YVAL_UNKNOWN
+    BOOL      = yapi.YVAL_BOOL
+    RATIONAL  = yapi.YVAL_RATIONAL
+    ALGEBRAIC = yapi.YVAL_ALGEBRAIC
+    BV        = yapi.YVAL_BV
+    SCALAR    = yapi.YVAL_SCALAR
+    TUPLE     = yapi.YVAL_TUPLE
+    FUNCTION  = yapi.YVAL_FUNCTION
+    MAPPING   = yapi.YVAL_MAPPING
