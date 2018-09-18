@@ -1,6 +1,28 @@
 #!/usr/bin/env python
 
-from yices_api import *
+from yices_api import (
+    yices_init,
+    yices_int_type,
+    yices_new_uninterpreted_term,
+    yices_int32,
+    yices_new_config,
+    yices_default_config_for_logic,
+    yices_new_context,
+    yices_and2,
+    yices_arith_leq_atom,
+    yices_assert_formula,
+    make_term_array,
+    yices_distinct,
+    yices_arith_eq_atom,
+    yices_get_model,
+    yices_get_int32_value,
+    yices_free_model,
+    yices_check_context,
+    yices_free_context,
+    yices_free_config,
+    yices_exit,
+    STATUS_SAT
+    )
 
 from ctypes import ( c_int32 )
 
