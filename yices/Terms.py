@@ -516,7 +516,106 @@ class Terms(object):
 
     # substitutions
 
-    # term exploration
+    # term recognizers
+
+    @staticmethod
+    def type_of_term(term):
+        return yapi.yices_type_of_term(term)
+
+    @staticmethod
+    def is_bool(term):
+        return yapi.yices_term_is_bool(term)
+
+    @staticmethod
+    def is_int(term):
+        return yapi.yices_term_is_int(term)
+
+    @staticmethod
+    def is_real(term):
+        return yapi.yices_term_is_real(term)
+
+    @staticmethod
+    def is_arithmetic(term):
+        return yapi.yices_term_is_arithmetic(term)
+
+    @staticmethod
+    def is_bitvector(term):
+        return yapi.yices_term_is_bitvector(term)
+
+    @staticmethod
+    def is_scalar(term):
+        return yapi.yices_term_is_scalar(term)
+
+    @staticmethod
+    def is_tuple(term):
+        return yapi.yices_term_is_tuple(term)
+
+    @staticmethod
+    def is_function(term):
+        return yapi.yices_term_is_function(term)
+
+    @staticmethod
+    def bitsize(term):
+        return yapi.yices_term_bitsize(term)
+
+    @staticmethod
+    def is_ground(term):
+        return yapi.yices_term_is_ground(term)
+
+
+    # term deconstruction
+    @staticmethod
+    def is_atomic(term):
+        return True if yapi.yices_term_is_atomic(term) else False
+
+    @staticmethod
+    def is_composite(term):
+        return True if yapi.yices_term_is_composite(term) else False
+
+    @staticmethod
+    def is_projection(term):
+        return True if yapi.yices_term_is_projection(term) else False
+
+    @staticmethod
+    def is_sum(term):
+        return True if yapi.yices_term_is_sum(term) else False
+
+    @staticmethod
+    def is_bvsum(term):
+        return True if yapi.yices_term_is_bvsum(term) else False
+
+    @staticmethod
+    def is_product(term):
+        return True if yapi.yices_term_is_product(term) else False
+
+    @staticmethod
+    def term_constructor(term):
+        return yapi.yices_term_constructor(term)
+
+    @staticmethod
+    def term_num_children(term):
+        return yapi.yices_term_num_children(term)
+
+    @staticmethod
+    def term_child(term, i):
+        return yapi.yices_term_child(term, i)
+
+    @staticmethod
+    def proj_index(term):
+        return yapi.yices_proj_index(term)
+
+    @staticmethod
+    def proj_arg(term):
+        return yapi.yices_proj_arg(term)
+
+
+
+#yices_bool_const_value(term)
+#yices_bv_const_value(term)
+#yices_scalar_const_value(term)
+#yices_bvsum_component(term)
+#yices_product_component(term)
+
 
     # names
 
