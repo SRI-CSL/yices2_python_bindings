@@ -1,6 +1,22 @@
 #!/usr/bin/env python
 
-from yices_api import *
+import sys
+
+from yices_api import (
+    yices_parse_term,
+    yices_has_mcsat,
+    yices_init,
+    yices_exit,
+    lp_algebraic_number_t,
+    yices_get_algebraic_number_value,
+    yices_assert_formula,
+    yices_check_context,
+    yices_get_model,
+    yices_free_model,
+    yices_free_context,
+    yices_pp_model_fd,
+    STATUS_SAT
+    )
 
 from yiceslib import (term_to_string, declare_real_var, declare_integer_var, make_context)
 

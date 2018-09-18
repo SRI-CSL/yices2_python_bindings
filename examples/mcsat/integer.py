@@ -2,7 +2,10 @@
 
 from ctypes import ( c_int64 )
 
-from yices_api import *
+from yices_api import (
+
+
+    )
 
 from yiceslib import (term_to_string, declare_real_var, declare_integer_var, make_context)
 
