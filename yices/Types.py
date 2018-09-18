@@ -174,7 +174,40 @@ class Types(object):
     def compatible_types(tau0, tau1):
         return True if yapi.yices_compatible_types(tau0, tau1) else False
 
-    # parsing
+    # type deconstruction
+
+    @staticmethod
+    def bvtype_size(tau):
+        return yapi.yices_bvtype_size(tau)
+
+    @staticmethod
+    def scalar_type_card(tau):
+        return yapi.yices_scalar_type_card(tau)
+
+    @staticmethod
+    def type_num_children(tau):
+        return yapi.yices_type_num_children(tau)
+
+    @staticmethod
+    def type_child(tau, i):
+        return yapi.yices_type_child(tau, i)
+
+    @staticmethod
+    def type_children(tau, v):
+        typev = yapi.type_vector_t()
+        yapi.yices_init_type_vector(typev)
+        errcode = yapi.yices_type_children(tau, typev)
+        if errcode == -1:
+            yapi.yices_delete_type_vector(typev)
+            return None
+        retval = []
+        for i in range(0, typev.size):
+            retval.append(typev.data[i])
+        yapi.yices_delete_type_vector(typev)
+        return retval
+
+
+   # parsing
 
     @staticmethod
     def parse_type(s):
