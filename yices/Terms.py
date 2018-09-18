@@ -509,6 +509,11 @@ class Terms(object):
 
     # parsing
 
+    @staticmethod
+    def parse_term(s):
+        return yapi.yices_parse_term(s)
+
+
     # substitutions
 
     # term exploration

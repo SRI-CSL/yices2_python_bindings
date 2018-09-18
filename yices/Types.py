@@ -129,7 +129,56 @@ class Types(object):
 
 
     # recognizers
-    # FIXME: TBD
+
+    @staticmethod
+    def is_bool(tau):
+        return True if yapi.yices_type_is_bool(tau) else False
+
+    @staticmethod
+    def is_int(tau):
+        return True if yapi.yices_type_is_int(tau) else False
+
+    @staticmethod
+    def is_real(tau):
+        return True if yapi.yices_type_is_real(tau) else False
+
+    @staticmethod
+    def is_arithmetic(tau):
+        return True if yapi.yices_type_is_arithmetic(tau) else False
+
+    @staticmethod
+    def is_bitvector(tau):
+        return True if yapi.yices_type_is_bitvector(tau) else False
+
+    @staticmethod
+    def is_scalar(tau):
+        return True if yapi.yices_type_is_scalar(tau) else False
+
+    @staticmethod
+    def is_uninterpreted(tau):
+        return True if yapi.yices_type_is_uninterpreted(tau) else False
+
+    @staticmethod
+    def is_tuple(tau):
+        return True if yapi.yices_type_is_tuple(tau) else False
+
+    @staticmethod
+    def is_function(tau):
+        return True if yapi.yices_type_is_function(tau) else False
+
+    @staticmethod
+    def is_subtype(tau0, tau1):
+        return True if yapi.yices_test_subtype(tau0, tau1) else False
+
+    @staticmethod
+    def compatible_types(tau0, tau1):
+        return True if yapi.yices_compatible_types(tau0, tau1) else False
+
+    # parsing
+
+    @staticmethod
+    def parse_type(s):
+        return yapi.yices_parse_type(s)
 
 
     # names

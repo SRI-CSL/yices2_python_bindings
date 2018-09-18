@@ -896,6 +896,14 @@ def yices_test_subtype(tau, sigma):
     """Returns 1 if tau is a subtype of sigma, 0 otherwise."""
     return libyices.yices_test_subtype(tau, sigma)
 
+# int32_t yices_compatible_types(type_t tau, type_t sigma)
+libyices.yices_compatible_types.restype = c_int32
+libyices.yices_compatible_types.argtypes = [type_t, type_t]
+@catch_error(0)
+def yices_compatible_types(tau, sigma):
+    """Returns 1 if tau is and sigma are compatible types, 0 otherwise."""
+    return libyices.yices_compatible_types(tau, sigma)
+
 # uint32_t yices_bvtype_size(type_t tau)
 libyices.yices_bvtype_size.restype = c_uint32
 libyices.yices_bvtype_size.argtypes = [type_t]
