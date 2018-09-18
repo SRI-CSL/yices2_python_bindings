@@ -99,7 +99,7 @@ def yices_python_info_main():
 # 1.0.6    -  2.5.3    -  9/28/2017      -  LD_LIBRARY_PATH hackery, III.                      #
 # 1.0.7    -  2.5.4    -  9/29/2017      -  patch level version bump for PPA goodness          #
 # 1.0.8    -  2.5.4    -  10/4/2017      -  improving the user experience  (less SIGSEGVs)     #
-#                                                                                              #
+# 1.1.0    -  2.6.0    -  9/30/2018      -  major changes (addition of pythonesque api)        #
 ################################################################################################
 
 #
@@ -112,8 +112,8 @@ yices_python_version = '1.0.8'
 #
 # 1.0.1 needs yices_has_mcsat
 # 1.0.1-7 needs the _fd api additions that appear in 2.5.4
-#
-yices_recommended_version = '2.5.4'
+# 1.1.0 hooks into the new unsat core stuff
+yices_recommended_version = '2.6.0'
 
 #iam: 10/4/2017 try to make the user experience a little more pythony.
 #BD suggests doing this in the loadYices routine; he might be right
