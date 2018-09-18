@@ -250,6 +250,10 @@ class Terms(object):
         return yapi.yices_arith_gt_atom(lhs, rhs)
 
     @staticmethod
+    def arith_lt_atom(lhs, rhs):
+        return yapi.yices_arith_lt_atom(lhs, rhs)
+
+    @staticmethod
     def arith_eq0_atom(term):
         return yapi.yices_arith_eq0_atom(term)
 

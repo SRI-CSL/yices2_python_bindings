@@ -1,4 +1,5 @@
 include yices_api.py
+include yices
 
 recursive-exclude test *
 exclude doc

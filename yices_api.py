@@ -107,7 +107,7 @@ def yices_python_info_main():
 # while the bindings are moving so fast we should keep them separate.
 #
 #
-yices_python_version = '1.0.8'
+yices_python_version = '1.1.0'
 
 #
 # 1.0.1 needs yices_has_mcsat
