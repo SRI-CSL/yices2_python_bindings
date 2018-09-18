@@ -1,6 +1,6 @@
 import unittest
 
-from ..yices import *
+from ..yices_api import *
 
 class TestTypes(unittest.TestCase):
 

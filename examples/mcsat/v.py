@@ -2,7 +2,7 @@
 
 from ctypes import ( c_int64 )
 
-from yices import *
+from yices_api import *
 
 from yiceslib import (term_to_string, declare_real_var, declare_integer_var, make_context)
 
@@ -18,118 +18,118 @@ tt(10) t(11)... tt(24), tw(1), tw(2)
 Exists
 tt(1010) tt(1011) ... tt(1024)
 Formula body
-tt(24) === tt(1024) 
-and 
-(tt(22) === tt(1022) 
-and 
-(tt(21) === tt(1021) 
-and 
-(tt(19) === tt(1019) 
-and 
-(tt(16) === tt(1016) 
-and 
-(tt(15) === tt(1015) 
-and 
-(tt(14) === tt(1014) 
-and 
-(tt(13) === tt(1013) 
-and 
-(tt(12) === tt(1012) 
-and 
-(tt(10) === tt(1010) 
-and 
-(tt(24) === tt(22) + tw(1) 
-and 
-(tt(24) >= (0/1).Real 
-and 
-(tt(24) >= tt(23) 
-and 
-(tt(23) >= tt(22) 
-and 
+tt(24) === tt(1024)
+and
+(tt(22) === tt(1022)
+and
+(tt(21) === tt(1021)
+and
+(tt(19) === tt(1019)
+and
+(tt(16) === tt(1016)
+and
+(tt(15) === tt(1015)
+and
+(tt(14) === tt(1014)
+and
+(tt(13) === tt(1013)
+and
+(tt(12) === tt(1012)
+and
+(tt(10) === tt(1010)
+and
+(tt(24) === tt(22) + tw(1)
+and
+(tt(24) >= (0/1).Real
+and
+(tt(24) >= tt(23)
+and
+(tt(23) >= tt(22)
+and
 (tt(22) >= tt(21)
-and 
-(tt(21) >= tt(20) 
-and 
-(tt(20) >= tt(19) 
-and 
-(tt(19) === tt(16) + tw(1) + tw(2) 
-and 
-(tt(19) >= (0/1).Real 
-and 
-(tt(19) >= tt(18) 
-and 
+and
+(tt(21) >= tt(20)
+and
+(tt(20) >= tt(19)
+and
+(tt(19) === tt(16) + tw(1) + tw(2)
+and
+(tt(19) >= (0/1).Real
+and
+(tt(19) >= tt(18)
+and
 (tt(18) >= tt(17)
-and 
-(tt(17) >= tt(16) 
-and 
-(tt(16) >= tt(15) 
-and 
-(tt(15) >= tt(14) 
-and 
-(tt(14) >= tt(13) 
-and 
-(tt(13) >= tt(12) 
-and 
-(tt(12) >= tt(11) 
-and 
-(tt(11) >= tt(10) 
-and 
-((0/1).Real >= (0/1).Real 
-and 
-tt(10) >= (0/1).Real 
-and 
-(tw(1) >= (1/1).Real 
-and 
-(tw(2) >= (4/1).Real 
-and 
+and
+(tt(17) >= tt(16)
+and
+(tt(16) >= tt(15)
+and
+(tt(15) >= tt(14)
+and
+(tt(14) >= tt(13)
+and
+(tt(13) >= tt(12)
+and
+(tt(12) >= tt(11)
+and
+(tt(11) >= tt(10)
+and
+((0/1).Real >= (0/1).Real
+and
+tt(10) >= (0/1).Real
+and
+(tw(1) >= (1/1).Real
+and
+(tw(2) >= (4/1).Real
+and
 (true).Boolean))))))))))))))))))))
 
-and 
-
-(tt(1024) === tt(1022) + tw(1) 
-and 
-(tt(1024) >= (0/1).Real 
-and 
-(tt(1024) >= tt(1023) 
-and 
-(tt(1023) >= tt(1022) 
-and 
-(tt(1022) >= tt(1021) 
-and 
-(tt(1021) >= tt(1020) 
-and 
-(tt(1020) >= tt(1019) 
-and 
-(tt(1019) === tt(1016) + tw(1) + tw(2) 
-and 
-(tt(1019) >= (0/1).Real 
-and 
-(tt(1019) >= tt(1018) 
-and 
-(tt(1018) >= tt(1017) 
-and 
-(tt(1017) >= tt(1016) 
-and 
-(tt(1016) >= tt(1015) 
-and 
-(tt(1015) >= tt(1014) 
-and 
-(tt(1014) >= tt(1013) 
-and 
-(tt(1013) >= tt(1012) 
 and
-(tt(1012) >= tt(1011) 
-and 
-(tt(1011) >= tt(1010) 
-and 
-((0/1).Real >= (0/1).Real 
-and 
-tt(10) >= (0/1).Real 
-and 
-(tw(1) >= (1/1).Real 
-and 
-(tw(2) >= (4/1).Real 
-and 
+
+(tt(1024) === tt(1022) + tw(1)
+and
+(tt(1024) >= (0/1).Real
+and
+(tt(1024) >= tt(1023)
+and
+(tt(1023) >= tt(1022)
+and
+(tt(1022) >= tt(1021)
+and
+(tt(1021) >= tt(1020)
+and
+(tt(1020) >= tt(1019)
+and
+(tt(1019) === tt(1016) + tw(1) + tw(2)
+and
+(tt(1019) >= (0/1).Real
+and
+(tt(1019) >= tt(1018)
+and
+(tt(1018) >= tt(1017)
+and
+(tt(1017) >= tt(1016)
+and
+(tt(1016) >= tt(1015)
+and
+(tt(1015) >= tt(1014)
+and
+(tt(1014) >= tt(1013)
+and
+(tt(1013) >= tt(1012)
+and
+(tt(1012) >= tt(1011)
+and
+(tt(1011) >= tt(1010)
+and
+((0/1).Real >= (0/1).Real
+and
+tt(10) >= (0/1).Real
+and
+(tw(1) >= (1/1).Real
+and
+(tw(2) >= (4/1).Real
+and
 (true).Boolean)))))))))))))))))))))))))))))))
 
 
@@ -158,8 +158,8 @@ def solve_problem():
 		 tt1023 :: real
 		 tt1024 :: real
 		 )
-	 (not 
-	  (and 
+	 (not
+	  (and
 	   (= tt24 tt1024)
 	   (= tt22 tt1022)
 	   (= tt21 tt1021)
@@ -177,9 +177,9 @@ def solve_problem():
 	   (>= tt22 tt21)
 	   (>= tt21 tt20)
 	   (>= tt20 tt19)
-	   (= tt19 (+ tt16 tw1 tw2)) 
+	   (= tt19 (+ tt16 tw1 tw2))
 	   (>= tt19 0)
-	   (>= tt19 tt18) 
+	   (>= tt19 tt18)
 	   (>= tt18 tt17)
 	   (>= tt17 tt16)
 	   (>= tt16 tt15)
@@ -219,13 +219,13 @@ def solve_problem():
 	 )
 """
 
-	
+
 	for i in range(10, 25):
 		declare_real_var('tt{0}'.format(i))
 
 	for i in range(1, 3):
 		declare_real_var('tw{0}'.format(i))
-		
+
 	p = yices_parse_term(problem)
 	s = term_to_string(p)
 	print 'Assertion: {0}\n'.format(s)

@@ -2,56 +2,56 @@
 
 from ctypes import ( c_int64 )
 
-from yices import *
+from yices_api import *
 
 from yiceslib import (term_to_string, declare_real_var, declare_integer_var, make_context)
 
 """
 
-iv7:Integer > (0).Integer 
-and 
-( iv8:Integer === iv1:Integer * iv7:Integer 
-  and 
-  ( iv3:Integer - iv8:Integer === iv5:Integer 
-    and 
-    ( iv5:Integer >= (0).Integer 
-      and ( iv9:Integer === iv1:Integer * iv7:Integer 
-            and ( iv4:Integer - iv9:Integer === iv6:Integer 
-                  and 
-                  ( iv6:Integer >= (0).Integer 
-                    and ( iv1:Integer === (1).Integer 
-                          and ( iv2:Integer === (0).Integer 
-                                and ( iv3:Integer === (100).Integer 
-                                      and ( iv4:Integer === (100).Integer 
+iv7:Integer > (0).Integer
+and
+( iv8:Integer === iv1:Integer * iv7:Integer
+  and
+  ( iv3:Integer - iv8:Integer === iv5:Integer
+    and
+    ( iv5:Integer >= (0).Integer
+      and ( iv9:Integer === iv1:Integer * iv7:Integer
+            and ( iv4:Integer - iv9:Integer === iv6:Integer
+                  and
+                  ( iv6:Integer >= (0).Integer
+                    and ( iv1:Integer === (1).Integer
+                          and ( iv2:Integer === (0).Integer
+                                and ( iv3:Integer === (100).Integer
+                                      and ( iv4:Integer === (100).Integer
                                             and (true).Boolean))))))))))
 
 simplifies by hand to:
 
 iv7:Integer > 0
-and 
-iv8:Integer === iv1:Integer * iv7:Integer 
-and 
-iv3:Integer - iv8:Integer === iv5:Integer 
-and 
+and
+iv8:Integer === iv1:Integer * iv7:Integer
+and
+iv3:Integer - iv8:Integer === iv5:Integer
+and
 iv5:Integer >= 0
-and 
-iv9:Integer === iv1:Integer * iv7:Integer 
-and 
-iv4:Integer - iv9:Integer === iv6:Integer 
-and 
+and
+iv9:Integer === iv1:Integer * iv7:Integer
+and
+iv4:Integer - iv9:Integer === iv6:Integer
+and
 iv6:Integer >= 0
-and 
+and
 iv1:Integer === 1
-and 
+and
 iv2:Integer === 0
-and 
+and
 iv3:Integer === 100
-and 
-iv4:Integer === 100 
+and
+iv4:Integer === 100
 
 and translates to:
 
-(and (> x7 0) 
+(and (> x7 0)
      (= x8 (* x1 x2))
      (= x5 (- x3 x8))
      (> x5 0)
@@ -68,7 +68,7 @@ and translates to:
 
 def solve_problem():
 	problem = """
-(and (> x7 0) 
+(and (> x7 0)
      (= x8 (* x1 x2))
      (= x5 (- x3 x8))
      (> x5 0)
@@ -83,10 +83,10 @@ def solve_problem():
 """
 	variables = [None] * 10
 	values = [None] * 10
-	
+
 	for i in range(1, 10):
 		variables[i] = declare_integer_var('x{0}'.format(i))
-		
+
 	p = yices_parse_term(problem)
 	s = term_to_string(p)
 	print 'Assertion: {0}\n'.format(s)
@@ -106,7 +106,7 @@ def solve_problem():
 	yices_pp_model_fd(1, model, 80, 20, 0)
 
 
-	
+
 	print "\nValues of variables:\n"
 
 	i64 = c_int64()

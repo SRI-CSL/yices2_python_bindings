@@ -21,7 +21,7 @@ setup(
     version=yices_python_version,
     description='Python Bindings for the Yices SMT Solver',
     long_description=long_description,
-    url='https://github.com/SRI-CSL/yices2',
+    url='https://github.com/SRI-CSL/yices2_python_bindings',
     author='Sam Owre, Ian A. Mason, Bruno Dutertre.',
     author_email='iam@csl.sri.com',
 
@@ -32,7 +32,7 @@ setup(
 
     entry_points = {
         'console_scripts': [
-            'yices_python_info = yices:yices_python_info_main',
+            'yices_python_info = yices_api:yices_python_info_main',
         ],
     },
 
@@ -62,6 +62,6 @@ setup(
         'Topic :: Software Development :: Libraries :: Python Modules',
     ],
 
-    py_modules=['yices'],
+    py_modules=['yices_api'],
 
 )

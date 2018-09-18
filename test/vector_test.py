@@ -1,7 +1,7 @@
 import unittest
 
 
-from ..yices import (
+from ..yices_api import (
     yices_init,
     yices_exit,
     term_vector_t,

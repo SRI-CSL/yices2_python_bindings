@@ -1,6 +1,6 @@
 import unittest
 
-from ..yices import *
+from ..yices_api import *
 
 from ctypes import (  c_int32, c_int64, pointer  )
 #import gmpy2

@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 
-from yices import *
+from yices_api import *
 
 from ctypes import ( c_int32 )
 

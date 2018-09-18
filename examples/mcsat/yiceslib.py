@@ -1,6 +1,6 @@
 from ctypes import ( c_int64 )
 
-from yices import *
+from yices_api import *
 
 
 def term_to_string(term):
@@ -36,4 +36,3 @@ def make_context():
     ctx = yices_new_context(cfg)
     yices_free_config(cfg)
     return ctx
-
