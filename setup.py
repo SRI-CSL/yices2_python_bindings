@@ -9,12 +9,12 @@ here = path.abspath(path.dirname(__file__))
 
 #FIXME:
 # Get the long description from the README file
-#with open(path.join(here, 'README.rst'), encoding='utf-8') as f:
+# with open(path.join(here, 'README.rst'), encoding='utf-8') as f:
 #    long_description = f.read()
 long_description = "This is the long description."
 
 # use the in house version number so we stay in synch with ourselves.
-from yices import yices_python_version
+from yices_api import yices_python_version
 
 setup(
     name='yices',
