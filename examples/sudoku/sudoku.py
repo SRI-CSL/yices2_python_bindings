@@ -1,5 +1,7 @@
 #!/usr/bin/env python
 
+from ctypes import (c_int32)
+
 from yices_api import (
     yices_init,
     yices_int_type,
@@ -23,8 +25,6 @@ from yices_api import (
     yices_exit,
     STATUS_SAT
     )
-
-from ctypes import ( c_int32 )
 
 yices_init()
 

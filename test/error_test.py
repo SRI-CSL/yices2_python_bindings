@@ -1,6 +1,19 @@
 import unittest
 
-from ..yices_api import *
+from ..yices_api import (
+    yices_init,
+    yices_exit,
+    yices_reset,
+    yices_error_code,
+    yices_error_report,
+    yices_clear_error,
+    yices_error_string,
+    yices_print_error_fd,
+    yices_constant,
+    yices_bool_type,
+    yices_type_is_bool,
+    YicesException
+)
 
 
 

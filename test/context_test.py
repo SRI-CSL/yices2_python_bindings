@@ -1,6 +1,39 @@
 import unittest
 
-from ..yices_api import *
+from ..yices_api import (
+    yices_init,
+    yices_exit,
+    yices_new_config,
+    yices_set_config,
+    yices_new_context,
+    yices_default_config_for_logic,
+    yices_context_status,
+    yices_push,
+    yices_pop,
+    yices_reset_context,
+    yices_context_enable_option,
+    yices_context_disable_option,
+    yices_bool_type,
+    yices_new_variable,
+    yices_bv_type,
+    yices_assert_formula,
+    yices_set_term_name,
+    yices_assert_formulas,
+    YicesException,
+    yices_new_uninterpreted_term,
+    yices_parse_term,
+    make_term_array,
+    yices_check_context,
+    yices_assert_blocking_clause,
+    yices_stop_search,
+    yices_new_param_record,
+    yices_default_params_for_context,
+    yices_set_param,
+    yices_free_param_record,
+    yices_free_context,
+    yices_free_config,
+    STATUS_SAT
+    )
 
 
 class TestContext(unittest.TestCase):

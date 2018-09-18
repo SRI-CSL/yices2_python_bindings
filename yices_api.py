@@ -70,9 +70,9 @@ from ctypes.util import find_library
 def yices_python_info_main():
     """The only console entry point; currently just used for information."""
     loadYices()
-    sys.stdout.write('Python Yices Bindings. Version {0}\n'.format(yices_python_version));
+    sys.stdout.write('Python Yices Bindings. Version {0}\n'.format(yices_python_version))
     sys.stdout.write('Yices library loaded from {0}\n'.format(libyicespath))
-    sys.stdout.write('Version: {0}\nArchitecture: {1}\nBuild mode: {2}\nBuild date: {3}\nMCSat support: {4}\n'.format(yices_version, yices_build_arch, yices_build_mode, yices_build_date, yices_has_mcsat()));
+    sys.stdout.write('Version: {0}\nArchitecture: {1}\nBuild mode: {2}\nBuild date: {3}\nMCSat support: {4}\n'.format(yices_version, yices_build_arch, yices_build_mode, yices_build_date, yices_has_mcsat()))
 
 
 
@@ -134,7 +134,7 @@ def catch_error(errval):
             """yices api function wrapper."""
             errstr = "You must initialize by calling yices_init()"
             result = yices_fun(*args, **kwargs) if __yices_library_inited__ else None
-            if not  __yices_library_inited__ :
+            if not  __yices_library_inited__:
                 raise YicesException(errstr)
             if result == errval and yices_error_code() != 0L:
                 errstr = yices_error_string()
@@ -153,7 +153,7 @@ def catch_uninitialized():
             """yices api function wrapper."""
             errstr = "You must initialize by calling yices_init()"
             result = yices_fun(*args, **kwargs) if __yices_library_inited__ else None
-            if not  __yices_library_inited__ :
+            if not  __yices_library_inited__:
                 raise YicesException(errstr)
             return result
         return wrapper
@@ -245,8 +245,8 @@ def yices_has_mcsat():
 def checkYices():
     """Checks that the library is not too stale to work with these bindings."""
     def _versionCheck():
-        (lv_major, lv_minor, lv_revision) = [ int(x) for x in yices_version.split('.') ]
-        (rv_major, rv_minor, rv_revision) = [ int(x) for x in yices_recommended_version.split('.') ]
+        (lv_major, lv_minor, lv_revision) = [int(x) for x in yices_version.split('.')]
+        (rv_major, rv_minor, rv_revision) = [int(x) for x in yices_recommended_version.split('.')]
         if lv_major < rv_major:
             return False
         if lv_major == rv_major and lv_minor < rv_minor:
@@ -4221,7 +4221,7 @@ libyices.yices_free_config.argtypes = [ctx_config_t]
 @catch_error(-1)
 def yices_free_config(config):
     """Frees the context descriptor."""
-    assert(config is not None)
+    assert config is not None
     libyices.yices_free_config(config)
 
 # int32_t yices_set_config(ctx_config_t *config, const char *name, const char *value)
@@ -4230,7 +4230,7 @@ libyices.yices_set_config.argtypes = [ctx_config_t, c_char_p, c_char_p]
 @catch_error(-1)
 def yices_set_config(config, name, value):
     """Sets the value of name in the context configuration, returns 0 on success, -1 on failure."""
-    assert(config is not None)
+    assert config is not None
     return libyices.yices_set_config(config, name, value)
 
 # int32_t yices_default_config_for_logic(ctx_config_t *config, const char *logic)
@@ -4239,7 +4239,7 @@ libyices.yices_default_config_for_logic.argtypes = [ctx_config_t, c_char_p]
 @catch_error(-1)
 def yices_default_config_for_logic(config, logic):
     """Sets the logic of the context configuration, returns 0 on success, -1 on failure."""
-    assert(config is not None)
+    assert config is not None
     return libyices.yices_default_config_for_logic(config, logic)
 
 #################
@@ -4259,7 +4259,7 @@ libyices.yices_free_context.argtypes = [context_t]
 @catch_error(-1)
 def yices_free_context(ctx):
     """Frees a context."""
-    assert(ctx is not None)
+    assert ctx is not None
     libyices.yices_free_context(ctx)
 
 # smt_status_t yices_context_status(context_t *ctx)
@@ -4271,7 +4271,7 @@ def yices_context_status(ctx):
     STATUS_IDLE, STATUS_SEARCHING, STATUS_UNKNOWN,
     STATUS_SAT, STATUS_UNSAT, STATUS_INTERRUPTED, STATUS_ERROR
     """
-    assert(ctx is not None)
+    assert ctx is not None
     return libyices.yices_context_status(ctx)
 
 # void yices_reset_context(context_t *ctx)
@@ -4279,7 +4279,7 @@ libyices.yices_reset_context.argtypes = [context_t]
 @catch_error(-1)
 def yices_reset_context(ctx):
     """Removes all assertions from the context."""
-    assert(ctx is not None)
+    assert ctx is not None
     libyices.yices_reset_context(ctx)
 
 # int32_t yices_push(context_t *ctx)
@@ -4288,7 +4288,7 @@ libyices.yices_push.argtypes = [context_t]
 @catch_error(-1)
 def yices_push(ctx):
     """Marks a backtrack point in the context, returns 0 on success, -1 otherwise."""
-    assert(ctx is not None)
+    assert ctx is not None
     return libyices.yices_push(ctx)
 
 # int32_t yices_pop(context_t *ctx)
@@ -4297,7 +4297,7 @@ libyices.yices_pop.argtypes = [context_t]
 @catch_error(-1)
 def yices_pop(ctx):
     """Backtracks to the previous backtrack point, returns 0 on success, -1 otherwise."""
-    assert(ctx is not None)
+    assert ctx is not None
     return libyices.yices_pop(ctx)
 
 # int32_t yices_context_enable_option(context_t *ctx, const char *option)
@@ -4306,7 +4306,7 @@ libyices.yices_context_enable_option.argtypes = [context_t, c_char_p]
 @catch_error(-1)
 def yices_context_enable_option(ctx, option):
     """Used to tune the amount of simplification used when evaluating assertions."""
-    assert(ctx is not None)
+    assert ctx is not None
     return libyices.yices_context_enable_option(ctx, option)
 
 # int32_t yices_context_disable_option(context_t *ctx, const char *option)
@@ -4315,7 +4315,7 @@ libyices.yices_context_disable_option.argtypes = [context_t, c_char_p]
 @catch_error(-1)
 def yices_context_disable_option(ctx, option):
     """Used to tune the amount of simplification used when evaluating assertions."""
-    assert(ctx is not None)
+    assert ctx is not None
     return libyices.yices_context_disable_option(ctx, option)
 
 # int32_t yices_assert_formula(context_t *ctx, term_t t)
@@ -4337,7 +4337,7 @@ def yices_assert_formula(ctx, t):
 
     This returns 0 if there's no error or -1 if there's an error.
     """
-    assert(ctx is not None)
+    assert ctx is not None
     return libyices.yices_assert_formula(ctx, t)
 
 # int32_t yices_assert_formulas(context_t *ctx, uint32_t n, const term_t t[])
@@ -4346,7 +4346,7 @@ libyices.yices_assert_formulas.argtypes = [context_t, c_uint32, POINTER(term_t)]
 @catch_error(-1)
 def yices_assert_formulas(ctx, n, t):
     """Assert an array of formulas of length n in the context ctx."""
-    assert(ctx is not None)
+    assert ctx is not None
     return libyices.yices_assert_formulas(ctx, n, t)
 
 # smt_status_t yices_check_context(context_t *ctx, const param_t *params)
@@ -4363,7 +4363,7 @@ def yices_check_context(ctx, params):
     problems.  Then you may want to play with the heuristics to see if
     performance improves.
     """
-    assert(ctx is not None)
+    assert ctx is not None
     return libyices.yices_check_context(ctx, params)
 
 # smt_status_t yices_check_context_with_assumptions(context_t *ctx, const param_t *params, uint32_t n, const term_t t[]);
@@ -4381,7 +4381,7 @@ def yices_check_context_with_assumptions(ctx, params, n, t):
     If the check returns STATUS_UNSAT, then one can construct an unsat core,
     that is, a subset of the n assumptions that is inconsistent with ctx.
     """
-    assert(ctx is not None)
+    assert ctx is not None
     return libyices.yices_check_context_with_assumptions(ctx, params, n, t)
 
 
@@ -4391,7 +4391,7 @@ libyices.yices_assert_blocking_clause.argtypes = [context_t]
 @catch_error(-1)
 def yices_assert_blocking_clause(ctx):
     """Adds a blocking clause, this is intended to help enumerate different models for a set of assertions."""
-    assert(ctx is not None)
+    assert ctx is not None
     return libyices.yices_assert_blocking_clause(ctx)
 
 # void yices_stop_search(context_t *ctx)
@@ -4399,7 +4399,7 @@ libyices.yices_stop_search.argtypes = [context_t]
 @catch_error(-1)
 def yices_stop_search(ctx):
     """Interupts the search."""
-    assert(ctx is not None)
+    assert ctx is not None
     libyices.yices_stop_search(ctx)
 
 
@@ -4419,7 +4419,7 @@ libyices.yices_default_params_for_context.argtypes = [context_t, param_t]
 @catch_error(-1)
 def yices_default_params_for_context(ctx, params):
     """Initializes the param object to have the default values."""
-    assert(ctx is not None)
+    assert ctx is not None
     libyices.yices_default_params_for_context(ctx, params)
 
 # int32_t yices_set_param(param_t *p, const char *pname, const char *value)
@@ -4451,7 +4451,7 @@ def yices_get_unsat_core(ctx, v):
     """Compute an unsat core after a call to yices_check_with_assumptions.
        The unsat core is returned in vector v.
        returns 0 if successful, -1 otherwise."""
-    assert(ctx is not None)
+    assert ctx is not None
     return libyices.yices_get_unsat_core(ctx, v)
 
 
@@ -4477,7 +4477,7 @@ def yices_get_model(ctx, keep_subst):
     The function returns NULL if the status isn't SAT or STATUS_UNKNOWN
     and sets an error report (code = CTX_INVALID_OPERATION).
     """
-    assert(ctx is not None)
+    assert ctx is not None
     mdl = libyices.yices_get_model(ctx, keep_subst)
     if mdl is None:
         raise YicesException('Model not available - result of check_context should yield context_status of 2 (STATUS_SAT) or 3 (STATUS_UNKNOWN)')
@@ -4488,7 +4488,7 @@ libyices.yices_free_model.argtypes = [model_t]
 @catch_error(-1)
 def yices_free_model(mdl):
     """Frees the model."""
-    assert(mdl is not None)
+    assert mdl is not None
     libyices.yices_free_model(mdl)
 
 # model_t *yices_model_from_map(uint32_t n, const term_t var[], const term_t map[])
@@ -4538,7 +4538,7 @@ libyices.yices_get_bool_value.argtypes = [model_t, term_t, POINTER(c_int32)]
 @catch_error(-1)
 def yices_get_bool_value(mdl, t, val):
     """Places the value of the bool term into val, returns 0 on success, and -1 on failure."""
-    assert(mdl is not None)
+    assert mdl is not None
     return libyices.yices_get_bool_value(mdl, t, val)
 
 # int32_t yices_get_int32_value(model_t *mdl, term_t t, int32_t *val)
@@ -4547,7 +4547,7 @@ libyices.yices_get_int32_value.argtypes = [model_t, term_t, POINTER(c_int32)]
 @catch_error(-1)
 def yices_get_int32_value(mdl, t, val):
     """Places the value of the int32 term into val, returns 0 on success, and -1 on failure."""
-    assert(mdl is not None)
+    assert mdl is not None
     return libyices.yices_get_int32_value(mdl, t, val)
 
 # int32_t yices_get_int64_value(model_t *mdl, term_t t, int64_t *val)
@@ -4556,7 +4556,7 @@ libyices.yices_get_int64_value.argtypes = [model_t, term_t, POINTER(c_int64)]
 @catch_error(-1)
 def yices_get_int64_value(mdl, t, val):
     """Places the value of the int64 term into val, returns 0 on success, and -1 on failure."""
-    assert(mdl is not None)
+    assert mdl is not None
     return libyices.yices_get_int64_value(mdl, t, val)
 
 # int32_t yices_get_rational32_value(model_t *mdl, term_t t, int32_t *num, uint32_t *den)
@@ -4565,7 +4565,7 @@ libyices.yices_get_rational32_value.argtypes = [model_t, term_t, POINTER(c_int32
 @catch_error(-1)
 def yices_get_rational32_value(mdl, t, num, den):
     """Places the values of the numerator and denominator of the 32 bit rational term into num and dem, returns 0 on success, and -1 on failure."""
-    assert(mdl is not None)
+    assert mdl is not None
     return libyices.yices_get_rational32_value(mdl, t, num, den)
 
 # int32_t yices_get_rational64_value(model_t *mdl, term_t t, int64_t *num, uint64_t *den)
@@ -4574,7 +4574,7 @@ libyices.yices_get_rational64_value.argtypes = [model_t, term_t, POINTER(c_int64
 @catch_error(-1)
 def yices_get_rational64_value(mdl, t, num, den):
     """Places the values of the numerator and denominator of the 64 bit rational term into num and dem, returns 0 on success, and -1 on failure."""
-    assert(mdl is not None)
+    assert mdl is not None
     return libyices.yices_get_rational64_value(mdl, t, num, den)
 
 # int32_t yices_get_double_value(model_t *mdl, term_t t, double *val)
@@ -4583,7 +4583,7 @@ libyices.yices_get_double_value.argtypes = [model_t, term_t, POINTER(c_double)]
 @catch_error(-1)
 def yices_get_double_value(mdl, t, val):
     """Places the value of the double term into val, returns 0 on success, and -1 on failure."""
-    assert(mdl is not None)
+    assert mdl is not None
     return libyices.yices_get_double_value(mdl, t, val)
 
 # int32_t yices_get_mpz_value(model_t *mdl, term_t t, mpz_t val)
@@ -4592,7 +4592,7 @@ libyices.yices_get_mpz_value.argtypes = [model_t, term_t, POINTER(mpz_t)]
 @catch_error(-1)
 def yices_get_mpz_value(mdl, t, val):
     """Places the value of the mpz term into val, returns 0 on success, and -1 on failure."""
-    assert(mdl is not None)
+    assert mdl is not None
     return libyices.yices_get_mpz_value(mdl, t, val)
 
 # int32_t yices_get_mpq_value(model_t *mdl, term_t t, mpq_t val)
@@ -4601,7 +4601,7 @@ libyices.yices_get_mpq_value.argtypes = [model_t, term_t, POINTER(mpq_t)]
 @catch_error(-1)
 def yices_get_mpq_value(mdl, t, val):
     """Places the value of the mpq term into val, returns 0 on success, and -1 on failure."""
-    assert(mdl is not None)
+    assert mdl is not None
     return libyices.yices_get_mpq_value(mdl, t, val)
 
 # int32_t yices_get_algebraic_number_value(model_t *mdl, term_t t, lp_algebraic_number_t *a)
@@ -4620,7 +4620,7 @@ def yices_get_algebraic_number_value(mdl, t, a):
     - if yices is compiled without support for MCSAT
        code = EVAL_NOT_SUPPORTED.
     """
-    assert(mdl is not None)
+    assert mdl is not None
     return libyices.yices_get_algebraic_number_value(mdl, t, a)
 
 # int32_t yices_get_bv_value(model_t *mdl, term_t t, int32_t val[])
@@ -4629,7 +4629,7 @@ libyices.yices_get_bv_value.argtypes = [model_t, term_t, POINTER(c_int32)]
 @catch_error(-1)
 def yices_get_bv_value(mdl, t, val):
     """Places the value of the bitvector term into val, returns 0 on success, and -1 on failure."""
-    assert(mdl is not None)
+    assert mdl is not None
     return libyices.yices_get_bv_value(mdl, t, val)
 
 # int32_t yices_get_scalar_value(model_t *mdl, term_t t, int32_t *val)
@@ -4638,7 +4638,7 @@ libyices.yices_get_scalar_value.argtypes = [model_t, term_t, POINTER(c_int32)]
 @catch_error(-1)
 def yices_get_scalar_value(mdl, t, val):
     """Places the value of the scalar term into val, returns 0 on success, and -1 on failure."""
-    assert(mdl is not None)
+    assert mdl is not None
     return libyices.yices_get_scalar_value(mdl, t, val)
 
 
@@ -4673,7 +4673,7 @@ libyices.yices_get_value.argtypes = [model_t, term_t, POINTER(yval_t)]
 @catch_error(-1)
 def yices_get_value(mdl, t, val):
     """Retrieves the value of t in the model as a node descriptor."""
-    assert(mdl is not None)
+    assert mdl is not None
     return libyices.yices_get_value(mdl, t, val)
 
 # int32_t yices_val_is_int32(model_t *mdl, const yval_t *v)
@@ -4682,7 +4682,7 @@ libyices.yices_val_is_int32.argtypes = [model_t, POINTER(yval_t)]
 @catch_error(-1)
 def yices_val_is_int32(mdl, v):
     """Tests if the node descriptor is a int32 value, returns 1 on success, 0 on failure."""
-    assert(mdl is not None)
+    assert mdl is not None
     return libyices.yices_val_is_int32(mdl, v)
 
 # int32_t yices_val_is_int64(model_t *mdl, const yval_t *v)
@@ -4691,7 +4691,7 @@ libyices.yices_val_is_int64.argtypes = [model_t, POINTER(yval_t)]
 @catch_error(-1)
 def yices_val_is_int64(mdl, v):
     """Tests if the node descriptor is a int64 value, returns 1 on success, 0 on failure."""
-    assert(mdl is not None)
+    assert mdl is not None
     return libyices.yices_val_is_int64(mdl, v)
 
 # int32_t yices_val_is_rational32(model_t *mdl, const yval_t *v)
@@ -4700,7 +4700,7 @@ libyices.yices_val_is_rational32.argtypes = [model_t, POINTER(yval_t)]
 @catch_error(-1)
 def yices_val_is_rational32(mdl, v):
     """Tests if the node descriptor is a 32 bit rational value, returns 1 on success, 0 on failure."""
-    assert(mdl is not None)
+    assert mdl is not None
     return libyices.yices_val_is_rational32(mdl, v)
 
 # int32_t yices_val_is_rational64(model_t *mdl, const yval_t *v)
@@ -4709,7 +4709,7 @@ libyices.yices_val_is_rational64.argtypes = [model_t, POINTER(yval_t)]
 @catch_error(-1)
 def yices_val_is_rational64(mdl, v):
     """Tests if the node descriptor is a 64 bit rational value, returns 1 on success, 0 on failure."""
-    assert(mdl is not None)
+    assert mdl is not None
     return libyices.yices_val_is_rational64(mdl, v)
 
 # int32_t yices_val_is_integer(model_t *mdl, const yval_t *v)
@@ -4718,7 +4718,7 @@ libyices.yices_val_is_integer.argtypes = [model_t, POINTER(yval_t)]
 @catch_error(-1)
 def yices_val_is_integer(mdl, v):
     """Tests if the node descriptor is a integer value, returns 1 on success, 0 on failure."""
-    assert(mdl is not None)
+    assert mdl is not None
     return libyices.yices_val_is_integer(mdl, v)
 
 # uint32_t yices_val_bitsize(model_t *mdl, const yval_t *v)
@@ -4727,7 +4727,7 @@ libyices.yices_val_bitsize.argtypes = [model_t, POINTER(yval_t)]
 @catch_error(-1)
 def yices_val_bitsize(mdl, v):
     """Gets the number of bits in the bitvector value, or 0 if v is not a bitvector."""
-    assert(mdl is not None)
+    assert mdl is not None
     return libyices.yices_val_bitsize(mdl, v)
 
 # uint32_t yices_val_tuple_arity(model_t *mdl, const yval_t *v)
@@ -4736,7 +4736,7 @@ libyices.yices_val_tuple_arity.argtypes = [model_t, POINTER(yval_t)]
 @catch_error(-1)
 def yices_val_tuple_arity(mdl, v):
     """Gets the arity of the tuple value, or 0 if v is not a tuple."""
-    assert(mdl is not None)
+    assert mdl is not None
     return libyices.yices_val_tuple_arity(mdl, v)
 
 # uint32_t yices_val_mapping_arity(model_t *mdl, const yval_t *v)
@@ -4745,7 +4745,7 @@ libyices.yices_val_mapping_arity.argtypes = [model_t, POINTER(yval_t)]
 @catch_error(-1)
 def yices_val_mapping_arity(mdl, v):
     """Gets the cardinality of the map value, or 0 if v is not a map."""
-    assert(mdl is not None)
+    assert mdl is not None
     return libyices.yices_val_mapping_arity(mdl, v)
 
 # uint32_t yices_val_function_arity(model_t *mdl, const yval_t *v)
@@ -4754,7 +4754,7 @@ libyices.yices_val_function_arity.argtypes = [model_t, POINTER(yval_t)]
 @catch_error(-1)
 def yices_val_function_arity(mdl, v):
     """Gets the arity of the function value, or 0 if v is not a function."""
-    assert(mdl is not None)
+    assert mdl is not None
     return libyices.yices_val_function_arity(mdl, v)
 
 # int32_t yices_val_get_bool(model_t *mdl, const yval_t *v, int32_t *val)
@@ -4763,7 +4763,7 @@ libyices.yices_val_get_bool.argtypes = [model_t, POINTER(yval_t), POINTER(c_int3
 @catch_error(-1)
 def yices_val_get_bool(mdl, v, val):
     """Gets the bool value in the node descriptor v and places it in val, returns 0 if successful, -1 otherwise."""
-    assert(mdl is not None)
+    assert mdl is not None
     return libyices.yices_val_get_bool(mdl, pointer(v), val)
 
 # int32_t yices_val_get_int32(model_t *mdl, const yval_t *v, int32_t *val)
@@ -4772,7 +4772,7 @@ libyices.yices_val_get_int32.argtypes = [model_t, POINTER(yval_t), POINTER(c_int
 @catch_error(-1)
 def yices_val_get_int32(mdl, v, val):
     """Gets the int32 value in the node descriptor v and places it in val, returns 0 if successful, -1 otherwise."""
-    assert(mdl is not None)
+    assert mdl is not None
     return libyices.yices_val_get_int32(mdl, pointer(v), val)
 
 # int32_t yices_val_get_int64(model_t *mdl, const yval_t *v, int64_t *val)
@@ -4781,7 +4781,7 @@ libyices.yices_val_get_int64.argtypes = [model_t, POINTER(yval_t), POINTER(c_int
 @catch_error(-1)
 def yices_val_get_int64(mdl, v, val):
     """Gets the int64 value in the node descriptor v and places it in val, returns 0 if successful, -1 otherwise."""
-    assert(mdl is not None)
+    assert mdl is not None
     return libyices.yices_val_get_int64(mdl, pointer(v), val)
 
 # int32_t yices_val_get_rational32(model_t *mdl, const yval_t *v, int32_t *num, uint32_t *den)
@@ -4790,7 +4790,7 @@ libyices.yices_val_get_rational32.argtypes = [model_t, POINTER(yval_t), POINTER(
 @catch_error(-1)
 def yices_val_get_rational32(mdl, v, num, den):
     """Gets the numerator and denominator of the 32 bit rational value in the node descriptor v and places them in num and den, returns 0 if successful, -1 otherwise."""
-    assert(mdl is not None)
+    assert mdl is not None
     return libyices.yices_val_get_rational32(mdl, pointer(v), num, den)
 
 # int32_t yices_val_get_rational64(model_t *mdl, const yval_t *v, int64_t *num, uint64_t *den)
@@ -4799,7 +4799,7 @@ libyices.yices_val_get_rational64.argtypes = [model_t, POINTER(yval_t), POINTER(
 @catch_error(-1)
 def yices_val_get_rational64(mdl, v, num, den):
     """Gets the numerator and denominator of the 64 bit rational value in the node descriptor v and places them in num and den, returns 0 if successful, -1 otherwise."""
-    assert(mdl is not None)
+    assert mdl is not None
     return libyices.yices_val_get_rational64(mdl, pointer(v), num, den)
 
 # int32_t yices_val_get_double(model_t *mdl, const yval_t *v, double *val)
@@ -4808,7 +4808,7 @@ libyices.yices_val_get_double.argtypes = [model_t, POINTER(yval_t), POINTER(c_do
 @catch_error(-1)
 def yices_val_get_double(mdl, v, val):
     """Gets the double value in the node descriptor v and places it in val, returns 0 if successful, -1 otherwise."""
-    assert(mdl is not None)
+    assert mdl is not None
     return libyices.yices_val_get_double(mdl, pointer(v), val)
 
 # int32_t yices_val_get_mpz(model_t *mdl, const yval_t *v, mpz_t val)
@@ -4817,7 +4817,7 @@ libyices.yices_val_get_mpz.argtypes = [model_t, POINTER(yval_t), POINTER(mpz_t)]
 @catch_error(-1)
 def yices_val_get_mpz(mdl, v, val):
     """Gets the mpz value in the node descriptor v and places it in val, returns 0 if successful, -1 otherwise."""
-    assert(mdl is not None)
+    assert mdl is not None
     return libyices.yices_val_get_mpz(mdl, pointer(v), pointer(val))
 
 # int32_t yices_val_get_mpq(model_t *mdl, const yval_t *v, mpq_t val)
@@ -4826,7 +4826,7 @@ libyices.yices_val_get_mpq.argtypes = [model_t, POINTER(yval_t), POINTER(mpq_t)]
 @catch_error(-1)
 def yices_val_get_mpq(mdl, v, val):
     """Gets the mpq value in the node descriptor v and places it in val, returns 0 if successful, -1 otherwise."""
-    assert(mdl is not None)
+    assert mdl is not None
     return libyices.yices_val_get_mpq(mdl, pointer(v), pointer(val))
 
 # int32_t yices_val_get_algebraic_number(model_t *mdl, const yval_t *v, lp_algebraic_number_t *a)
@@ -4835,7 +4835,7 @@ libyices.yices_val_get_algebraic_number.argtypes = [model_t, POINTER(yval_t), PO
 @catch_error(-1)
 def yices_val_get_algebraic_number(mdl, v, a):
     """Gets the algebraic value in the node descriptor v and places it in val, returns 0 if successful, -1 otherwise."""
-    assert(mdl is not None)
+    assert mdl is not None
     return libyices.yices_val_get_algebraic_number(mdl, pointer(v), pointer(a))
 
 # int32_t yices_val_get_bv(model_t *mdl, const yval_t *v, int32_t val[])
@@ -4844,7 +4844,7 @@ libyices.yices_val_get_bv.argtypes = [model_t, POINTER(yval_t), POINTER(c_int32)
 @catch_error(-1)
 def yices_val_get_bv(mdl, v, val):
     """Gets the bitvector value in the node descriptor v and places it in val, returns 0 if successful, -1 otherwise."""
-    assert(mdl is not None)
+    assert mdl is not None
     return libyices.yices_val_get_bv(mdl, pointer(v), val)
 
 # int32_t yices_val_get_scalar(model_t *mdl, const yval_t *v, int32_t *val, type_t *tau)
@@ -4853,7 +4853,7 @@ libyices.yices_val_get_scalar.argtypes = [model_t, POINTER(yval_t), POINTER(c_in
 @catch_error(-1)
 def yices_val_get_scalar(mdl, v, val, tau):
     """Gets the scalar value in the node descriptor v and places it in val, returns 0 if successful, -1 otherwise."""
-    assert(mdl is not None)
+    assert mdl is not None
     return libyices.yices_val_get_scalar(mdl, pointer(v), val, tau)
 
 # int32_t yices_val_expand_tuple(model_t *mdl, const yval_t *v, yval_t child[])
@@ -4862,7 +4862,7 @@ libyices.yices_val_expand_tuple.argtypes = [model_t, POINTER(yval_t), POINTER(yv
 @catch_error(-1)
 def yices_val_expand_tuple(mdl, v, child):
     """Stores all the children of the tuple node v in the array child, returns 0 if successful, -1 otherwise."""
-    assert(mdl is not None)
+    assert mdl is not None
     return libyices.yices_val_expand_tuple(mdl, pointer(v), child)
 
 # int32_t yices_val_expand_function(model_t *mdl, const yval_t *f, yval_t *def, yval_vector_t *v)
@@ -4871,7 +4871,7 @@ libyices.yices_val_expand_function.argtypes = [model_t, POINTER(yval_t), POINTER
 @catch_error(-1)
 def yices_val_expand_function(mdl, f, df, v):
     """Stores all the mappings of the function node f in the array v, also storing the default value of f in def, returns 0 if successful, -1 otherwise."""
-    assert(mdl is not None)
+    assert mdl is not None
     return libyices.yices_val_expand_function(mdl, pointer(f), pointer(df), pointer(v))
 
 # int32_t yices_val_expand_mapping(model_t *mdl, const yval_t *m, yval_t tup[], yval_t *val)
@@ -4886,7 +4886,7 @@ def yices_val_expand_mapping(mdl, m, tup, val):
      - the nodes (x_1 ... x_k) are stored in tup[0 ... k-1]
        the node v is stored in val.
     """
-    assert(mdl is not None)
+    assert mdl is not None
     return libyices.yices_val_expand_mapping(mdl, pointer(m), tup, pointer(val))
 
 
@@ -4900,7 +4900,7 @@ libyices.yices_formula_true_in_model.argtypes = [model_t, term_t]
 @catch_error(-1)
 def yices_formula_true_in_model(mdl, f):
     """Checks whether the formula f is true in the model, returns 1 if f is true, 0 if f is false, and -1 otherwise."""
-    assert(mdl is not None)
+    assert mdl is not None
     return libyices.yices_formula_true_in_model(mdl, f)
 
 
@@ -4923,7 +4923,7 @@ def yices_formulas_true_in_model(mdl, n, f):
      NOTE: if n>1, it's more efficient to call this function once than to
      call formula_true_in_mode n times.
     """
-    assert(mdl is not None)
+    assert mdl is not None
     return libyices.yices_formula_true_in_model(mdl, n, f)
 
 #
@@ -4936,7 +4936,7 @@ libyices.yices_get_value_as_term.argtypes = [model_t, term_t]
 @catch_error(-1)
 def yices_get_value_as_term(mdl, t):
     """Converts the value of term t to a constant term, or NULL_TERM if there is an error."""
-    assert(mdl is not None)
+    assert mdl is not None
     return libyices.yices_get_value_as_term(mdl, t)
 
 # int32_t yices_term_array_value(model_t *mdl, uint32_t n, const term_t a[], term_t b[])
@@ -4945,7 +4945,7 @@ libyices.yices_term_array_value.argtypes = [model_t, c_uint32, POINTER(term_t), 
 @catch_error(-1)
 def yices_term_array_value(mdl, n, a, b):
     """Converts the array of terms of length n into and array on n values in the model mdl, returning 0 if successful, and -1 otherwise."""
-    assert(mdl is not None)
+    assert mdl is not None
     return libyices.yices_term_array_value(mdl, n, a, b)
 
 #
@@ -4959,7 +4959,7 @@ libyices.yices_implicant_for_formula.argtypes = [model_t, term_t, POINTER(term_v
 @catch_error(-1)
 def yices_implicant_for_formula(mdl, t, v):
     """Compute an implicant for t in the model mdl and store it in v, returning 0 if successful, and -1 otherwise."""
-    assert(mdl is not None)
+    assert mdl is not None
     return libyices.yices_implicant_for_formula(mdl, t, v)
 
 # int32_t yices_implicant_for_formulas(model_t *mdl, uint32_t n, const term_t a[], term_vector_t *v)
@@ -4968,7 +4968,7 @@ libyices.yices_implicant_for_formulas.argtypes = [model_t, c_uint32, POINTER(ter
 @catch_error(-1)
 def yices_implicant_for_formulas(mdl, n, a, v):
     """Compute an implicant for an array of formulas in the model mdl and store it in v, returning 0 if successful, and -1 otherwise."""
-    assert(mdl is not None)
+    assert mdl is not None
     return libyices.yices_implicant_for_formulas(mdl, n, a, v)
 
 
@@ -4990,7 +4990,7 @@ def yices_generalize_model(mdl, t, nelims, elim, mode, v):
     - mode defines the generalization algorithm
     - v: term_vector to return the result
     """
-    assert(mdl is not None)
+    assert mdl is not None
     return libyices.yices_generalize_model(mdl, t, nelims, elim, mode, v)
 
 # int32_t yices_generalize_model_array(model_t *mdl, uint32_t n, const term_t a[], uint32_t nelims, const term_t elim[], yices_gen_mode_t mode, term_vector_t *v)
@@ -4999,7 +4999,7 @@ libyices.yices_generalize_model_array.argtypes = [model_t, c_uint32, POINTER(ter
 @catch_error(-1)
 def yices_generalize_model_array(mdl, n, a, nelims, elim, mode, v):
     """Compute a generalization of mdl for the conjunct of the formulas in the array, placing it in v, returning 0 if successful, and -1 otherwise."""
-    assert(mdl is not None)
+    assert mdl is not None
     return libyices.yices_generalize_model_array(mdl, n, a, nelims, elim, mode, v)
 
 ########################
@@ -5067,7 +5067,7 @@ libyices.yices_pp_model_fd.argtypes = [c_int, model_t, c_uint32, c_uint32, c_uin
 @catch_error(-1)
 def yices_pp_model_fd(fd, mdl, width, height, offset):
     """Pretty print an model."""
-    assert(mdl is not None)
+    assert mdl is not None
     return libyices.yices_pp_model_fd(fd, mdl, width, height, offset)
 
 # char *yices_type_to_string(type_t tau, uint32_t width, uint32_t height, uint32_t offset)
@@ -5102,7 +5102,7 @@ libyices.yices_model_to_string.argtypes = [model_t, c_uint32, c_uint32, c_uint32
 @catch_error(-1)
 def yices_model_to_string(mdl, width, height, offset):
     """Converts a model to a string using the pretty printer."""
-    assert(mdl is not None)
+    assert mdl is not None
     cstrptr = libyices.yices_model_to_string(mdl, width, height, offset)
     mdlstr = cast(cstrptr, c_char_p).value
     libyices.yices_free_string(cstrptr)
