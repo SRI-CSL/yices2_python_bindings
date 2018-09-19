@@ -613,6 +613,8 @@ class Terms(object):
 #yices_bool_const_value(term)
 #yices_bv_const_value(term)
 #yices_scalar_const_value(term)
+#yices_rational_const_value
+#yices_sum_component
 #yices_bvsum_component(term)
 #yices_product_component(term)
 
