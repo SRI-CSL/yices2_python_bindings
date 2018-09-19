@@ -10,7 +10,7 @@ the python language bindings by simply installing the pip package:
 pip install yices
 ```
 
-There are two python packages provided:
+There are two python packages provided by the pip package:
 
 yices_api : this API is very closely tied to the yices C API, see [yices.h](https://github.com/SRI-CSL/yices2/blob/master/src/include/yices.h).
 
