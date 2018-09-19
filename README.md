@@ -17,6 +17,24 @@ yices_api : this API is very closely tied to the yices C API, see [yices.h](http
 yices  : this a somewhat more Pythonesque API that bridges the gap between the low level yices_api and the python user.
 
 
+## Porting from pip package 1.0.8 to the latest 1.1.0
+
+The 1.0.8 yices package is now called yices_api so you will need to change
+
+```
+import yices
+```
+
+to
+
+```
+import yices_api
+```
+
+
+
+
+
 ## Examples of Usage
 
 ### The tests
