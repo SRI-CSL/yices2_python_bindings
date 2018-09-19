@@ -41,8 +41,8 @@ for i in range(9):
 
 #not real happy about the indexing going from 0 to 8, but
 #isolating access via V could make it easier to go from 1 to 9
-def V(i, j):
-    return X[i][j]
+def V(vi, vj):
+    return X[vi][vj]
 
 
 
@@ -91,12 +91,12 @@ for k in range(3):
 
 
 #initial conditions (part of the UI)
-def set_value(context, position, value):
+def set_value(ctx, position, value):
     (row, column) = position
-    assert 1 <= row and row <= 9
-    assert 1 <= column and column <= 9
-    assert 1 <= value and value <= 9
-    yices_assert_formula(context, yices_arith_eq_atom(V(row - 1, column - 1), C[value]))
+    assert row >= 1 and row <= 9
+    assert column >= 1 and column <= 9
+    assert value >= 1  and value <= 9
+    yices_assert_formula(ctx, yices_arith_eq_atom(V(row - 1, column - 1), C[value]))
 
 
 #
