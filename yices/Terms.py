@@ -9,7 +9,6 @@ class Terms(object):
     TRUE      = yapi.yices_true()
     FALSE     = yapi.yices_false()
     ZERO      = yapi.yices_zero()
-    #FIXME: int32 or int64. Ask BD?
     ONE       = yapi.yices_int32(1)
     MINUS_ONE = yapi.yices_int32(-1)
 
@@ -280,9 +279,9 @@ class Terms(object):
 
     #bv term constructors
 
-    #FIXME: ask BD do we really need the uint32 uint64 int32 int64  variants?
     @staticmethod
     def bv_const_integer(nbits, i):
+        #FIXME: nbit needs to fit into a 32 bit int
         return yapi.yices_bvconst_int64(nbits, long(i))
 
     @staticmethod
@@ -516,6 +515,8 @@ class Terms(object):
 
     # substitutions
 
+    #FIXME: do these but use a dictionary rather than two arrays of the same size.
+
     # term recognizers
 
     @staticmethod
@@ -609,7 +610,7 @@ class Terms(object):
         return yapi.yices_proj_arg(term)
 
 
-
+#FIXME finish these
 #yices_bool_const_value(term)
 #yices_bv_const_value(term)
 #yices_scalar_const_value(term)

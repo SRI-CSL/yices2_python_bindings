@@ -75,7 +75,7 @@ def yices_python_info_main():
     loadYices()
     sys.stdout.write('Python Yices Bindings. Version {0}\n'.format(yices_python_version))
     sys.stdout.write('Yices library loaded from {0}\n'.format(libyicespath))
-    sys.stdout.write('Version: {0}\nArchitecture: {1}\nBuild mode: {2}\nBuild date: {3}\nMCSat support: {4}\n'.format(yices_version, yices_build_arch, yices_build_mode, yices_build_date, yices_has_mcsat()))
+    sys.stdout.write('Version: {0}\nArchitecture: {1}\nBuild mode: {2}\nBuild date: {3}\nMCSat support: {4}\n'.format(yices_version, yices_build_arch, yices_build_mode, yices_build_date, 'yes' if yices_has_mcsat() else 'no'))
 
 
 

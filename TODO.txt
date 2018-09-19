@@ -9,3 +9,9 @@ yices should throw them instead.
 [] 4. Add tests for the yices package.
 
 [] 5. Fix the `lint_all` complaints.
+
+[] 6. Investigate the new type annotation mechanism.
+
+[] 7. Implement the Limits class (and uses) in BD's Java bindings.
+ctypes quietly truncates 64 to 32 so we need to make sure we know
+when this happens.

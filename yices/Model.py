@@ -146,6 +146,7 @@ class Model(object):
             return None
         return [ bvarray[i] for i in range(0, bvsize) ]
 
+    #FIXME: this problem is part of the gmp libpoly conundrum
     def get_value_from_algebraic_yval(self, yval):
         raise UnderConstruction("Haven't implemented this yet. Nag Ian.")
 

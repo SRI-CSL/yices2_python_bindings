@@ -15,10 +15,17 @@ There are two python packages provided by the pip package:
 ### yices_api
 
 This API is very closely tied to the yices C API, see [yices.h](https://github.com/SRI-CSL/yices2/blob/master/src/include/yices.h).
+If you want to use this API you will need to be familiar with `ctypes`.  Unless you really need it, we recommend that you use the
+Pythonesque API below.
+
 
 ### yices
 
 This a somewhat more Pythonesque API that bridges the gap between the low level yices_api and the python user.
+
+#describe types
+#describe errors and exceptions
+#do the yices REAME.md examples in python
 
 
 ## Porting from pip package 1.0.8 to the latest 1.1.0
@@ -83,3 +90,9 @@ Build mode: release
 Build date: 2018-07-02
 MCSat support: 1
 ```
+
+
+
+### Random things to point out
+
+Terms.and([t0, ...., tN])
