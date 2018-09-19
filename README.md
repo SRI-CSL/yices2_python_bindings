@@ -12,9 +12,13 @@ pip install yices
 
 There are two python packages provided by the pip package:
 
-yices_api : this API is very closely tied to the yices C API, see [yices.h](https://github.com/SRI-CSL/yices2/blob/master/src/include/yices.h).
+### yices_api
 
-yices  : this a somewhat more Pythonesque API that bridges the gap between the low level yices_api and the python user.
+This API is very closely tied to the yices C API, see [yices.h](https://github.com/SRI-CSL/yices2/blob/master/src/include/yices.h).
+
+### yices
+
+This a somewhat more Pythonesque API that bridges the gap between the low level yices_api and the python user.
 
 
 ## Porting from pip package 1.0.8 to the latest 1.1.0
@@ -30,7 +34,7 @@ to
 ```
 import yices_api
 ```
-
+and similar variations of the `import` statement.
 
 
 
@@ -47,13 +51,15 @@ of tests that use many of the API routines.
 #### The sudoku example
 
 In the directory [sudoku](https://github.com/SRI-CSL/yices2/tree/master/src/bindings/python/examples/sudoku) there is a
-yices script `sudoku.ys` and a translation `sudoku.py` that solve the same puzzle. The python version illustrates
-the power of the API over the more sedate yices specification language.
+yices script `sudoku.ys` and two translations `sudoku_api.py` and `sudoku.py` that solve the same puzzle. The `sudoku_api.py`  python version
+uses the low level `yices_api` package, while the `sudoku.py` uses the more pythonesque api. Both
+illustrate the power of the API over the more sedate yices specification language.
 
 #### The mcsat example
 
 In the directory [mcsat](https://github.com/SRI-CSL/yices2/tree/master/src/bindings/python/examples/mcsat) there is a
-C program `mcsat.c` and a translation `mcsat.py` that demonstrate simple uses of yices' non-linear capabilites.
+C program `mcsat.c` and a translation `mcsat.py` that demonstrate simple uses of yices' non-linear capabilites. Because
+it uses libpoly, the python version uses the low level API.
 
 
 ### The SudokuSolver
@@ -69,11 +75,11 @@ yices system:
 
 ```
 >yices_python_info
-Python Yices Bindings. Version 1.0.7
+Python Yices Bindings. Version 1.1.0
 Yices library loaded from /usr/local/lib/libyices.dylib
-Version: 2.5.4
-Architecture: x86_64-apple-darwin16.7.0
+Version: 2.6.0
+Architecture: x86_64-apple-darwin17.6.0
 Build mode: release
-Build date: 2017-10-02
+Build date: 2018-07-02
 MCSat support: 1
 ```
