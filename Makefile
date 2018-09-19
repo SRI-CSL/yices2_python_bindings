@@ -61,6 +61,6 @@ lint: check_lint
 
 lint_all: check_lint
 # for detecting more than just errors:
-	@ $(PYLINT) --rcfile=.pylintrc yices_api.py yices/*.py test/*.py examples/sudoku/sudoku.py
+	@ $(PYLINT) --disable=missing-docstring --disable=global-statement --disable=duplicate-code --rcfile=.pylintrc yices_api.py yices/*.py examples/sudoku/*.py
 
 .PHONY: test lint lint check_lint

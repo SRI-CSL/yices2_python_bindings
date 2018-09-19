@@ -35,6 +35,9 @@ python routine should be a python array. We can use the make_* routines
 locally. we should also return values, not place them in "references" or "arrays"
 since we do not have to return an error code like the C API.
 
+iam: 9/19/2018 this module has been renamed to yices_api
+
+
 """
 from __future__ import with_statement
 
@@ -183,7 +186,9 @@ def guess_library_name(package_name):
 #
 # N.B. find_library is not super reliable
 #
+
 libyicespath = find_library("yices")
+
 libyices = None
 
 if libyicespath is None: libyicespath = guess_library_name('yices')
@@ -200,7 +205,9 @@ def _loadYicesFromPath(path, library):
         return False
 
 def loadYices():
-    global libyicespath, libyices
+
+    global libyicespath
+    global libyices
 
     error_msg = "Yices dynamic library not found."
 
@@ -277,7 +284,8 @@ checkYices()
 #to call a routine that needs gmp, otherwise we do not load it.
 libgmppath = find_library('gmp')
 
-if libgmppath is None: libgmppath = guess_library_name('gmp')
+if libgmppath is None:
+    libgmppath = guess_library_name('gmp')
 
 libgmp = None
 libgmpFailed = None
@@ -298,9 +306,8 @@ def hasGMP():
         sys.stderr.write('\nLoading gmp library from {0}.\n'.format(libgmppath))
         libgmpFailed = False
         return True
-    else:
-        libgmpFailed = True
-        return False
+    libgmpFailed = True
+    return False
 
 
 # From yices_types.h
@@ -497,6 +504,7 @@ libyices.yices_exit.restype = None
 @catch_uninitialized()
 def yices_exit():
     """Delete all internal data structures and objects - this must be called to avoid memory leaks."""
+    global __yices_library_inited__
     libyices.yices_exit()
     __yices_library_inited__ = False
 
@@ -5158,6 +5166,7 @@ def yices_set_mpz(vmpz, val):
                             'should be decimal or start with 0x (hex), 0b (binary), or 0 (octal)')
     elif isinstance(val, (int, long)):
         libgmp.__gmpz_set_si(byref(vmpz), val)
+        return True
     else:
         raise TypeError('set_mpz: val should be a string or integer')
 
@@ -5177,6 +5186,7 @@ def yices_set_mpq(vmpq, num, den):
     elif isinstance(num, (int, long)):
         if isinstance(den, (int, long)):
             libgmp.__gmpq_set_si(byref(vmpq), num, den)
+            return True
         else:
             raise TypeError('set_mpq: num and den should both be strings or integers')
     else:

@@ -6,6 +6,10 @@
 
 [MASTER]
 
+#disable bad-whitespace
+disable=C0326
+
+
 # Specify a configuration file.
 #rcfile=
 
@@ -105,7 +109,7 @@ evaluation=10.0 - ((float(5 * error + warning + refactor + convention) / stateme
 [BASIC]
 
 # Good variable names which should always be accepted, separated by a comma
-good-names=i,j,k,ex,Run,_
+good-names=i,j,k,ex,Run,_,a,m,n
 
 # Bad variable names which should always be refused, separated by a comma
 bad-names=foo,bar,baz,toto,tutu,tata
@@ -122,16 +126,16 @@ include-naming-hint=no
 property-classes=abc.abstractproperty
 
 # Regular expression matching correct function names
-function-rgx=[a-zA-Z_][a-zA-Z0-9_]{1,30}$
+function-rgx=[a-zA-Z_][a-zA-Z0-9_]{1,40}$
 
 # Naming hint for function names
-function-name-hint=[a-zA-Z_][a-zA-Z0-9_]{1,30}$
+function-name-hint=[a-zA-Z_][a-zA-Z0-9_]{1,40}$
 
 # Regular expression matching correct variable names
-variable-rgx=[a-z_][a-z0-9_]{1,30}$
+variable-rgx=[a-z_][a-z0-9_]{1,40}$
 
 # Naming hint for variable names
-variable-name-hint=[a-z_][a-z0-9_]{2,30}$
+variable-name-hint=[a-z_][a-z0-9_]{2,40}$
 
 # Regular expression matching correct constant names
 const-rgx=(([a-zA-Z_][a-zA-Z0-9_]*)|(__.*__))$
@@ -140,22 +144,22 @@ const-rgx=(([a-zA-Z_][a-zA-Z0-9_]*)|(__.*__))$
 const-name-hint=(([a-zA-Z_][a-zA-Z0-9_]*)|(__.*__))$
 
 # Regular expression matching correct attribute names
-attr-rgx=[a-z_][a-z0-9_]{2,30}$
+attr-rgx=[a-z_][a-z0-9_]{2,40}$
 
 # Naming hint for attribute names
-attr-name-hint=[a-z_][a-z0-9_]{2,30}$
+attr-name-hint=[a-z_][a-z0-9_]{2,40}$
 
 # Regular expression matching correct argument names
-argument-rgx=[a-z_][a-z0-9_]{0,30}$
+argument-rgx=[a-z_][a-z0-9_]{0,40}$
 
 # Naming hint for argument names
-argument-name-hint=[a-z_][a-z0-9_]{0,30}$
+argument-name-hint=[a-z_][a-z0-9_]{0,40}$
 
 # Regular expression matching correct class attribute names
-class-attribute-rgx=([A-Za-z_][A-Za-z0-9_]{2,30}|(__.*__))$
+class-attribute-rgx=([A-Za-z_][A-Za-z0-9_]{1,40}|(__.*__))$
 
 # Naming hint for class attribute names
-class-attribute-name-hint=([A-Za-z_][A-Za-z0-9_]{2,30}|(__.*__))$
+class-attribute-name-hint=([A-Za-z_][A-Za-z0-9_]{1,40}|(__.*__))$
 
 # Regular expression matching correct inline iteration names
 inlinevar-rgx=[A-Za-z_][A-Za-z0-9_]*$
@@ -176,10 +180,10 @@ module-rgx=(([a-z_][a-z0-9_]*)|([A-Z][a-zA-Z0-9]+))$
 module-name-hint=(([a-z_][a-z0-9_]*)|([A-Z][a-zA-Z0-9]+))$
 
 # Regular expression matching correct method names
-method-rgx=[a-z_][a-z0-9_]{2,30}$
+method-rgx=[a-z_][a-z0-9_]{1,40}$
 
 # Naming hint for method names
-method-name-hint=[a-z_][a-z0-9_]{2,30}$
+method-name-hint=[a-z_][a-z0-9_]{2,40}$
 
 # Regular expression which should only match function or class names that do
 # not require a docstring.
@@ -199,7 +203,7 @@ max-nested-blocks=5
 [FORMAT]
 
 # Maximum number of characters on a single line.
-max-line-length=200
+max-line-length=300
 
 # Regexp for a line that is allowed to be longer than the limit.
 ignore-long-lines=^\s*(# )?<?https?://\S+>?$
@@ -215,7 +219,7 @@ single-line-if-stmt=no
 no-space-check=trailing-comma,dict-separator
 
 # Maximum number of lines in a module
-max-module-lines=5000
+max-module-lines=6000
 
 # String used as indentation unit. This is usually "    " (4 spaces) or "\t" (1
 # tab).
@@ -336,7 +340,7 @@ valid-metaclass-classmethod-first-arg=mcs
 
 # List of member names, which should be excluded from the protected access
 # warning.
-exclude-protected=_asdict,_fields,_replace,_source,_make
+exclude-protected=_asdict,_fields,_replace,_source,_make, __gmpz_init, __gmpq_init, __gmpz_set_str, __gmpq_set_str, __gmpz_set_si, __gmpq_set_si,__gmpq_canonicalize
 
 
 [DESIGN]
@@ -352,7 +356,7 @@ ignored-argument-names=_.*
 max-locals=15
 
 # Maximum number of return / yield for function / method body
-max-returns=6
+max-returns=10
 
 # Maximum number of branch for function / method body
 max-branches=12
@@ -370,7 +374,7 @@ max-attributes=7
 min-public-methods=0
 
 # Maximum number of public methods for a class (see R0904).
-max-public-methods=20
+max-public-methods=200
 
 # Maximum number of boolean expressions in a if statement
 max-bool-expr=5

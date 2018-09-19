@@ -193,7 +193,7 @@ class Types(object):
         return yapi.yices_type_child(tau, i)
 
     @staticmethod
-    def type_children(tau, v):
+    def type_children(tau):
         typev = yapi.type_vector_t()
         yapi.yices_init_type_vector(typev)
         errcode = yapi.yices_type_children(tau, typev)
