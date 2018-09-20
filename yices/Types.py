@@ -1,6 +1,8 @@
-import sys
-
 import yices_api as yapi
+
+from .YicesException import YicesException
+
+from .Terms import Terms
 
 class Types(object):
 
@@ -18,7 +20,7 @@ class Types(object):
     @staticmethod
     def bv_type(nbits, name=None):
         if nbits <= 0:
-            raise Exception("nbits must be positive")
+            raise YicesException(msg="nbits must be positive")
         tau = yapi.yices_bv_type(nbits)
         if name and not Types.set_name(tau, name):
             return None
@@ -41,7 +43,7 @@ class Types(object):
     @staticmethod
     def new_scalar_type(card, name=None):
         if card <= 0:
-            raise Exception("new_scalar_type: card must be positive")
+            raise YicesException(msg="new_scalar_type: card must be positive")
         tau = yapi.yices_new_scalar_type(card)
         if name and not Types.set_name(tau, name):
             return None
@@ -59,7 +61,7 @@ class Types(object):
         tau = -1
         tlen = len(types)
         if tlen <= 0:
-            raise Exception("new_tuple_type: len(types) must be positive")
+            raise YicesException(msg="new_tuple_type: len(types) must be positive")
         elif tlen == 1:
             tau = yapi.yices_tuple_type1(types[0])
         elif tlen == 2:
@@ -69,10 +71,8 @@ class Types(object):
         else:
             tarray = yapi.make_type_array(types)
             tau = yapi.yices_tuple_type(tlen, tarray)
-        if tau == -1:
-            #FIXME: which will we do CONSISTENTLY? return None or throw and exception
-            sys.stderr.write('new_tuple_type({0}) failed {1}\n', types, yapi.yices_error_string())
-            return None
+        if tau == Types.NULL_TYPE:
+            raise YicesException('yices_tuple_type')
         if name and not Types.set_name(tau, name):
             return None
         return tau
@@ -83,7 +83,7 @@ class Types(object):
         tau = -1
         dlen = len(doms)
         if dlen <= 0:
-            raise Exception("new_function_type: len(doms) must be positive")
+            raise YicesException(msg="new_function_type: len(doms) must be positive")
         elif dlen == 1:
             tau = yapi.yices_function_type1(doms[0], rng)
         elif dlen == 2:
@@ -93,10 +93,8 @@ class Types(object):
         else:
             darray = yapi.make_type_array(doms)
             tau = yapi.yices_function_type(dlen, darray, rng)
-        if tau == -1:
-            #FIXME: which will we do CONSISTENTLY? return None or throw and exception
-            sys.stderr.write('new_function_type({0}, {1}) failed {2}\n', doms, rng, yapi.yices_error_string())
-            return None
+        if tau == Types.NULL_TYPE:
+            raise YicesException('yices_function_type')
         if name and not Types.set_name(tau, name):
             return None
         return tau
@@ -123,8 +121,7 @@ class Types(object):
             ni = element_names[i]
             errcode = yapi.yices_set_term_name(elements[i], ni)
             if errcode == -1:
-                sys.stderr.write('declare_finite_set: yices_set_term_name({0}, {1}) failed {2}\n', elements[i], ni, yapi.yices_error_string())
-                return (None, None)
+                raise YicesException('yices_set_term_name')
         return (tau, elements)
 
 
@@ -178,19 +175,31 @@ class Types(object):
 
     @staticmethod
     def bvtype_size(tau):
-        return yapi.yices_bvtype_size(tau)
+        retval = yapi.yices_bvtype_size(tau)
+        if retval == 0:
+            raise YicesException('yices_bvtype_size')
+        return retval
 
     @staticmethod
     def scalar_type_card(tau):
-        return yapi.yices_scalar_type_card(tau)
+        retval = yapi.yices_scalar_type_card(tau)
+        if retval == 0:
+            raise YicesException('yices_scalar_type_card')
+        return retval
 
     @staticmethod
     def type_num_children(tau):
-        return yapi.yices_type_num_children(tau)
+        retval = yapi.yices_type_num_children(tau)
+        if retval == -1:
+            raise YicesException('yices_type_num_children')
+        return retval
 
     @staticmethod
     def type_child(tau, i):
-        return yapi.yices_type_child(tau, i)
+        retval = yapi.yices_type_child(tau, i)
+        if retval == Types.NULL_TYPE:
+            raise YicesException('yices_type_child')
+        return retval
 
     @staticmethod
     def type_children(tau):
@@ -199,7 +208,7 @@ class Types(object):
         errcode = yapi.yices_type_children(tau, typev)
         if errcode == -1:
             yapi.yices_delete_type_vector(typev)
-            return None
+            raise YicesException('yices_type_children')
         retval = []
         for i in range(0, typev.size):
             retval.append(typev.data[i])
@@ -222,8 +231,7 @@ class Types(object):
             return False
         errcode = yapi.yices_set_type_name(tau, name)
         if errcode == -1:
-            sys.stderr.write('Types.set_name({0}, {1}): yices_set_type_name failed {2}\n', tau, name, yapi.yices_error_string())
-            return False
+            raise YicesException('yices_set_type_name')
         return True
 
     @staticmethod
@@ -248,7 +256,4 @@ class Types(object):
 
     @staticmethod
     def get_by_name(name):
-        tau = yapi.yices_get_type_by_name(name)
-        if tau == -1:
-            return None
-        return tau
+        return  yapi.yices_get_type_by_name(name)
