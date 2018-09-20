@@ -18,7 +18,7 @@ help:
 
 
 check:
-	pytest
+	pytest test_api
 
 
 #local editable install for developing
@@ -42,7 +42,7 @@ install:
 	pip install
 
 clean:
-	rm -f  *.pyc *~
+	rm -rf  *.pyc *~ __pycache__ */*.pyc */*~ */__pycache__ */*/*.pyc */*/*~ */*/__pycache__
 
 
 

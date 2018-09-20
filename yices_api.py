@@ -124,10 +124,11 @@ yices_recommended_version = '2.6.0'
 #then go on to try and do stuff.
 __yices_library_inited__ = False
 
-class YicesException(Exception):
+class YicesAPIException(Exception):
     """Base class for exceptions from Yices."""
     pass
 
+#iam: 9/19/2018 only throw an exception if the library is not inited.
 def catch_error(errval):
     """catches any error."""
     def decorator(yices_fun):
@@ -138,11 +139,11 @@ def catch_error(errval):
             errstr = "You must initialize by calling yices_init()"
             result = yices_fun(*args, **kwargs) if __yices_library_inited__ else None
             if not  __yices_library_inited__:
-                raise YicesException(errstr)
-            if result == errval and yices_error_code() != 0L:
-                errstr = yices_error_string()
-                yices_clear_error()
-                raise YicesException(errstr)
+                raise YicesAPIException(errstr)
+            #iam: 9/19/2018 if result == errval and yices_error_code() != 0L:
+            #iam: 9/19/2018     errstr = yices_error_string()
+            #iam: 9/19/2018     yices_clear_error()
+            #iam: 9/19/2018     raise YicesAPIException(errstr)
             return result
         return wrapper
     return decorator
@@ -157,7 +158,7 @@ def catch_uninitialized():
             errstr = "You must initialize by calling yices_init()"
             result = yices_fun(*args, **kwargs) if __yices_library_inited__ else None
             if not  __yices_library_inited__:
-                raise YicesException(errstr)
+                raise YicesAPIException(errstr)
             return result
         return wrapper
     return decorator
@@ -216,7 +217,7 @@ def loadYices():
     if _loadYicesFromPath('/usr/local/lib', libyicespath):
         return
     # else we failed
-    raise YicesException(error_msg)
+    raise YicesAPIException(error_msg)
 
 
 
@@ -267,7 +268,7 @@ def checkYices():
     Please upgrade: http://yices.csl.sri.com/.
     """
     if not _versionCheck():
-        raise YicesException(complaint.format(yices_recommended_version, yices_version))
+        raise YicesAPIException(complaint.format(yices_recommended_version, yices_version))
 
 
 checkYices()
@@ -4497,7 +4498,7 @@ def yices_get_model(ctx, keep_subst):
     assert ctx is not None
     mdl = libyices.yices_get_model(ctx, keep_subst)
     if mdl is None:
-        raise YicesException('Model not available - result of check_context should yield context_status of 2 (STATUS_SAT) or 3 (STATUS_UNKNOWN)')
+        raise YicesAPIException('Model not available - result of check_context should yield context_status of 2 (STATUS_SAT) or 3 (STATUS_UNKNOWN)')
     return mdl
 
 # void yices_free_model(model_t *mdl)
