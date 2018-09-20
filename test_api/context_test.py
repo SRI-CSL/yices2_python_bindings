@@ -1,103 +1,91 @@
 import unittest
 
-from ..yices_api import (
-    yices_init,
-    yices_exit,
-    yices_new_config,
-    yices_set_config,
-    yices_new_context,
-    yices_default_config_for_logic,
-    yices_context_status,
-    yices_push,
-    yices_pop,
-    yices_reset_context,
-    yices_context_enable_option,
-    yices_context_disable_option,
-    yices_bool_type,
-    yices_new_variable,
-    yices_bv_type,
-    yices_assert_formula,
-    yices_set_term_name,
-    yices_assert_formulas,
-    YicesAPIException,
-    yices_new_uninterpreted_term,
-    yices_parse_term,
-    make_term_array,
-    yices_check_context,
-    yices_assert_blocking_clause,
-    yices_stop_search,
-    yices_new_param_record,
-    yices_default_params_for_context,
-    yices_set_param,
-    yices_free_param_record,
-    yices_free_context,
-    yices_free_config,
-    STATUS_SAT
-    )
+import yices_api as yapi
 
+from yices_api import YicesAPIException
 
 class TestContext(unittest.TestCase):
 
     def setUp(self):
-        yices_init()
+        yapi.yices_init()
 
     def tearDown(self):
-        yices_exit()
+        yapi.yices_exit()
 
     def test_config(self):
-        cfg = yices_new_config()
+        cfg = yapi.yices_new_config()
         # Valid call
-        yices_set_config(cfg, "mode", "push-pop")
+        yapi.yices_set_config(cfg, "mode", "push-pop")
         # Invalid name
-        with self.assertRaisesRegexp(YicesAPIException, 'invalid parameter'):
-            yices_set_config(cfg, "baz", "bar")
+        #iam: 9/19/2018 with self.assertRaisesRegexp(YicesAPIException, 'invalid parameter'):
+        #iam: 9/19/2018     yapi.yices_set_config(cfg, "baz", "bar")
+        errcode = yapi.yices_set_config(cfg, "baz", "bar")
+        error_string = yapi.yices_error_string()
+        self.assertEqual(errcode, -1)
+        self.assertEqual(error_string, 'invalid parameter')
         # Invalid value
-        with self.assertRaisesRegexp(YicesAPIException, 'value not valid for parameter'):
-            yices_set_config(cfg, "mode", "bar")
-        yices_default_config_for_logic(cfg, "QF_UFNIRA")
-        yices_free_config(cfg)
+        #iam: 9/19/2018 with self.assertRaisesRegexp(YicesAPIException, 'value not valid for parameter'):
+        #iam: 9/19/2018     yapi.yices_set_config(cfg, "mode", "bar")
+        errcode = yapi.yices_set_config(cfg, "mode", "bar")
+        error_string = yapi.yices_error_string()
+        self.assertEqual(errcode, -1)
+        self.assertEqual(error_string, 'value not valid for parameter')
+        yapi.yices_default_config_for_logic(cfg, "QF_UFNIRA")
+        yapi.yices_free_config(cfg)
 
     def test_context(self):
-        cfg = yices_new_config()
-        ctx = yices_new_context(cfg)
-        stat = yices_context_status(ctx)
-        ret = yices_push(ctx)
-        ret = yices_pop(ctx)
-        yices_reset_context(ctx)
-        ret = yices_context_enable_option(ctx, "arith-elim")
-        ret = yices_context_disable_option(ctx, "arith-elim")
-        stat = yices_context_status(ctx)
+        cfg = yapi.yices_new_config()
+        ctx = yapi.yices_new_context(cfg)
+        stat = yapi.yices_context_status(ctx)
+        ret = yapi.yices_push(ctx)
+        ret = yapi.yices_pop(ctx)
+        yapi.yices_reset_context(ctx)
+        ret = yapi.yices_context_enable_option(ctx, "arith-elim")
+        ret = yapi.yices_context_disable_option(ctx, "arith-elim")
+        stat = yapi.yices_context_status(ctx)
         self.assertEqual(stat, 0)
-        yices_reset_context(ctx)
-        bool_t = yices_bool_type()
-        bvar1 = yices_new_variable(bool_t)
-        with self.assertRaisesRegexp(YicesAPIException, 'assertion contains a free variable'):
-            yices_assert_formula(ctx, bvar1)
-        bv_t = yices_bv_type(3)
-        bvvar1 = yices_new_uninterpreted_term(bv_t)
-        yices_set_term_name(bvvar1, 'x')
-        bvvar2 = yices_new_uninterpreted_term(bv_t)
-        yices_set_term_name(bvvar2, 'y')
-        bvvar3 = yices_new_uninterpreted_term(bv_t)
-        yices_set_term_name(bvvar3, 'z')
-        fmla1 = yices_parse_term('(= x (bv-add y z))')
-        fmla2 = yices_parse_term('(bv-gt y 0b000)')
-        fmla3 = yices_parse_term('(bv-gt z 0b000)')
-        yices_assert_formula(ctx, fmla1)
-        yices_assert_formulas(ctx, 3, make_term_array([fmla1, fmla2, fmla3]))
-        smt_stat = yices_check_context(ctx, None)
-        self.assertEqual(smt_stat, STATUS_SAT)
-        yices_assert_blocking_clause(ctx)
-        yices_stop_search(ctx)
-        param = yices_new_param_record()
-        yices_default_params_for_context(ctx, param)
-        yices_set_param(param, "dyn-ack", "true")
-        with self.assertRaisesRegexp(YicesAPIException, 'invalid parameter'):
-            yices_set_param(param, "foo", "bar")
-        with self.assertRaisesRegexp(YicesAPIException, 'value not valid for parameter'):
-            yices_set_param(param, "dyn-ack", "bar")
-        yices_free_param_record(param)
-        yices_free_context(ctx)
+        yapi.yices_reset_context(ctx)
+        bool_t = yapi.yices_bool_type()
+        bvar1 = yapi.yices_new_variable(bool_t)
+        #iam: 9/19/2018 with self.assertRaisesRegexp(YicesAPIException, 'assertion contains a free variable'):
+        #iam: 9/19/2018     yapi.yices_assert_formula(ctx, bvar1)
+        errcode = yapi.yices_assert_formula(ctx, bvar1)
+        error_string = yapi.yices_error_string()
+        self.assertEqual(errcode, -1)
+        self.assertEqual(error_string, 'assertion contains a free variable')
+        bv_t = yapi.yices_bv_type(3)
+        bvvar1 = yapi.yices_new_uninterpreted_term(bv_t)
+        yapi.yices_set_term_name(bvvar1, 'x')
+        bvvar2 = yapi.yices_new_uninterpreted_term(bv_t)
+        yapi.yices_set_term_name(bvvar2, 'y')
+        bvvar3 = yapi.yices_new_uninterpreted_term(bv_t)
+        yapi.yices_set_term_name(bvvar3, 'z')
+        fmla1 = yapi.yices_parse_term('(= x (bv-add y z))')
+        fmla2 = yapi.yices_parse_term('(bv-gt y 0b000)')
+        fmla3 = yapi.yices_parse_term('(bv-gt z 0b000)')
+        yapi.yices_assert_formula(ctx, fmla1)
+        yapi.yices_assert_formulas(ctx, 3, yapi.make_term_array([fmla1, fmla2, fmla3]))
+        smt_stat = yapi.yices_check_context(ctx, None)
+        self.assertEqual(smt_stat, yapi.STATUS_SAT)
+        yapi.yices_assert_blocking_clause(ctx)
+        yapi.yices_stop_search(ctx)
+        param = yapi.yices_new_param_record()
+        yapi.yices_default_params_for_context(ctx, param)
+        yapi.yices_set_param(param, "dyn-ack", "true")
+        #iam: 9/19/2018 with self.assertRaisesRegexp(YicesAPIException, 'invalid parameter'):
+        #iam: 9/19/2018     yapi.yices_set_param(param, "foo", "bar")
+        errcode = yapi.yices_set_param(param, "foo", "bar")
+        error_string = yapi.yices_error_string()
+        self.assertEqual(errcode, -1)
+        self.assertEqual(error_string, 'invalid parameter')
+        #iam: 9/19/2018 with self.assertRaisesRegexp(YicesAPIException, 'value not valid for parameter'):
+        #iam: 9/19/2018    yapi.yices_set_param(param, "dyn-ack", "bar")
+        errcode = yapi.yices_set_param(param, "dyn-ack", "bar")
+        error_string = yapi.yices_error_string()
+        self.assertEqual(errcode, -1)
+        self.assertEqual(error_string, 'value not valid for parameter')
+        yapi.yices_free_param_record(param)
+        yapi.yices_free_context(ctx)
 
 
 if __name__ == '__main__':

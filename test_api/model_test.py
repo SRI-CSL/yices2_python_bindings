@@ -173,13 +173,21 @@ class TestModels(unittest.TestCase):
         mdlstr = yapi.yices_model_to_string(mdl, 80, 100, 0)
         self.assertEqual(mdlstr, '(= i1 987654321987654321987654322)\n(= i2 987654321987654321987654321)')
         i32v1 = c_int32()
-        with self.assertRaisesRegexp(YicesAPIException,
-                                     'eval error: the term value does not fit the expected type'):
-            yapi.yices_get_int32_value(mdl, i1, i32v1)
+        #iam: 9/19/2018 with self.assertRaisesRegexp(YicesAPIException,
+        #iam: 9/19/2018                              'eval error: the term value does not fit the expected type'):
+        #iam: 9/19/2018     yapi.yices_get_int32_value(mdl, i1, i32v1)
+        errcode = yapi.yices_get_int32_value(mdl, i1, i32v1)
+        error_string = yapi.yices_error_string()
+        self.assertEqual(errcode, -1)
+        self.assertEqual(error_string, 'eval error: the term value does not fit the expected type')
         i64v1 = c_int64()
-        with self.assertRaisesRegexp(YicesAPIException,
-                                     'eval error: the term value does not fit the expected type'):
-            yapi.yices_get_int64_value(mdl, i1, i64v1)
+        #iam: 9/19/2018 with self.assertRaisesRegexp(YicesAPIException,
+        #iam: 9/19/2018                              'eval error: the term value does not fit the expected type'):
+        #iam: 9/19/2018     yapi.yices_get_int64_value(mdl, i1, i64v1)
+        errcode = yapi.yices_get_int64_value(mdl, i1, i64v1)
+        error_string = yapi.yices_error_string()
+        self.assertEqual(errcode, -1)
+        self.assertEqual(error_string, 'eval error: the term value does not fit the expected type')
         gmpz1 = yapi.yices_new_mpz()
         gmpz2 = yapi.yices_new_mpz()
         yapi.yices_get_mpz_value(mdl, i1, gmpz1)
@@ -193,9 +201,14 @@ class TestModels(unittest.TestCase):
         yapi.yices_pp_term_fd(1, mpz1, 100, 10, 0)
         alg1 = yapi.lp_algebraic_number_t()
         #yapi.yices_get_algebraic_number_value(mdl, i1, alg1)
-        with self.assertRaisesRegexp(YicesAPIException,
-                                     'could not convert value \(in model\) to a term'):
-            yapi.yices_get_algebraic_number_value(mdl, i1, alg1)
+        #iam: 9/19/2018 with self.assertRaisesRegexp(YicesAPIException,
+        #iam: 9/19/2018                              'could not convert value \(in model\) to a term'):
+        #iam: 9/19/2018     yapi.yices_get_algebraic_number_value(mdl, i1, alg1)
+        errcode = yapi.yices_get_algebraic_number_value(mdl, i1, alg1)
+        error_string = yapi.yices_error_string()
+        self.assertEqual(errcode, -1)
+        self.assertEqual(error_string, 'could not convert value (in model) to a term')
+
 
     def test_mpq_models(self):
         r1 = define_const('r1', real_t)
@@ -208,14 +221,23 @@ class TestModels(unittest.TestCase):
         self.assertEqual(mdlstr, '(= r1 987654325444320656205432115/3456666334217777794)\n(= r2 987654321987654321987654321/3456666334217777794)')
         r32num1 = c_int32()
         r32den1 = c_uint32()
-        with self.assertRaisesRegexp(YicesAPIException,
-                                     'eval error: the term value does not fit the expected type'):
-            yapi.yices_get_rational32_value(mdl, r1, r32num1, r32den1)
+        #iam: 9/19/2018 with self.assertRaisesRegexp(YicesAPIException,
+        #iam: 9/19/2018                              'eval error: the term value does not fit the expected type'):
+        #iam: 9/19/2018     yapi.yices_get_rational32_value(mdl, r1, r32num1, r32den1)
+        errcode = yapi.yices_get_rational32_value(mdl, r1, r32num1, r32den1)
+        error_string = yapi.yices_error_string()
+        self.assertEqual(errcode, -1)
+        self.assertEqual(error_string, 'eval error: the term value does not fit the expected type')
+
         r64num1 = c_int64()
         r64den1 = c_uint64()
-        with self.assertRaisesRegexp(YicesAPIException,
-                                     'eval error: the term value does not fit the expected type'):
-            yapi.yices_get_rational64_value(mdl, r1, r64num1, r64den1)
+        #iam: 9/19/2018 with self.assertRaisesRegexp(YicesAPIException,
+        #iam: 9/19/2018                              'eval error: the term value does not fit the expected type'):
+        #iam: 9/19/2018     yapi.yices_get_rational64_value(mdl, r1, r64num1, r64den1)
+        errcode = yapi.yices_get_rational64_value(mdl, r1, r64num1, r64den1)
+        error_string = yapi.yices_error_string()
+        self.assertEqual(errcode, -1)
+        self.assertEqual(error_string, 'eval error: the term value does not fit the expected type')
         gmpq1 = yapi.yices_new_mpq()
         gmpq2 = yapi.yices_new_mpq()
         yapi.yices_get_mpq_value(mdl, r1, gmpq1)
@@ -449,8 +471,12 @@ class TestModels(unittest.TestCase):
         self.assertEqual(yapi.yices_val_mapping_arity(mdl, yv1), 0)
         self.assertEqual(yapi.yices_val_function_arity(mdl, yv1), 0)
         bval1 = c_int32()
-        with self.assertRaisesRegexp(YicesAPIException, 'invalid operation on yval'):
-            yapi.yices_val_get_bool(mdl, yv1, bval1)
+        #iam: 9/19/2018 with self.assertRaisesRegexp(YicesAPIException, 'invalid operation on yval'):
+        #iam: 9/19/2018     yapi.yices_val_get_bool(mdl, yv1, bval1)
+        errcode = yapi.yices_val_get_bool(mdl, yv1, bval1)
+        error_string = yapi.yices_error_string()
+        self.assertEqual(errcode, -1)
+        self.assertEqual(error_string, 'invalid operation on yval')
         i32val1 = c_int32()
         yapi.yices_val_get_int32(mdl, yv1, i32val1)
         self.assertEqual(i32val1.value, 4)
@@ -478,8 +504,12 @@ class TestModels(unittest.TestCase):
         yapi.yices_val_get_mpq(mdl, yv1, gmpq1)
         mpq1 = yapi.yices_mpq(gmpq1)
         self.assertEqual(yapi.yices_term_to_string(mpq1, 200, 10, 0), '4')
-        with self.assertRaisesRegexp(YicesAPIException, 'invalid operation on yval'):
-            yapi.yices_val_get_bv(mdl, yv1, bval1)
+        #iam: 9/19/2018 with self.assertRaisesRegexp(YicesAPIException, 'invalid operation on yval'):
+        #iam: 9/19/2018     yapi.yices_val_get_bv(mdl, yv1, bval1)
+        errcode = yapi.yices_val_get_bv(mdl, yv1, bval1)
+        error_string = yapi.yices_error_string()
+        self.assertEqual(errcode, -1)
+        self.assertEqual(error_string, 'invalid operation on yval')
 
     def test_model_from_map(self):
         bv_t = yapi.yices_bv_type(8)

@@ -1,53 +1,46 @@
 import unittest
 
-from ..yices_api import (
-    yices_init,
-    yices_exit,
-    yices_reset,
-    yices_error_code,
-    yices_error_report,
-    yices_clear_error,
-    yices_error_string,
-    yices_print_error_fd,
-    yices_constant,
-    yices_bool_type,
-    yices_type_is_bool,
-    YicesAPIException
-)
+import yices_api as yapi
 
+from yices_api import YicesAPIException
 
 
 class TestError(unittest.TestCase):
 
     def setUp(self):
-        yices_init()
+        yapi.yices_init()
 
     def tearDown(self):
-        yices_exit()
+        yapi.yices_exit()
 
     def test_error(self):
-        yices_reset()
+        yapi.yices_reset()
 
         # First with no error
-        errcode = yices_error_code()
+        errcode = yapi.yices_error_code()
         self.assertEqual(errcode, 0L)
-        errep = yices_error_report()
+        errep = yapi.yices_error_report()
         self.assertEqual(errep.code, 0L)
-        yices_clear_error()
-        errstr = yices_error_string()
+        yapi.yices_clear_error()
+        errstr = yapi.yices_error_string()
         self.assertEqual(errstr, 'no error')
-        yices_print_error_fd(1)
+        yapi.yices_print_error_fd(1)
 
         # Illegal - only scalar or uninterpreted types allowed
-        bool_t = yices_bool_type()
-        self.assertTrue(yices_type_is_bool(bool_t))
-        with self.assertRaisesRegexp(YicesAPIException, 'invalid type in constant creation'):
-            const1 = yices_constant(bool_t, 0)
-        errpt = yices_error_report()
-        self.assertEqual(yices_error_code(), 0)
-        self.assertEqual(yices_error_code(), errpt.code)
-        errstr = yices_error_string()
+        bool_t = yapi.yices_bool_type()
+        self.assertTrue(yapi.yices_type_is_bool(bool_t))
+        #iam: 9/19/2018 with self.assertRaisesRegexp(YicesAPIException, 'invalid type in constant creation'):
+        #iam: 9/19/2018    const1 = yices_constant(bool_t, 0)
+        const1 = yapi.yices_constant(bool_t, 0)
+        error_string = yapi.yices_error_string()
+        self.assertEqual(const1, -1)
+        self.assertEqual(error_string, 'invalid type in constant creation')
+        yapi.yices_clear_error()
+        errpt = yapi.yices_error_report()
+        self.assertEqual(yapi.yices_error_code(), 0)
+        self.assertEqual(yapi.yices_error_code(), errpt.code)
+        errstr = yapi.yices_error_string()
         self.assertEqual(errstr, 'no error')
-        yices_print_error_fd(1)
-        yices_clear_error()
-        self.assertEqual(yices_error_code(), 0L)
+        yapi.yices_print_error_fd(1)
+        yapi.yices_clear_error()
+        self.assertEqual(yapi.yices_error_code(), 0L)
