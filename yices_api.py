@@ -125,7 +125,7 @@ yices_recommended_version = '2.6.0'
 __yices_library_inited__ = False
 
 class YicesAPIException(Exception):
-    """Base class for exceptions from Yices."""
+    """Base class for exceptions from Yices API."""
     pass
 
 #iam: 9/19/2018 only throw an exception if the library is not inited.
@@ -4294,7 +4294,7 @@ def yices_context_status(ctx):
 
 # void yices_reset_context(context_t *ctx)
 libyices.yices_reset_context.argtypes = [context_t]
-@catch_error(-1)
+@catch_uninitialized()
 def yices_reset_context(ctx):
     """Removes all assertions from the context."""
     assert ctx is not None
@@ -4414,7 +4414,7 @@ def yices_assert_blocking_clause(ctx):
 
 # void yices_stop_search(context_t *ctx)
 libyices.yices_stop_search.argtypes = [context_t]
-@catch_error(-1)
+@catch_uninitialized()
 def yices_stop_search(ctx):
     """Interupts the search."""
     assert ctx is not None

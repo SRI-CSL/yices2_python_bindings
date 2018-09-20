@@ -1,7 +1,8 @@
-import sys
-
 import yices_api as yapi
 
+from .YicesException import YicesException
+
+from .Status import Status
 
 class Context(object):
 
@@ -9,19 +10,25 @@ class Context(object):
     def __init__(self, config=None):
         cfg = config.config if config else None
         self.context = yapi.yices_new_context(cfg)
+        if self.context == -1:
+            raise YicesException('yices_new_context')
 
 
     # option is a string
     def enable_option(self, option):
         assert self.context is not None
         errcode = yapi.yices_context_enable_option(self.context, option)
-        return True if errcode == 0 else False
+        if errcode == -1:
+            raise YicesException('yices_context_enable_option')
+        return True
 
     # option is a string
     def disable_option(self, option):
         assert self.context is not None
         errcode = yapi.yices_context_disable_option(self.context, option)
-        return True if errcode == 0 else False
+        if errcode == -1:
+            raise YicesException('yices_context_disable_option')
+        return True
 
 
     def status(self):
@@ -31,12 +38,10 @@ class Context(object):
 
     def assert_formula(self, term):
         assert self.context is not None
-        # FIXME: this idiom is wrong because Sam's stuff throws exceptions.
         errcode = yapi.yices_assert_formula(self.context, term)
-        if errcode == 0:
-            return True
-        sys.stderr.write('yices_assert_formula failed {0}\n', yapi.yices_error_string())
-        return False
+        if errcode == -1:
+            raise YicesException('yices_assert_formula')
+        return True
 
     # to be very pythonesque we should handle iterables, but we do need to know the length
     def assert_formulas(self, python_array_or_tuple):
@@ -44,15 +49,17 @@ class Context(object):
         alen = len(python_array_or_tuple)
         a = yapi.make_term_array(python_array_or_tuple)
         errcode = yapi.yices_assert_formulas(self.context, alen, a)
-        if errcode == 0:
-            return True
-        sys.stderr.write('yices_assert_formulas failed {0}\n', yapi.yices_error_string())
-        return False
+        if errcode == -1:
+            raise YicesException('yices_assert_formulas')
+        return True
 
 
     def check_context(self, params=None):
         assert self.context is not None
-        return  yapi.yices_check_context(self.context, params)
+        status = yapi.yices_check_context(self.context, params)
+        if status == -1:
+            raise YicesException('yices_check_context')
+        return status
 
     def stop_search(self):
         assert self.context is not None
@@ -65,42 +72,45 @@ class Context(object):
     def assert_blocking_clause(self):
         assert self.context is not None
         errcode = yapi.yices_assert_blocking_clause(self.context)
-        if errcode == 0:
-            return True
-        sys.stderr.write('yices_assert_blocking_clause failed {0}\n', yapi.yices_error_string())
-        return False
+        if errcode == -1:
+            raise YicesException('yices_assert_blocking_clause')
+        return True
+
 
     def push(self):
         assert self.context is not None
         errcode = yapi.yices_push(self.context)
-        if errcode == 0:
-            return True
-        sys.stderr.write('yices_push failed {0}\n', yapi.yices_error_string())
-        return False
+        if errcode == -1:
+            raise YicesException('yices_push')
+        return True
 
     def pop(self):
         assert self.context is not None
         errcode = yapi.yices_pop(self.context)
-        if errcode == 0:
-            return True
-        sys.stderr.write('yices_pop failed {0}\n', yapi.yices_error_string())
-        return False
+        if errcode == -1:
+            raise YicesException('yices_pop')
+        return True
+
 
     def check_context_with_assumptions(self, params, python_array_or_tuple):
         alen = len(python_array_or_tuple)
         a = yapi.make_term_array(python_array_or_tuple)
-        return yapi.yices_check_context_with_assumptions(self.context, params, alen, a)
+        status = yapi.yices_check_context_with_assumptions(self.context, params, alen, a)
+        if status == Status.ERROR:
+            raise YicesException('yices_pop')
+        return status
+
 
     def get_unsat_core(self):
         retval = []
         unsat_core = yapi.term_vector_t()
         yapi.yices_init_term_vector(unsat_core)
         errcode = yapi.yices_get_unsat_core(self.context, unsat_core)
-        if errcode == 0:
-            for i in range(0, unsat_core.size):
-                retval.append(unsat_core.data[i])
-        else:
-            sys.stderr.write('yices_get_unsat_core failed {0}\n', yapi.yices_error_string())
+        if errcode == -1:
+            raise YicesException('yices_get_unsat_core')
+
+        for i in range(0, unsat_core.size):
+            retval.append(unsat_core.data[i])
         return retval
 
 
