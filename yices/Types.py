@@ -2,8 +2,6 @@ import yices_api as yapi
 
 from .YicesException import YicesException
 
-from .Terms import Terms
-
 class Types(object):
 
 

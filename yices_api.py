@@ -4496,10 +4496,10 @@ def yices_get_model(ctx, keep_subst):
     and sets an error report (code = CTX_INVALID_OPERATION).
     """
     assert ctx is not None
-    mdl = libyices.yices_get_model(ctx, keep_subst)
-    if mdl is None:
-        raise YicesAPIException('Model not available - result of check_context should yield context_status of 2 (STATUS_SAT) or 3 (STATUS_UNKNOWN)')
-    return mdl
+    return libyices.yices_get_model(ctx, keep_subst)
+    #iam: 9/19/2018 if mdl is None:
+    #iam: 9/19/2018     raise YicesAPIException('Model not available - result of check_context should yield context_status of 2 (STATUS_SAT) or 3 (STATUS_UNKNOWN)')
+    #iam: 9/19/2018 return mdl
 
 # void yices_free_model(model_t *mdl)
 libyices.yices_free_model.argtypes = [model_t]

@@ -1,5 +1,3 @@
-import sys
-
 import ctypes
 
 from fractions import Fraction
@@ -8,6 +6,7 @@ import yices_api as yapi
 
 from .UnderConstruction import UnderConstruction
 from .Yvals import Yval
+from .YicesException import YicesException
 
 
 class Model(object):
@@ -23,14 +22,20 @@ class Model(object):
 
     @staticmethod
     def from_context(context, keep_subst):
-        return Model(yapi.yices_get_model(context.context, keep_subst))
+        model = yapi.yices_get_model(context.context, keep_subst)
+        if model == 0:
+            raise YicesException('yices_get_model')
+        return Model(model)
 
 
     @staticmethod
     def from_map(mapping):
         dom = mapping.keys()
         rng = [ mapping[d] for d in dom]
-        return Model(yapi.yices_model_from_map(len(dom), yapi.make_term_array(dom), yapi.make_term_array(rng)))
+        model = yapi.yices_model_from_map(len(dom), yapi.make_term_array(dom), yapi.make_term_array(rng))
+        if model == 0:
+            raise YicesException('yices_model_from_map')
+        return Model(model)
 
 
     def collect_defined_terms(self):
@@ -53,8 +58,7 @@ class Model(object):
         ytval = ctypes.c_int32()
         errcode = yapi.yices_get_bool_value(self.model, term, ytval)
         if errcode == -1:
-            sys.stderr.write('Model.get_bool_value: yices_get_bool_value failed {0}\n', yapi.yices_error_string())
-            return None
+            raise YicesException('yices_get_bool_value')
         return True if ytval.value else False
 
 
@@ -62,8 +66,7 @@ class Model(object):
         ytval = ctypes.c_int64()
         errcode = yapi.yices_get_int64_value(self.model, term, ytval)
         if errcode == -1:
-            sys.stderr.write('Model.get_integer_value: yices_get_int64_value failed {0}\n', yapi.yices_error_string())
-            return None
+            raise YicesException('yices_get_int64_value')
         return ytval.value
 
     def get_fraction_value(self, term):
@@ -71,8 +74,7 @@ class Model(object):
         ytden = ctypes.c_int64()
         errcode = yapi.yices_get_rational64_value(self.model, term, ytnum, ytden)
         if errcode == -1:
-            sys.stderr.write('Model.get_fraction_value: yices_get_rational64_value failed {0}\n', yapi.yices_error_string())
-            return None
+            raise YicesException('yices_get_rational64_value')
         return Fraction(ytnum.value, ytden.value)
 
 
@@ -80,8 +82,7 @@ class Model(object):
         ytval = ctypes.c_double()
         errcode = yapi.yices_get_double_value(self.model, term, ytval)
         if errcode == -1:
-            sys.stderr.write('Model.get_float_value: yices_get_double_value failed {0}\n', yapi.yices_error_string())
-            return None
+            raise YicesException('yices_get_double_value')
         return ytval.value
 
     def get_scalar_value(self, term):
@@ -89,8 +90,7 @@ class Model(object):
         ytval = ctypes.c_int32()
         errcode = yapi.yices_get_scalar_value(self.model, term, ytval)
         if errcode == -1:
-            sys.stderr.write('Model.get_scalar_value: yices_get_scalar_value failed {0}\n', yapi.yices_error_string())
-            return None
+            raise YicesException('yices_get_scalar_value')
         return ytval.value
 
 
@@ -106,33 +106,29 @@ class Model(object):
         if yapi.yices_val_is_int64(self.model, yval):
             val = ctypes.c_int64()
             errcode = yapi.yices_val_get_int64(self.model,  yval, val)
-            if errcode != 0:
-                sys.stderr.write('Model.get_value: yices_val_get_int64 failed {0}\n', yapi.yices_error_string())
-                return None
+            if errcode == -1:
+                raise YicesException('yices_val_get_int64')
             return val.value
         elif yapi.yices_val_is_rational64(self.model, yval):
             ytnum = ctypes.c_int64()
             ytden = ctypes.c_int64()
             errcode = yapi.yices_val_get_rational64(self.model,  yval, ytnum, ytden)
-            if errcode != 0:
-                sys.stderr.write('Model.get_value: yices_val_get_int64 failed {0}\n', yapi.yices_error_string())
-                return None
+            if errcode == -1:
+                raise YicesException('yices_val_get_rational64')
             return Fraction(ytnum.value, ytden.value)
         else:
             val = ctypes.c_double()
             errcode = yapi.yices_val_get_double(self.model,  yval, val)
-            if errcode != 0:
-                sys.stderr.write('Model.get_value: yices_val_get_int64 failed {0}\n', yapi.yices_error_string())
-                return None
+            if errcode == -1:
+                raise YicesException('yices_val_get_double')
             return val.value
 
     def get_value_from_scalar_yval(self, yval):
         value = ctypes.c_int32()
         typev = ctypes.c_int32()
         errcode =  yapi.yices_val_get_scalar(self.model, yval, value, typev)
-        if errcode != 0:
-            sys.stderr.write('Model.get_value: yices_val_get_scalar failed {0}\n', yapi.yices_error_string())
-            return None
+        if errcode == -1:
+            raise YicesException('yices_val_get_scalar')
         return yapi.yices_constant(typev.value, value.value)
 
     def get_value_from_bv_yval(self, yval):
@@ -141,9 +137,8 @@ class Model(object):
             return None
         bvarray = yapi.make_empty_int32_array(bvsize)
         errcode = yapi.yices_val_get_bv(self.model, yval, bvarray)
-        if errcode != 0:
-            sys.stderr.write('Model.get_value: yices_val_get_bv failed {0}\n', yapi.yices_error_string())
-            return None
+        if errcode == -1:
+            raise YicesException('yices_val_get_bv')
         return [ bvarray[i] for i in range(0, bvsize) ]
 
     #FIXME: this problem is part of the gmp libpoly conundrum
@@ -157,7 +152,7 @@ class Model(object):
         yval_array = yapi.make_empty_yval_array(tuple_size)
         errcode = yapi.yices_val_expand_tuple(self.model, yval, yval_array)
         if errcode == -1:
-            return None
+            raise YicesException('yices_val_expand_tuple')
         retval = [ Model.get_value_from_yval(self.model, yval_array[i]) for i in range(0, tuple_size) ]
         return tuple(retval)
 
@@ -169,7 +164,7 @@ class Model(object):
         ysrc = yapi.make_empty_yval_array(mapping_size)
         errcode = yapi.yices_val_expand_mapping(self.model, yval, ysrc, ytgt)
         if errcode == -1:
-            return None
+            raise YicesException('yices_val_expand_mapping')
         src = [Model.get_value_from_yval(self.model, ysrc[i]) for i in range(0, mapping_size) ]
         tgt = Model.get_value_from_yval(self.model, ytgt)
         return (tuple(src), tgt)
@@ -184,7 +179,7 @@ class Model(object):
         errcode = yapi.yices_val_expand_function(self.model, yval, ydefault, ymapping)
         if errcode == -1:
             yapi.yices_delete_yval_vector(ymapping)
-            return None
+            raise YicesException('yices_val_expand_function')
         default = Model.get_value_from_yval(self.model, ydefault)
         mapping = [ Model.get_value_from_yval(self.model, ymapping.data[i]) for i in range(0, ymapping.size) ]
         dict_map = {}
@@ -222,9 +217,7 @@ class Model(object):
         if tag == Yval.FUNCTION:
             return self.get_value_from_function_yval(yval)
 
-        sys.stderr.write('Model.get_value_from_yval: unexpected yval tag {0}\n', tag)
-        return None
-
+        raise YicesException(msg='Model.get_value_from_yval: unexpected yval tag {0}\n'.format(tag))
 
 
 
@@ -233,8 +226,7 @@ class Model(object):
         yval = yapi.yval_t()
         errcode = yapi.yices_get_value(self.model, term, yval)
         if errcode == -1:
-            sys.stderr.write('Model.get_value: yices_val_get_value failed {0}\n', yapi.yices_error_string())
-            return None
+            raise YicesException('yices_get_value')
         return self.get_value_from_yval(yval)
 
 
@@ -274,7 +266,7 @@ class Model(object):
         errcode = yapi.yices_generalize_model(self.model, term, len(elim_array), var_array, mode, termv)
         if errcode == -1:
             yapi.yices_delete_term_vector(termv)
-            return None
+            raise YicesException('yices_generalize_model')
         retval = []
         for i in range(0, termv.size):
             retval.append(termv.data[i])
@@ -289,7 +281,7 @@ class Model(object):
         errcode = yapi.yices_generalize_model_array(self.model, len(term_array), tarray, len(elim_array), var_array, mode, termv)
         if errcode == -1:
             yapi.yices_delete_term_vector(termv)
-            return None
+            raise YicesException('yices_generalize_model_array')
         retval = []
         for i in range(0, termv.size):
             retval.append(termv.data[i])
