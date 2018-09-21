@@ -25,6 +25,13 @@ class Types(object):
         return tau
 
     @staticmethod
+    def bool_type(name=None):
+        tau = yapi.yices_bool_type()
+        if name and not Types.set_name(tau, name):
+            return None
+        return tau
+
+    @staticmethod
     def int_type(name=None):
         tau = yapi.yices_int_type()
         if name and not Types.set_name(tau, name):

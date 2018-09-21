@@ -56,6 +56,9 @@ class Context(object):
 
     def check_context(self, params=None):
         assert self.context is not None
+        #unwrap the params object
+        if params is not None:
+            params = params.params
         status = yapi.yices_check_context(self.context, params)
         if status == -1:
             raise YicesException('yices_check_context')

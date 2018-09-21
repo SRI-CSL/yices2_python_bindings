@@ -2,6 +2,7 @@ import unittest
 
 from yices.Config import Config
 from yices.Context import Context
+from yices.Model import Model
 from yices.Parameters import Parameters
 from yices.Status import Status
 from yices.Types import Types
@@ -63,10 +64,12 @@ class TestModels(unittest.TestCase):
 
 
     def tearDown(self):
-        pass
+        self.cfg.dispose()
+        self.ctx.dispose()
+        self.param.dispose()
+        Yices.exit()
 
     def test_bool_models(self):
-        return
         b1 = define_const('b1', bool_t)
         b2 = define_const('b2', bool_t)
         b3 = define_const('b3', bool_t)
@@ -75,13 +78,12 @@ class TestModels(unittest.TestCase):
         self.assertEqual(self.ctx.check_context(self.param), Status.SAT)
         b_mdl1 = Model.from_context(self.ctx, 1)
         self.assertNotEqual(b_mdl1, None)
-        # init to -1 to make sure they get updated
         bval1 = b_mdl1.get_bool_value(b1)
         bval2 = b_mdl1.get_bool_value(b2)
         bval3 = b_mdl1.get_bool_value(b3)
-        self.assertEqual(bval1, 0)
-        self.assertEqual(bval2, 0)
-        self.assertEqual(bval3, 1)
+        self.assertEqual(bval1, False)
+        self.assertEqual(bval2, False)
+        self.assertEqual(bval3, True)
         b_fmla2 = Terms.parse_term('(not b3)')
         self.ctx.assert_formula(b_fmla2)
         self.assertEqual(self.ctx.check_context(self.param), Status.SAT)
@@ -90,8 +92,12 @@ class TestModels(unittest.TestCase):
         bval1 = b_mdl1.get_bool_value(b1)
         bval2 = b_mdl1.get_bool_value(b2)
         bval3 = b_mdl1.get_bool_value(b3)
-        self.assertEqual(bval1, 0)
-        self.assertEqual(bval2, 1)
-        self.assertEqual(bval3, 0)
-        #v1 = b_mdl1.get_value(b1)
-        #self.assertEqual(v1, 0)
+        val1 = b_mdl1.get_value(b1)
+        val2 = b_mdl1.get_value(b2)
+        val3 = b_mdl1.get_value(b3)
+        self.assertEqual(bval1, False)
+        self.assertEqual(bval2, True)
+        self.assertEqual(bval3, False)
+        self.assertEqual(bval1, val1)
+        self.assertEqual(bval2, val2)
+        self.assertEqual(bval3, val3)

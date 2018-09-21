@@ -123,6 +123,13 @@ class Model(object):
                 raise YicesException('yices_val_get_double')
             return val.value
 
+    def get_value_from_bool_yval(self, yval):
+        value = ctypes.c_int32()
+        errcode =  yapi.yices_val_get_bool(self.model, yval, value)
+        if errcode == -1:
+            raise YicesException('yices_val_get_bool')
+        return True if value.value else False
+
     def get_value_from_scalar_yval(self, yval):
         value = ctypes.c_int32()
         typev = ctypes.c_int32()
@@ -195,6 +202,9 @@ class Model(object):
 
     def get_value_from_yval(self, yval):
         tag = yval.node_tag
+
+        if tag == Yval.BOOL:
+            return self.get_value_from_bool_yval(yval)
 
         if tag == Yval.RATIONAL:
             return self.get_value_from_rational_yval(yval)
