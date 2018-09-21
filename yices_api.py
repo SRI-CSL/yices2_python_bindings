@@ -507,7 +507,7 @@ def yices_init():
 def yices_is_inited():
     """This function True if the yices library has been initied, False otherwise."""
     global __yices_library_inited__
-    return __yices_library_inited__
+    return True if __yices_library_inited__ else False
 
 
 # void yices_exit(void)

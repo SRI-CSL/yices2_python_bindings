@@ -2,6 +2,7 @@ import yices_api as yapi
 
 from .YicesException import YicesException
 from .Types import Types
+from .Constructors import Constructor
 
 class Terms(object):
 
@@ -14,6 +15,10 @@ class Terms(object):
 
 
     #general logical term constructors
+
+    @staticmethod
+    def zero():
+        return Terms.ZERO
 
     @staticmethod
     def true():
@@ -183,10 +188,17 @@ class Terms(object):
             raise YicesException('yices_exists')
         return retval
 
+    @staticmethod
+    def ylambda(variables, body):
+        retval = yapi.yices_lambda(len(variables), yapi.make_term_array(variables), body)
+        if retval == Terms.NULL_TERM:
+            raise YicesException('yices_lambda')
+        return retval
+
     #arithmetic term constructors
 
     @staticmethod
-    def new_rational(n, d):
+    def rational(n, d):
         assert d
         retval = yapi.yices_rational64(long(n), long(d))
         if retval == Terms.NULL_TERM:
@@ -194,7 +206,7 @@ class Terms(object):
         return retval
 
     @staticmethod
-    def new_rational_from_fraction(f):
+    def rational_from_fraction(f):
         retval = yapi.yices_rational64(long(f.numerator), long(f.denominator))
         if retval == Terms.NULL_TERM:
             raise YicesException('yices_rational64')
@@ -256,6 +268,13 @@ class Terms(object):
         retval = yapi.yices_power(term, exponent)
         if retval == Terms.NULL_TERM:
             raise YicesException('yices_power')
+        return retval
+
+    @staticmethod
+    def division(num, den):
+        retval = yapi.yices_division(num, den)
+        if retval == Terms.NULL_TERM:
+            raise YicesException('yices_division')
         return retval
 
     @staticmethod
@@ -409,7 +428,7 @@ class Terms(object):
     #bv term constructors
 
     @staticmethod
-    def bv_const_integer(nbits, i):
+    def bvconst_integer(nbits, i):
         #FIXME: nbit needs to fit into a 32 bit int
         retval = yapi.yices_bvconst_int64(nbits, long(i))
         if retval == Terms.NULL_TERM:
@@ -417,28 +436,28 @@ class Terms(object):
         return retval
 
     @staticmethod
-    def bv_const_zero(nbits):
+    def bvconst_zero(nbits):
         retval = yapi.yices_bvconst_zero(nbits)
         if retval == Terms.NULL_TERM:
             raise YicesException('yices_bvconst_zero')
         return retval
 
     @staticmethod
-    def bv_const_one(nbits):
+    def bvconst_one(nbits):
         retval = yapi.yices_bvconst_one(nbits)
         if retval == Terms.NULL_TERM:
             raise YicesException('yices_bvconst_one')
         return retval
 
     @staticmethod
-    def bv_const_minus_one(nbits):
+    def bvconst_minus_one(nbits):
         retval = yapi.yices_bvconst_minus_one(nbits)
         if retval == Terms.NULL_TERM:
             raise YicesException('yices_bvconst_minus_one')
         return retval
 
     @staticmethod
-    def bv_const_from_array(array_o_bits):
+    def bvconst_from_array(array_o_bits):
         retval = yapi.yices_bvconst_from_array(len(array_o_bits), yapi.make_int32_array(array_o_bits))
         if retval == Terms.NULL_TERM:
             raise YicesException('yices_bvconst_from_array')
@@ -512,6 +531,13 @@ class Terms(object):
         retval = yapi.yices_bvrem(lhs, rhs)
         if retval == Terms.NULL_TERM:
             raise YicesException('yices_bvrem')
+        return retval
+
+    @staticmethod
+    def bvsdiv(lhs, rhs):
+        retval = yapi.yices_bvsdiv(lhs, rhs)
+        if retval == Terms.NULL_TERM:
+            raise YicesException('yices_bvsdiv')
         return retval
 
     @staticmethod
@@ -817,6 +843,33 @@ class Terms(object):
 
     #FIXME: do these but use a dictionary rather than two arrays of the same size.
 
+    #FIXME: these should really just be one function in the pythonesque API
+
+    @staticmethod
+    def subst(variables, terms, term):
+        assert len(variables) == len(terms)
+        retval = yapi.yices_subst_term(len(variables), yapi.make_term_array(variables), yapi.make_term_array(terms), term)
+        if retval == Terms.NULL_TERM:
+            raise YicesException('yices_subst_term')
+        return retval
+
+
+    @staticmethod
+    def substs(variables, terms, list_o_terms):
+        assert len(variables) == len(terms)
+        array_o_terms = yapi.make_term_array(list_o_terms)
+        errorcode = yapi.yices_subst_term_array(len(variables), yapi.make_term_array(variables), yapi.make_term_array(terms), len(array_o_terms), array_o_terms)
+        if errorcode == -1:
+            raise YicesException('yices_subst_term_array')
+        retval = [None] * len(list_o_terms)
+        for i in range(len(list_o_terms)):
+            retval[i] = array_o_terms[i]
+        return retval
+
+
+
+
+
     # term recognizers
 
     @staticmethod
@@ -869,7 +922,9 @@ class Terms(object):
     @staticmethod
     def bitsize(term):
         retval = yapi.yices_term_bitsize(term)
-        return True if retval else False
+        if retval == 0:
+            raise YicesException('yices_term_bitsize')
+        return retval
 
     @staticmethod
     def is_ground(term):
@@ -903,24 +958,40 @@ class Terms(object):
         return True if yapi.yices_term_is_product(term) else False
 
     @staticmethod
-    def term_constructor(term):
+    def constructor(term):
         retval = yapi.yices_term_constructor(term)
+        if retval ==  Constructor.CONSTRUCTOR_ERROR:
+            raise YicesException('yices_term_constructor')
+        return retval
 
     @staticmethod
-    def term_num_children(term):
+    def num_children(term):
         retval = yapi.yices_term_num_children(term)
+        if retval == -1:
+            raise YicesException('yices_term_num_children')
+        return retval
 
     @staticmethod
-    def term_child(term, i):
+    def child(term, i):
         retval = yapi.yices_term_child(term, i)
+        if retval == Terms.NULL_TERM:
+            raise YicesException('yices_term_child')
+        return retval
+
 
     @staticmethod
     def proj_index(term):
         retval = yapi.yices_proj_index(term)
+        if retval == -1:
+            raise YicesException('yices_proj_index')
+        return retval
 
     @staticmethod
     def proj_arg(term):
         retval = yapi.yices_proj_arg(term)
+        if retval == Terms.NULL_TERM:
+            raise YicesException('yices_proj_arg')
+        return retval
 
 
 #FIXME finish these

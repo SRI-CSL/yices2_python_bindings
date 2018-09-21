@@ -30,7 +30,7 @@ class Yices(object):
 
     @staticmethod
     def is_inited():
-        yapi.yices_is_inited()
+        return yapi.yices_is_inited()
 
     @staticmethod
     def exit():
