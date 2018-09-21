@@ -970,3 +970,20 @@ class Terms(object):
         if term == -1:
             return None
         return term
+
+    #printing
+
+
+    @staticmethod
+    def print_to_fd(fd, term, width, height, offset):
+        errcode = yapi.yices_pp_term_fd(fd, term, int(width), int(height), int(offset))
+        if errcode == -1:
+            raise YicesException('yices_pp_term_fd')
+
+
+    @staticmethod
+    def to_string(term, width, height, offset):
+        retval = yapi.yices_term_to_string(term, int(width), int(height), int(offset))
+        if retval == 0:
+            raise YicesException('yices_term_to_string')
+        return retval

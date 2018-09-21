@@ -262,3 +262,19 @@ class Types(object):
     @staticmethod
     def get_by_name(name):
         return  yapi.yices_get_type_by_name(name)
+
+    # printing
+
+    @staticmethod
+    def print_to_fd(fd, tau, width, height, offset):
+        errcode = yapi.yices_pp_type_fd(fd, tau, int(width), int(height), int(offset))
+        if errcode == -1:
+            raise YicesException('yices_pp_type_fd')
+
+
+    @staticmethod
+    def to_string(tau, width, height, offset):
+        retval = yapi.yices_type_to_string(tau, int(width), int(height), int(offset))
+        if retval == 0:
+            raise YicesException('yices_type_to_string')
+        return retval

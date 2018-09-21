@@ -298,6 +298,7 @@ class Model(object):
         yapi.yices_delete_term_vector(termv)
         return retval
 
+    # printing
 
     def print_to_fd(self, fd, width=None, height=None, offset=None):
         if (width is None) or (height is None) or (offset is None):
@@ -310,6 +311,6 @@ class Model(object):
                 raise YicesException('yices_pp_print_model_fd')
 
 
-    def to_string(self, width=None, height=None, offset=None):
-        #it is gonna leak this string
+    def to_string(self, width, height, offset):
+        #this gonna just have to leak
         return yapi.yices_model_to_string(self.model, int(width), int(height), int(offset))
