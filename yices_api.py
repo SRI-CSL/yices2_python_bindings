@@ -504,6 +504,12 @@ def yices_init():
     __yices_library_inited__ = True
     libyices.yices_init()
 
+def yices_is_inited():
+    """This function True if the yices library has been initied, False otherwise."""
+    global __yices_library_inited__
+    return __yices_library_inited__
+
+
 # void yices_exit(void)
 libyices.yices_exit.restype = None
 @catch_uninitialized()

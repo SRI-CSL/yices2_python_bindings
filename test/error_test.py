@@ -1,46 +1,42 @@
 import unittest
 
-import yices_api as yapi
-
-from yices_api import YicesAPIException
-
+from yices.Terms import Terms
+from yices.Types import Types
+from yices.Yices import Yices
+from yices.YicesException import YicesException
 
 class TestError(unittest.TestCase):
 
     def setUp(self):
-        yapi.yices_init()
+        Yices.init()
 
     def tearDown(self):
-        yapi.yices_exit()
+        Yices.exit()
 
     def test_error(self):
-        yapi.yices_reset()
+        Yices.reset()
 
         # First with no error
-        errcode = yapi.yices_error_code()
+        errcode = Yices.error_code()
         self.assertEqual(errcode, 0L)
-        errep = yapi.yices_error_report()
+        errep = Yices.error_report()
         self.assertEqual(errep.code, 0L)
-        yapi.yices_clear_error()
-        errstr = yapi.yices_error_string()
+        Yices.clear_error()
+        errstr = Yices.error_string()
         self.assertEqual(errstr, 'no error')
-        yapi.yices_print_error_fd(1)
+        Yices.print_error(1)
 
         # Illegal - only scalar or uninterpreted types allowed
-        bool_t = yapi.yices_bool_type()
-        self.assertTrue(yapi.yices_type_is_bool(bool_t))
-        #iam: 9/19/2018 with self.assertRaisesRegexp(YicesAPIException, 'invalid type in constant creation'):
-        #iam: 9/19/2018    const1 = yices_constant(bool_t, 0)
-        const1 = yapi.yices_constant(bool_t, 0)
-        error_string = yapi.yices_error_string()
-        self.assertEqual(const1, -1)
-        self.assertEqual(error_string, 'invalid type in constant creation')
-        yapi.yices_clear_error()
-        errpt = yapi.yices_error_report()
-        self.assertEqual(yapi.yices_error_code(), 0)
-        self.assertEqual(yapi.yices_error_code(), errpt.code)
-        errstr = yapi.yices_error_string()
+        bool_t = Types.bool_type()
+        self.assertTrue(Types.is_bool(bool_t))
+        with self.assertRaisesRegexp(YicesException, 'The function yices_constant failed because: invalid type in constant creation'):
+            const1 = Terms.constant(bool_t, 0)
+        Yices.clear_error()
+        errpt = Yices.error_report()
+        self.assertEqual(Yices.error_code(), 0)
+        self.assertEqual(Yices.error_code(), errpt.code)
+        errstr = Yices.error_string()
         self.assertEqual(errstr, 'no error')
-        yapi.yices_print_error_fd(1)
-        yapi.yices_clear_error()
-        self.assertEqual(yapi.yices_error_code(), 0L)
+        Yices.print_error(1)
+        Yices.clear_error()
+        self.assertEqual(Yices.error_code(), 0L)
