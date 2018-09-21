@@ -229,18 +229,22 @@ loadYices()
 
 # const char *yices_version
 yices_version = c_char_p.in_dll(libyices, "yices_version").value
+yices_version = yices_version.decode("utf-8")
 """libyices version as in '2.5.3'"""
 
 # const char *yices_build_arch
 yices_build_arch = c_char_p.in_dll(libyices, "yices_build_arch").value
+yices_build_arch = yices_build_arch.decode("utf-8")
 """libyices build architecture as in 'x86_64-pc-linux-gnu'"""
 
 # const char *yices_build_mode
 yices_build_mode = c_char_p.in_dll(libyices, "yices_build_mode").value
+yices_build_mode = yices_build_mode.decode("utf-8")
 """libyices build mode (typically either 'release' or 'debug'"""
 
 # const char *yices_build_date
 yices_build_date = c_char_p.in_dll(libyices, "yices_build_date").value
+yices_build_date = yices_build_date.decode("utf-8")
 """libyices build date as in '2017-09-08'"""
 
 # int32_t yices_has_mcsat(void)

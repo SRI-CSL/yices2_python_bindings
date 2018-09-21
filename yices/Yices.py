@@ -12,3 +12,7 @@ class Yices(object):
     @staticmethod
     def exit():
         yapi.yices_exit()
+
+    @staticmethod
+    def init():
+        yapi.yices_init()

@@ -18,7 +18,7 @@ help:
 
 
 check:
-	pytest test_api
+	pytest test_api test
 
 
 #local editable install for developing

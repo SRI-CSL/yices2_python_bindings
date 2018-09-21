@@ -1,5 +1,3 @@
-import sys
-
 import yices_api as yapi
 
 from .YicesException import YicesException
@@ -943,8 +941,7 @@ class Terms(object):
             return False
         errcode = yapi.yices_set_term_name(term, name)
         if errcode == -1:
-            sys.stderr.write('Terms.set_name({0}, {1}): yices_set_term_name failed {2}\n', term, name, yapi.yices_error_string())
-            return False
+            raise YicesException('yices_set_term_name')
         return True
 
     @staticmethod
