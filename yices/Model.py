@@ -297,3 +297,19 @@ class Model(object):
             retval.append(termv.data[i])
         yapi.yices_delete_term_vector(termv)
         return retval
+
+
+    def print_to_fd(self, fd, width=None, height=None, offset=None):
+        if (width is None) or (height is None) or (offset is None):
+            errcode = yapi.yices_print_model_fd(fd, self.model)
+            if errcode == -1:
+                raise YicesException('yices_print_model_fd')
+        else:
+            errcode = yapi.yices_pp_model_fd(fd, self.model, int(width), int(height), int(offset))
+            if errcode == -1:
+                raise YicesException('yices_pp_print_model_fd')
+
+
+    def to_string(self, width=None, height=None, offset=None):
+        #it is gonna leak this string
+        return yapi.yices_model_to_string(self.model, int(width), int(height), int(offset))

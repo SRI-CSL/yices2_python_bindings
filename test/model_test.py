@@ -52,6 +52,7 @@ class TestModels(unittest.TestCase):
 
     def setUp(self):
         # this is required for some strange reason.
+        # seems like yices/__init__.py does not get evaluated
         Yices.init()
         self.cfg = Config()
         self.ctx = Context(self.cfg)
@@ -101,3 +102,20 @@ class TestModels(unittest.TestCase):
         self.assertEqual(bval1, val1)
         self.assertEqual(bval2, val2)
         self.assertEqual(bval3, val3)
+
+    def test_int_models(self):
+        ''' int32, int64 '''
+        i1 = define_const('i1', int_t)
+        i2 = define_const('i2', int_t)
+        assert_formula('(> i1 3)', self.ctx)
+        assert_formula('(< i2 i1)', self.ctx)
+        self.assertEqual(self.ctx.check_context(self.param), Status.SAT)
+        mdl = Model.from_context(self.ctx, 1)
+        i32v1 = mdl.get_integer_value(i1)
+        i32v2 = mdl.get_integer_value(i2)
+        self.assertEqual(i32v1, 4)
+        self.assertEqual(i32v2, 3)
+        mdl.print_to_fd(1)
+        mdl.print_to_fd(1, 80, 100, 0)
+        mdlstr = mdl.to_string(80, 100, 0)
+        self.assertEqual(mdlstr, '(= i1 4)\n(= i2 3)')
