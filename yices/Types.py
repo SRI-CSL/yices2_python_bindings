@@ -72,7 +72,7 @@ class Types(object):
         elif tlen == 2:
             tau = yapi.yices_tuple_type2(types[0], types[1])
         elif tlen == 3:
-            tau = yapi.yices_tuple_type3(types[0], types[1], types[3])
+            tau = yapi.yices_tuple_type3(types[0], types[1], types[2])
         else:
             tarray = yapi.make_type_array(types)
             tau = yapi.yices_tuple_type(tlen, tarray)
@@ -193,21 +193,21 @@ class Types(object):
         return retval
 
     @staticmethod
-    def type_num_children(tau):
+    def num_children(tau):
         retval = yapi.yices_type_num_children(tau)
         if retval == -1:
             raise YicesException('yices_type_num_children')
         return retval
 
     @staticmethod
-    def type_child(tau, i):
+    def child(tau, i):
         retval = yapi.yices_type_child(tau, i)
         if retval == Types.NULL_TYPE:
             raise YicesException('yices_type_child')
         return retval
 
     @staticmethod
-    def type_children(tau):
+    def children(tau):
         typev = yapi.type_vector_t()
         yapi.yices_init_type_vector(typev)
         errcode = yapi.yices_type_children(tau, typev)
