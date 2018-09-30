@@ -10,3 +10,21 @@ class Status(object):
     UNSAT        = yapi.STATUS_UNSAT
     INTERRUPTED  = yapi.STATUS_INTERRUPTED
     ERROR        = yapi.STATUS_ERROR
+
+
+    @staticmethod
+    def name(status):
+        if status == Status.IDLE:
+            return 'IDLE'
+        if status == Status.SEARCHING:
+            return 'SEARCHING'
+        if status == Status.UNKNOWN:
+            return 'UNKNOWN'
+        if status == Status.SAT:
+            return 'SAT'
+        if status == Status.UNSAT:
+            return 'UNSAT'
+        if status == Status.INTERRUPTED:
+            return 'INTERRUPTED'
+        if status == Status.ERROR:
+            return 'ERROR'

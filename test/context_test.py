@@ -1,91 +1,78 @@
 import unittest
 
-import yices_api as yapi
+#import yices_api as yapi
+#from yices_api import YicesAPIException
 
-from yices_api import YicesAPIException
+from yices.Config import Config
+from yices.Context import Context
+from yices.Model import Model
+from yices.Parameters import Parameters
+from yices.Status import Status
+from yices.Types import Types
+from yices.Terms import Terms
+from yices.YicesException import YicesException
+from yices.Yices import Yices
+
 
 class TestContext(unittest.TestCase):
 
     def setUp(self):
-        yapi.yices_init()
+        Yices.init()
 
     def tearDown(self):
-        yapi.yices_exit()
+        Yices.exit()
 
     def test_config(self):
-        cfg = yapi.yices_new_config()
+        cfg = Config()
         # Valid call
-        yapi.yices_set_config(cfg, "mode", "push-pop")
+        cfg.set_config("mode", "push-pop")
         # Invalid name
-        #iam: 9/19/2018 with self.assertRaisesRegexp(YicesAPIException, 'invalid parameter'):
-        #iam: 9/19/2018     yapi.yices_set_config(cfg, "baz", "bar")
-        errcode = yapi.yices_set_config(cfg, "baz", "bar")
-        error_string = yapi.yices_error_string()
-        self.assertEqual(errcode, -1)
-        self.assertEqual(error_string, 'invalid parameter')
+        with self.assertRaisesRegexp(YicesException, 'invalid parameter'):
+            cfg.set_config("baz", "bar")
         # Invalid value
-        #iam: 9/19/2018 with self.assertRaisesRegexp(YicesAPIException, 'value not valid for parameter'):
-        #iam: 9/19/2018     yapi.yices_set_config(cfg, "mode", "bar")
-        errcode = yapi.yices_set_config(cfg, "mode", "bar")
-        error_string = yapi.yices_error_string()
-        self.assertEqual(errcode, -1)
-        self.assertEqual(error_string, 'value not valid for parameter')
-        yapi.yices_default_config_for_logic(cfg, "QF_UFNIRA")
-        yapi.yices_free_config(cfg)
+        with self.assertRaisesRegexp(YicesException, 'value not valid for parameter'):
+            cfg.set_config("mode", "bar")
+        cfg.default_config_for_logic("QF_UFNIRA")
+        cfg.dispose()
 
     def test_context(self):
-        cfg = yapi.yices_new_config()
-        ctx = yapi.yices_new_context(cfg)
-        stat = yapi.yices_context_status(ctx)
-        ret = yapi.yices_push(ctx)
-        ret = yapi.yices_pop(ctx)
-        yapi.yices_reset_context(ctx)
-        ret = yapi.yices_context_enable_option(ctx, "arith-elim")
-        ret = yapi.yices_context_disable_option(ctx, "arith-elim")
-        stat = yapi.yices_context_status(ctx)
+        cfg = Config()
+        ctx = Context(cfg)
+        stat = ctx.status()
+        ret = ctx.push()
+        ret = ctx.pop()
+        ctx.reset_context()
+        ret = ctx.enable_option("arith-elim")
+        ret = ctx.disable_option("arith-elim")
+        stat = ctx.status()
         self.assertEqual(stat, 0)
-        yapi.yices_reset_context(ctx)
-        bool_t = yapi.yices_bool_type()
-        bvar1 = yapi.yices_new_variable(bool_t)
-        #iam: 9/19/2018 with self.assertRaisesRegexp(YicesAPIException, 'assertion contains a free variable'):
-        #iam: 9/19/2018     yapi.yices_assert_formula(ctx, bvar1)
-        errcode = yapi.yices_assert_formula(ctx, bvar1)
-        error_string = yapi.yices_error_string()
-        self.assertEqual(errcode, -1)
-        self.assertEqual(error_string, 'assertion contains a free variable')
-        bv_t = yapi.yices_bv_type(3)
-        bvvar1 = yapi.yices_new_uninterpreted_term(bv_t)
-        yapi.yices_set_term_name(bvvar1, 'x')
-        bvvar2 = yapi.yices_new_uninterpreted_term(bv_t)
-        yapi.yices_set_term_name(bvvar2, 'y')
-        bvvar3 = yapi.yices_new_uninterpreted_term(bv_t)
-        yapi.yices_set_term_name(bvvar3, 'z')
-        fmla1 = yapi.yices_parse_term('(= x (bv-add y z))')
-        fmla2 = yapi.yices_parse_term('(bv-gt y 0b000)')
-        fmla3 = yapi.yices_parse_term('(bv-gt z 0b000)')
-        yapi.yices_assert_formula(ctx, fmla1)
-        yapi.yices_assert_formulas(ctx, 3, yapi.make_term_array([fmla1, fmla2, fmla3]))
-        smt_stat = yapi.yices_check_context(ctx, None)
-        self.assertEqual(smt_stat, yapi.STATUS_SAT)
-        yapi.yices_assert_blocking_clause(ctx)
-        yapi.yices_stop_search(ctx)
-        param = yapi.yices_new_param_record()
-        yapi.yices_default_params_for_context(ctx, param)
-        yapi.yices_set_param(param, "dyn-ack", "true")
-        #iam: 9/19/2018 with self.assertRaisesRegexp(YicesAPIException, 'invalid parameter'):
-        #iam: 9/19/2018     yapi.yices_set_param(param, "foo", "bar")
-        errcode = yapi.yices_set_param(param, "foo", "bar")
-        error_string = yapi.yices_error_string()
-        self.assertEqual(errcode, -1)
-        self.assertEqual(error_string, 'invalid parameter')
-        #iam: 9/19/2018 with self.assertRaisesRegexp(YicesAPIException, 'value not valid for parameter'):
-        #iam: 9/19/2018    yapi.yices_set_param(param, "dyn-ack", "bar")
-        errcode = yapi.yices_set_param(param, "dyn-ack", "bar")
-        error_string = yapi.yices_error_string()
-        self.assertEqual(errcode, -1)
-        self.assertEqual(error_string, 'value not valid for parameter')
-        yapi.yices_free_param_record(param)
-        yapi.yices_free_context(ctx)
+        ctx.reset_context()
+        bool_t = Types.bool_type()
+        bvar1 = Terms.new_variable(bool_t)
+        with self.assertRaisesRegexp(YicesException, 'assertion contains a free variable'):
+            ctx.assert_formula(bvar1)
+        bv_t = Types.bv_type(3)
+        bvvar1 = Terms.new_uninterpreted_term(bv_t, 'x')
+        bvvar2 = Terms.new_uninterpreted_term(bv_t, 'y')
+        bvvar3 = Terms.new_uninterpreted_term(bv_t, 'z')
+        fmla1 = Terms.parse_term('(= x (bv-add y z))')
+        fmla2 = Terms.parse_term('(bv-gt y 0b000)')
+        fmla3 = Terms.parse_term('(bv-gt z 0b000)')
+        ctx.assert_formula(fmla1)
+        ctx.assert_formulas([fmla1, fmla2, fmla3])
+        smt_stat = ctx.check_context(None)
+        self.assertEqual(smt_stat, Status.SAT)
+        ctx.assert_blocking_clause()
+        ctx.stop_search()
+        param = Parameters()
+        param.default_params_for_context(ctx)
+        param.set_param("dyn-ack", "true")
+        with self.assertRaisesRegexp(YicesException, 'invalid parameter'):
+            param.set_param("foo", "bar")
+        with self.assertRaisesRegexp(YicesException, 'value not valid for parameter'):
+            param.set_param("dyn-ack", "bar")
+        param.dispose()
+        ctx.dispose()
 
 
 if __name__ == '__main__':

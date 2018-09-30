@@ -93,6 +93,10 @@ MCSat support: 1
 
 
 
-### Random things to point out
+### Random things to point out. We avoid clashing with
+python's thirstf for reserved words by prepending a 'y'
 
-Terms.and([t0, ...., tN])
+Terms.yand([t0, ...., tN])
+Terms.yor([t0, ...., tN])
+Terms.ynot(t0)
+Terms.ylambda(variables, body)

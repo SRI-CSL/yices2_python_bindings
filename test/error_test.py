@@ -30,7 +30,7 @@ class TestError(unittest.TestCase):
         bool_t = Types.bool_type()
         self.assertTrue(Types.is_bool(bool_t))
         with self.assertRaisesRegexp(YicesException, 'The function yices_constant failed because: invalid type in constant creation'):
-            const1 = Terms.constant(bool_t, 0)
+            Terms.constant(bool_t, 0)
         Yices.clear_error()
         errpt = Yices.error_report()
         self.assertEqual(Yices.error_code(), 0)

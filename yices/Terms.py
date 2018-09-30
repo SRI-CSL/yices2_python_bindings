@@ -61,7 +61,7 @@ class Terms(object):
 
 
     @staticmethod
-    def negation(term):
+    def ynot(term):
         retval = yapi.yices_not(term)
         if retval == Terms.NULL_TERM:
             raise YicesException('yices_not')
@@ -69,7 +69,7 @@ class Terms(object):
 
 
     @staticmethod
-    def conjunction(terms):
+    def yand(terms):
         tlen = len(terms)
         if not len:
             return Terms.TRUE
@@ -79,7 +79,7 @@ class Terms(object):
         return retval
 
     @staticmethod
-    def disjunction(terms):
+    def yor(terms):
         tlen = len(terms)
         if not len:
             return Terms.FALSE

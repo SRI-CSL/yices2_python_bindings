@@ -128,6 +128,9 @@ class YicesAPIException(Exception):
     """Base class for exceptions from Yices API."""
     pass
 
+#iam: 9/29/2018 turn this on to get entry and exit log messages on stderr.
+YICES_API_TRACE = False
+
 #iam: 9/19/2018 only throw an exception if the library is not inited.
 def catch_error(errval):
     """catches any error."""
@@ -137,7 +140,11 @@ def catch_error(errval):
         def wrapper(*args, **kwargs):
             """yices api function wrapper."""
             errstr = "You must initialize by calling yices_init()"
+            if YICES_API_TRACE:
+                sys.stderr.write('\nEntering {0}.\n'.format(yices_fun.__name__))
             result = yices_fun(*args, **kwargs) if __yices_library_inited__ else None
+            if YICES_API_TRACE:
+                sys.stderr.write('\nExiting {0}.\n'.format(yices_fun.__name__))
             if not  __yices_library_inited__:
                 raise YicesAPIException(errstr)
             #iam: 9/19/2018 if result == errval and yices_error_code() != 0L:
