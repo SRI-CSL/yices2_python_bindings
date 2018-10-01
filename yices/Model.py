@@ -111,7 +111,7 @@ class Model(object):
             return val.value
         elif yapi.yices_val_is_rational64(self.model, yval):
             ytnum = ctypes.c_int64()
-            ytden = ctypes.c_int64()
+            ytden = ctypes.c_uint64()
             errcode = yapi.yices_val_get_rational64(self.model,  yval, ytnum, ytden)
             if errcode == -1:
                 raise YicesException('yices_val_get_rational64')
