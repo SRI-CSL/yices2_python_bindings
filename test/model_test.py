@@ -119,3 +119,28 @@ class TestModels(unittest.TestCase):
         mdl.print_to_fd(1, 80, 100, 0)
         mdlstr = mdl.to_string(80, 100, 0)
         self.assertEqual(mdlstr, '(= i1 4)\n(= i2 3)')
+
+    def test_rat_models(self):
+        ''' rational32, rational64, double '''
+        r1 = define_const('r1', real_t)
+        r2 = define_const('r2', real_t)
+        assert_formula('(> r1 3)', self.ctx)
+        assert_formula('(< r1 4)', self.ctx)
+        assert_formula('(< (- r1 r2) 0)', self.ctx)
+        self.assertEqual(self.ctx.check_context(self.param), Status.SAT)
+        mdl = Model.from_context(self.ctx, 1)
+        #r32v1num = c_int32()
+        #r32v1den = c_uint32()
+        #r32v2num = c_int32()
+        #r32v2den = c_uint32()
+        v1 = mdl.get_fraction_value(r1)
+        v2 = mdl.get_fraction_value(r2)
+        # r1 = 7/2, r2 = 4/1
+        self.assertEqual(v1.numerator, 7)
+        self.assertEqual(v1.denominator, 2)
+        self.assertEqual(v2.numerator, 4)
+        self.assertEqual(v2.denominator, 1)
+        rdoub1 = mdl.get_float_value(r1)
+        rdoub2 = mdl.get_float_value(r2)
+        self.assertEqual(rdoub1, 3.5)
+        self.assertEqual(rdoub2, 4.0)

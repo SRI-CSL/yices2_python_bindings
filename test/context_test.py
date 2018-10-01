@@ -1,8 +1,5 @@
 import unittest
 
-#import yices_api as yapi
-#from yices_api import YicesAPIException
-
 from yices.Config import Config
 from yices.Context import Context
 from yices.Model import Model

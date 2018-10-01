@@ -52,7 +52,7 @@ context = Context(config)
 
 # x is between 1 and 9
 def between_1_and_9(x):
-    return Terms.conjunction([Terms.arith_leq_atom(one, x), Terms.arith_leq_atom(x, nine)])
+    return Terms.yand([Terms.arith_leq_atom(one, x), Terms.arith_leq_atom(x, nine)])
 
 for i in range(9):
     for j in range(9):

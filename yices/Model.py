@@ -71,7 +71,7 @@ class Model(object):
 
     def get_fraction_value(self, term):
         ytnum = ctypes.c_int64()
-        ytden = ctypes.c_int64()
+        ytden = ctypes.c_uint64()
         errcode = yapi.yices_get_rational64_value(self.model, term, ytnum, ytden)
         if errcode == -1:
             raise YicesException('yices_get_rational64_value')
