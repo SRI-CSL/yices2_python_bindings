@@ -160,7 +160,7 @@ class Model(object):
         errcode = yapi.yices_val_expand_tuple(self.model, yval, yval_array)
         if errcode == -1:
             raise YicesException('yices_val_expand_tuple')
-        retval = [ Model.get_value_from_yval(self.model, yval_array[i]) for i in range(0, tuple_size) ]
+        retval = [ self.get_value_from_yval(yval_array[i]) for i in range(0, tuple_size) ]
         return tuple(retval)
 
     def get_value_from_mapping_yval(self, yval):

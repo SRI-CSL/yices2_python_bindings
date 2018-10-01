@@ -175,3 +175,17 @@ class TestModels(unittest.TestCase):
         self.assertEqual(val3[1], 0)
         self.assertEqual(val3[2], 1)
         mdl1.dispose()
+
+
+    def test_tuple_models(self):
+        tup_t = Types.new_tuple_type([bool_t, real_t, int_t])
+        t1 = define_const('t1', tup_t)
+        assert_formula('(ite (select t1 1) (< (select t1 2) (select t1 3)) (> (select t1 2) (select t1 3)))', self.ctx)
+        self.assertEqual(self.ctx.check_context(self.param), Status.SAT)
+        mdl = Model.from_context(self.ctx, 1)
+        mdlstr = mdl.to_string(80, 100, 0)
+        self.assertEqual(mdlstr, '(= t1 (mk-tuple false 1 0))')
+        val = mdl.get_value(t1)
+        self.assertEqual(val[0], False)
+        self.assertEqual(val[1], 1)
+        self.assertEqual(val[2], 0)
