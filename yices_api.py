@@ -511,6 +511,8 @@ def yices_init():
     __yices_library_inited__ = True
     libyices.yices_init()
 
+# iam: 10/2/2018 N.B. Neither this nor yices_exit() get wrapped because either before or after execution
+# __yices_library_inited__ can be False
 def yices_is_inited():
     """This function True if the yices library has been initied, False otherwise."""
     global __yices_library_inited__
@@ -519,13 +521,13 @@ def yices_is_inited():
 
 # void yices_exit(void)
 libyices.yices_exit.restype = None
-@catch_uninitialized()
 def yices_exit():
     """Delete all internal data structures and objects - this must be called to avoid memory leaks."""
-    #FIXME: uncommenting this causes all the tests to fail
-    #global __yices_library_inited__
-    libyices.yices_exit()
-    __yices_library_inited__ = False
+    global __yices_library_inited__
+    if __yices_library_inited__:
+        libyices.yices_exit()
+        __yices_library_inited__ = False
+
 
 # void yices_reset(void)
 libyices.yices_reset.restype = None
