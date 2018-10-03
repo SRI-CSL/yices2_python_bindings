@@ -172,8 +172,8 @@ class Model(object):
         errcode = yapi.yices_val_expand_mapping(self.model, yval, ysrc, ytgt)
         if errcode == -1:
             raise YicesException('yices_val_expand_mapping')
-        src = [Model.get_value_from_yval(self.model, ysrc[i]) for i in range(0, mapping_size) ]
-        tgt = Model.get_value_from_yval(self.model, ytgt)
+        src = [self.get_value_from_yval(ysrc[i]) for i in range(0, mapping_size) ]
+        tgt = self.get_value_from_yval(ytgt)
         return (tuple(src), tgt)
 
     def get_value_from_function_yval(self, yval):
@@ -187,8 +187,8 @@ class Model(object):
         if errcode == -1:
             yapi.yices_delete_yval_vector(ymapping)
             raise YicesException('yices_val_expand_function')
-        default = Model.get_value_from_yval(self.model, ydefault)
-        mapping = [ Model.get_value_from_yval(self.model, ymapping.data[i]) for i in range(0, ymapping.size) ]
+        default = self.get_value_from_yval(ydefault)
+        mapping = [ self.get_value_from_yval(ymapping.data[i]) for i in range(0, ymapping.size) ]
         dict_map = {}
         for (src, tgt) in mapping:
             dict_map[src] = tgt

@@ -243,3 +243,22 @@ class TestModels(unittest.TestCase):
         sc1val = mdl.get_value_as_term(sc1)
         self.assertEqual(Terms.is_scalar(sc1val), True)
         self.assertEqual(mdl.get_value(sc1), sc1val)
+
+
+
+    def test_function_models(self):
+        funtype = Types.new_function_type([int_t, bool_t, real_t], real_t)
+        ftystr = Types.to_string(funtype, 100, 80, 0)
+        Types.print_to_fd(1, funtype, 100, 80, 0)
+        self.assertEqual(ftystr, '(-> int bool real real)')
+        fun1 = define_const('fun1', funtype)
+        b1 = define_const('b1', bool_t)
+        i1 = define_const('i1', int_t)
+        r1 = define_const('r1', real_t)
+        assert_formula('(> (fun1 i1 b1 r1) (fun1 (+ i1 1) (not b1) (- r1 i1)))', self.ctx)
+        self.assertEqual(self.ctx.check_context(self.param), Status.SAT)
+        mdl = Model.from_context(self.ctx, 1)
+        mdlstr = mdl.to_string(80, 100, 0)
+        self.assertEqual(mdlstr, '(= b1 false)\n(= i1 1463)\n(= r1 -579)\n(function fun1\n (type (-> int bool real real))\n (= (fun1 1463 false -579) 1)\n (= (fun1 1464 true -2042) 0)\n (default 2))')
+        fun1val = mdl.get_value(fun1)
+        self.assertEqual(fun1val((b1, i1, r1)), 1463)
