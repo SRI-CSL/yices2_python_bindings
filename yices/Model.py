@@ -216,6 +216,7 @@ class Model(object):
             return self.get_value_from_bv_yval(yval)
 
         if tag == Yval.ALGEBRAIC:
+
             return self.get_value_from_algebraic_yval(yval)
 
         if tag == Yval.TUPLE:
