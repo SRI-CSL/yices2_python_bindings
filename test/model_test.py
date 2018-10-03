@@ -221,3 +221,25 @@ class TestModels(unittest.TestCase):
         self.assertEqual(implstr2, '(>= (+ -3 i1) 0)')
         implstr3 = Terms.to_string(tarray2[1], 200, 10, 0)
         self.assertEqual(implstr3, '(>= (+ 9 (* -1 i1)) 0)')
+
+
+
+    def test_scalar_models(self):
+        scalar_t = Types.new_scalar_type(10)
+        sc1 = define_const('sc1', scalar_t)
+        sc2 = define_const('sc2', scalar_t)
+        sc3 = define_const('sc3', scalar_t)
+        assert_formula('(/= sc1 sc2)', self.ctx)
+        assert_formula('(/= sc1 sc3)', self.ctx)
+        self.assertEqual(self.ctx.check_context(self.param), Status.SAT)
+        mdl = Model.from_context(self.ctx, 1)
+        val1 = mdl.get_scalar_value(sc1)
+        val2 = mdl.get_scalar_value(sc2)
+        val3 = mdl.get_scalar_value(sc3)
+        self.assertEqual(val1, 9)
+        self.assertEqual(val2, 8)
+        self.assertEqual(val3, 8)
+        self.assertEqual(Terms.is_scalar(sc1), True)
+        sc1val = mdl.get_value_as_term(sc1)
+        self.assertEqual(Terms.is_scalar(sc1val), True)
+        self.assertEqual(mdl.get_value(sc1), sc1val)
