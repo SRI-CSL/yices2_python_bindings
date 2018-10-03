@@ -23,8 +23,8 @@ if status == Status.SAT:
     model = Model.from_context(ctx, 1)
     model_string = model.to_string(80, 100, 0)
     print(model_string)
-    xval = model.get_float_value(x)
-    yval = model.get_float_value(y)
+    xval = model.get_value(x)
+    yval = model.get_value(y)
     print('x = {0}, y = {1}'.format(xval, yval))
 
 cfg.dispose()

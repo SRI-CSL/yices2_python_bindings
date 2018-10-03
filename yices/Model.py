@@ -150,7 +150,12 @@ class Model(object):
 
     #FIXME: this problem is part of the gmp libpoly conundrum
     def get_value_from_algebraic_yval(self, yval):
-        raise UnderConstruction("Haven't implemented this yet. Nag Ian.")
+        val = ctypes.c_double()
+        errcode = yapi.yices_val_get_double(self.model,  yval, val)
+        if errcode == -1:
+            raise YicesException('yices_val_get_double')
+        return val.value
+        #raise UnderConstruction("Haven't implemented this yet. Nag Ian.")
 
     def get_value_from_tuple_yval(self, yval):
         tuple_size = yapi.yices_val_tuple_arity(self.model, yval)
