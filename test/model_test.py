@@ -261,4 +261,6 @@ class TestModels(unittest.TestCase):
         mdlstr = mdl.to_string(80, 100, 0)
         self.assertEqual(mdlstr, '(= b1 false)\n(= i1 1463)\n(= r1 -579)\n(function fun1\n (type (-> int bool real real))\n (= (fun1 1463 false -579) 1)\n (= (fun1 1464 true -2042) 0)\n (default 2))')
         fun1val = mdl.get_value(fun1)
-        self.assertEqual(fun1val((b1, i1, r1)), 1463)
+        self.assertEqual(fun1val((1463, False, -579)), 1)
+        self.assertEqual(fun1val((1464, True, -2042)), 0)
+        self.assertEqual(fun1val((1462, True, -2041)), 2)
