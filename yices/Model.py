@@ -191,7 +191,6 @@ class Model(object):
         mapping = [ self.get_value_from_yval(ymapping.data[i]) for i in range(0, ymapping.size) ]
         dict_map = {}
         for (src, tgt) in mapping:
-            print('\tmapping: {0} to {1}'.format(src, tgt))
             dict_map[src] = tgt
         yapi.yices_delete_yval_vector(ymapping)
         def retfun(src):
