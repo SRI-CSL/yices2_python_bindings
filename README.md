@@ -36,7 +36,7 @@ magic is done by
 ```
 from yices import *
 ```
-or more in a more verbose fashion by
+or in a more verbose fashion by
 ```
 from yices.Config import Config
 from yices.Context import Context
@@ -54,8 +54,8 @@ from yices.Yvals import Yval
 ## Porting from pip package 1.0.8 to the latest 1.1.0
 
 There are breaking changes from pip package 1.0.8 to the latest 1.1.0.
-The yices_api operation no longer raise exceptions, but rather return error codes
-indicating issues. The pythonesque API takes the opposite approach and raises
+The yices_api operations no longer raise exceptions by default, but rather return error codes
+indicating issues, just like the C API. The pythonesque API takes the opposite approach and raises
 exceptions when things go wrong.
 
 The 1.0.8 yices package is now called yices_api so you will need to change
