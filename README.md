@@ -111,7 +111,7 @@ if status == Status.SAT:
     yval = model.get_value(y)
     print('x = {0}, y = {1}'.format(xval, yval))
 ```
-The complete file can be found [here]https://github.com/SRI-CSL/yices2_python_bindings/example/readme_qf_lra.py)
+The complete file can be found [here.](https://github.com/SRI-CSL/yices2_python_bindings/example/readme_qf_lra.py)
 
 #### Bit-Vectors
 
@@ -145,7 +145,7 @@ if status == Status.SAT:
     print('x = {0}\ny = {1}'.format(xval, yval))
 
 ```
-The complete file can be found [here]https://github.com/SRI-CSL/yices2_python_bindings/example/readme_qf_bv.py)
+The complete file can be found [here.](https://github.com/SRI-CSL/yices2_python_bindings/example/readme_qf_bv.py)
 
 #### Non-Linear Real Arithmetic
 
@@ -176,7 +176,7 @@ if status == Status.SAT:
     yval = model.get_value(y)
     print('x = {0}, y = {1}'.format(xval, yval))
 ```
-The complete file can be found [here]https://github.com/SRI-CSL/yices2_python_bindings/example/readme_qf_nra.py)
+The complete file can be found [here.]https://github.com/SRI-CSL/yices2_python_bindings/example/readme_qf_nra.py)
 
 
 
