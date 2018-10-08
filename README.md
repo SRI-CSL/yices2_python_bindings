@@ -2,86 +2,47 @@
 
 #  Python Bindings for Yices 2
 
+As the name indicates, this provides a Python interface to the Yices SMT Solvers.
+
 ## Installation
 
-Once you have installed the [Yices SMT Solver](http://yices.csl.sri.com/), you can install
-the python language bindings by simply installing the pip package:
+Install the [Yices SMT Solver](http://yices.csl.sri.com/) first, then, install
+the python language bindings with:
 ```
 pip install yices
 ```
 
-There are two python packages provided by the pip package:
+This will install two python packages and a binary.
 
-### yices_api
+- yices_api
 
-This API is very closely tied to the yices C API, see [yices.h](https://github.com/SRI-CSL/yices2/blob/master/src/include/yices.h).
-If you want to use this API you will need to be familiar with `ctypes`.  Unless you really need it, we recommend that you use the
-Pythonesque API below.
+This gives you access to the low-level Yices API from Python. To use this API, you will need to be familiar with `ctypes` and know the Yices C API, see [yices.h](https://github.com/SRI-CSL/yices2/blob/master/src/include/yices.h).  Unless you really need it, we recommend that you use the Pythonesque API below.
 
+- yices
 
-### yices
+This a more Pythonesque API that bridges the gap between the low level yices_api and the python user. It provides 
+Python classes to represent Yices context, models, configurations, etc.
 
-This a somewhat more Pythonesque API that bridges the gap between the low level yices_api and the python user.
-Contexts, models, configurations, and search parameters, all all represented an instances of the classes:
-```
-Context Config Parameters Model
-```
-while types and terms are not wrapped by a python class, but remain integers. Operations on them are
-static methods of the appropriate class.
-```
-Types Terms Status Constructor Yval
-```
-The yices dynamic library is initialized simple by importing th pythonesque API, which by `__init__.py`
-magic is done by
-```
-from yices import *
-```
-or in a more verbose fashion by
-```
-from yices.Config import Config
-from yices.Context import Context
-from yices.Constructors import Constructor
-from yices.Model import Model
-from yices.Parameters import Parameters
-from yices.Status import Status
-from yices.Types import Types
-from yices.Terms import Terms
-from yices.YicesException import YicesException
-from yices.Yices import Yices
-from yices.Yvals import Yval
-```
+- yices_python_info
 
-## Porting from pip package 1.0.8 to the latest 1.1.0
-
-There are breaking changes from pip package 1.0.8 to the latest 1.1.0.
-The yices_api operations no longer raise exceptions by default, but rather return error codes
-indicating issues, just like the C API. The pythonesque API takes the opposite approach and raises
-exceptions when things go wrong.
-
-The 1.0.8 yices package is now called yices_api so you will need to change
+The binary `yices_python_info` prints information about the system:
 
 ```
-import yices
+> yices_python_info
+Python Yices Bindings. Version 1.1.0
+Yices library loaded from /usr/local/lib/libyices.dylib
+Version: 2.6.0
+Architecture: x86_64-apple-darwin17.6.0
+Build mode: release
+Build date: 2018-07-02
+MCSat support: 1
 ```
 
-to
 
-```
-import yices_api
-```
-and similar variations of the `import` statement.
 
-## Examples of Usage
+##  Examples
 
-### The tests
-
-The directory [test](https://github.com/SRI-CSL/yices2/tree/master/src/bindings/python/test) contains a random collection
-of tests that use many of the API routines.
-
-### The examples
-
-The yices2 GitHub [README](https://github.com/SRI-CSL/yices2/tree/master/README.md) contains three simple examples of using
-yices. These are translated into python in the following manner.
+The following three examples show how to use the yices module.
 
 #### Linear Real Arithmetic
 
@@ -111,7 +72,16 @@ if status == Status.SAT:
     yval = model.get_value(y)
     print('x = {0}, y = {1}'.format(xval, yval))
 ```
+
 The complete file can be found [here.](https://github.com/SRI-CSL/yices2_python_bindings/example/readme_qf_lra.py)
+Running this example should show this:
+
+```
+> python examples/readme_qf_lra.py 
+(= x 2)
+(= y -1)
+x = 2, y = -1
+```
 
 #### Bit-Vectors
 
@@ -178,55 +148,86 @@ if status == Status.SAT:
 ```
 The complete file can be found [here.]https://github.com/SRI-CSL/yices2_python_bindings/example/readme_qf_nra.py)
 
+### More Examples
+
+The directory [test](https://github.com/SRI-CSL/yices2/tree/master/src/bindings/python/test) of Yices
+contains tests of the API routines.
+
+#### Sudoku
+
+A more advanced example is in directory [sudoku](https://github.com/SRI-CSL/yices2/tree/master/src/bindings/python/examples/sudoku). 
+It shows three different ways of solving the same sudoku puzzle using Yices:
+
+- `sudoku.ys` is a Yices input file
+
+- `sudoku.py` does the same thing using the Python `yices` API
+
+- `sudoku_api.pu` does it using the low-level `yices_api` module and `ctypes`
+
+### SudokuSolver
+
+We keep a GUI-based Sudoku solver written using the Yices Python API in a separate 
+[repository](https://github.com/SRI-CSL/SudokuSolver).
+
+#### MC-SAT
+
+Another example in [mcsat](https://github.com/SRI-CSL/yices2/tree/master/src/bindings/python/examples/mcsat) 
+demonstrates simple use of Yices' non-linear capabilites. Because this example requires the libpoly library, 
+the python code uses the low-level API.
 
 
-#### The Sudoku Example
+## Details
 
-In the directory [sudoku](https://github.com/SRI-CSL/yices2/tree/master/src/bindings/python/examples/sudoku) there is a
-yices script `sudoku.ys` and two translations `sudoku_api.py` and `sudoku.py` that solve the same puzzle. The `sudoku_api.py`  python version
-uses the low level `yices_api` package, while the `sudoku.py` uses the more pythonesque api. Both
-illustrate the power of the API over the more sedate yices specification language.
+The `yices` Python API introduces different classes to represent Yices objects such as 
+contexts, models, configurations, and search parameters. Term and type constructors are
+implemented as static methods of the Python classes `Terms` and `Types`, respectively.
+We do not wrap the Yices notions of terms and types into Python classes. Just as in the C-API,
+terms and types are represented as integer in Python.
 
-#### The mcsat Example
-
-In the directory [mcsat](https://github.com/SRI-CSL/yices2/tree/master/src/bindings/python/examples/mcsat) there is a
-C program `mcsat.c` and a translation `mcsat.py` that demonstrate simple uses of yices' non-linear capabilites. Because
-it uses libpoly, the python version uses the low level API.
-
-
-### The SudokuSolver
-
-In the repository [SudokuSolver](https://github.com/SRI-CSL/SudokuSolver) there is a GUI that allows you to
-enter an arbitrary sudoku puzzle and solve it, and enter a partial puzzle and count the number of solutions it has.
-There is a branch using the `yices_api` and the master branch that uses the newer pythonesque API.
-
-
-## Information
-
-The pip package also installs a binary `yices_python_info` which when executed prints the basic information about the installed
-yices system:
-
+To use the API, it is sufficient to just import the `yices` module:
 ```
->yices_python_info
-Python Yices Bindings. Version 1.1.0
-Yices library loaded from /usr/local/lib/libyices.dylib
-Version: 2.6.0
-Architecture: x86_64-apple-darwin17.6.0
-Build mode: release
-Build date: 2018-07-02
-MCSat support: 1
+from yices import *
 ```
+or, in a more verbose fashion:
+```
+from yices.Config import Config
+from yices.Context import Context
+from yices.Constructors import Constructor
+from yices.Model import Model
+from yices.Parameters import Parameters
+from yices.Status import Status
+from yices.Types import Types
+from yices.Terms import Terms
+from yices.YicesException import YicesException
+from yices.Yices import Yices
+from yices.Yvals import Yval
+```
+This will automatically load the `libyices` dynamic library.
 
-
-
-### Random things to point out.
-
-We avoid clashing with
-python's thirst for reserved words by prepending a 'y'
+Most functions in the C-API have a corresponing Python method of the same name, except 
+where this would clash with Python's reserved words. To avoid such a clash, we prepend the
+function names with 'y'. Currently, this affects a few functions in the `Terms` class:
 ```
 Terms.yand([t0, ...., tN])
 Terms.yor([t0, ...., tN])
 Terms.ynot(t0)
 Terms.ylambda(variables, body)
 ```
-If anyone has a better idea, we would love to hear it.
+
+
+## Incompatibility with the pip yices package version 1.0.8
+
+We have made incompatible changes to the low-level `yices_api` module. In our previous version
+(pip package version 1.0.8), low-level operations raised exception on error. In the current
+version (pip package version 1.1.0), we have changed this to return an error code.
+
+We have also changed the module names. What used to be module `yices` in version 1.0.8 is 
+now called `yices_api`. So to keep using the low-level Python API, you have to change
+```
+import yices
+```
+to
+```
+import yices_api
+```
+and similar variations of the `import` statement.
