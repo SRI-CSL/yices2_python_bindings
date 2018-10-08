@@ -16,29 +16,29 @@ This will install two python packages and a binary.
 
 - yices_api
 
-This gives you access to the low-level Yices API from Python. To use this API, you will need to be familiar with `ctypes` and know the Yices C API, see [yices.h](https://github.com/SRI-CSL/yices2/blob/master/src/include/yices.h).  Unless you really need it, we recommend that you use the Pythonesque API below.
+  This gives you access to the low-level Yices API from Python. To use this API, you will need to be familiar 
+  with `ctypes`   and know the Yices C API, see [yices.h](https://github.com/SRI-CSL/yices2/blob/master/src/include/yices.h).
+  Unless you really need it, we recommend that you use the Pythonesque API below.
 
 - yices
 
-This a more Pythonesque API that bridges the gap between the low level yices_api and the python user. It provides 
-Python classes to represent Yices context, models, configurations, etc.
+  This a more Pythonesque API that bridges the gap between the low level yices_api and the python user. It provides 
+  Python classes to represent Yices context, models, configurations, etc.
 
 - yices_python_info
 
-The binary `yices_python_info` prints information about the system:
+  The binary `yices_python_info` prints information about the system:
 
-```
-> yices_python_info
-Python Yices Bindings. Version 1.1.0
-Yices library loaded from /usr/local/lib/libyices.dylib
-Version: 2.6.0
-Architecture: x86_64-apple-darwin17.6.0
-Build mode: release
-Build date: 2018-07-02
-MCSat support: 1
-```
-
-
+  ```
+  > yices_python_info
+  Python Yices Bindings. Version 1.1.0
+  Yices library loaded from /usr/local/lib/libyices.dylib
+  Version: 2.6.0
+  Architecture: x86_64-apple-darwin17.6.0
+  Build mode: release
+  Build date: 2018-07-02
+  MCSat support: 1
+  ```
 
 ##  Examples
 
