@@ -19,8 +19,6 @@ there is also the middle ground of
 
 import yices as y
 
-iam: What about constants like NULL_TERM?
-
 iam: need to isolate and load the gmp stuff into a separate language binding.
 
 bd: take care of pointer() vs. byref(). Be consistent about it.
@@ -29,11 +27,6 @@ bd: take care of pointer() vs. byref(). Be consistent about it.
 
 iam: we should beef up the Yices exception so that it contains a copy of the
 error report.
-
-iam: we should hide all ctype crap from the user. Any array passed in to a
-python routine should be a python array. We can use the make_* routines
-locally. we should also return values, not place them in "references" or "arrays"
-since we do not have to return an error code like the C API.
 
 iam: 9/19/2018 this module has been renamed to yices_api
 
@@ -102,7 +95,7 @@ def yices_python_info_main():
 # 1.0.6    -  2.5.3    -  9/28/2017      -  LD_LIBRARY_PATH hackery, III.                      #
 # 1.0.7    -  2.5.4    -  9/29/2017      -  patch level version bump for PPA goodness          #
 # 1.0.8    -  2.5.4    -  10/4/2017      -  improving the user experience  (less SIGSEGVs)     #
-# 1.1.0    -  2.6.0    -  9/30/2018      -  major changes (addition of pythonesque api)        #
+# 1.1.0    -  2.6.0    -  10/8/2018      -  major changes (addition of pythonesque api)        #
 ################################################################################################
 
 #
