@@ -36,7 +36,7 @@ magic is done by
 ```
 from yices import *
 ```
-or more in a more verbose fashion by
+or in a more verbose fashion by
 ```
 from yices.Config import Config
 from yices.Context import Context
@@ -54,8 +54,8 @@ from yices.Yvals import Yval
 ## Porting from pip package 1.0.8 to the latest 1.1.0
 
 There are breaking changes from pip package 1.0.8 to the latest 1.1.0.
-The yices_api operation no longer raise exceptions, but rather return error codes
-indicating issues. The pythonesque API takes the opposite approach and raises
+The yices_api operations no longer raise exceptions by default, but rather return error codes
+indicating issues, just like the C API. The pythonesque API takes the opposite approach and raises
 exceptions when things go wrong.
 
 The 1.0.8 yices package is now called yices_api so you will need to change
@@ -111,7 +111,7 @@ if status == Status.SAT:
     yval = model.get_value(y)
     print('x = {0}, y = {1}'.format(xval, yval))
 ```
-The complete file can be found [here]https://github.com/SRI-CSL/yices2_python_bindings/example/readme_qf_lra.py)
+The complete file can be found [here.](https://github.com/SRI-CSL/yices2_python_bindings/example/readme_qf_lra.py)
 
 #### Bit-Vectors
 
@@ -145,7 +145,7 @@ if status == Status.SAT:
     print('x = {0}\ny = {1}'.format(xval, yval))
 
 ```
-The complete file can be found [here]https://github.com/SRI-CSL/yices2_python_bindings/example/readme_qf_bv.py)
+The complete file can be found [here.](https://github.com/SRI-CSL/yices2_python_bindings/example/readme_qf_bv.py)
 
 #### Non-Linear Real Arithmetic
 
@@ -176,7 +176,7 @@ if status == Status.SAT:
     yval = model.get_value(y)
     print('x = {0}, y = {1}'.format(xval, yval))
 ```
-The complete file can be found [here]https://github.com/SRI-CSL/yices2_python_bindings/example/readme_qf_nra.py)
+The complete file can be found [here.]https://github.com/SRI-CSL/yices2_python_bindings/example/readme_qf_nra.py)
 
 
 
