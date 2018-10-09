@@ -1,6 +1,9 @@
 import yices_api as yapi
 
-yapi.yices_init()
+# iam: this has to go before the imports below to ensure that the
+# yices2 library is initialized (and so static fields get initialized
+# ok).
+yapi.yices_init()  # pylint: disable=wrong-import-position
 
 from yices.Config import Config
 from yices.Context import Context

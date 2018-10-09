@@ -137,7 +137,7 @@ def catch_error(errval):
                 sys.stderr.write('\nEntering {0}.\n'.format(yices_fun.__name__))
             result = yices_fun(*args, **kwargs) if __yices_library_inited__ else None
             if YICES_API_TRACE:
-                sys.stderr.write('\nExiting {0}.\n'.format(yices_fun.__name__))
+                sys.stderr.write('\nExiting {0} with {1} (errval is {2}).\n'.format(yices_fun.__name__, result, errval))
             if not  __yices_library_inited__:
                 raise YicesAPIException(errstr)
             #iam: 9/19/2018 if result == errval and yices_error_code() != 0L:
@@ -192,17 +192,19 @@ libyicespath = find_library("yices")
 
 libyices = None
 
-if libyicespath is None: libyicespath = guess_library_name('yices')
+if libyicespath is None:
+    libyicespath = guess_library_name('yices')
 
 def _loadYicesFromPath(path, library):
     global libyices
     try:
-        if path is not None:
-            libyices = CDLL(os.path.join(path, library))
-        else:
-            libyices = CDLL(library)
+        where = os.path.join(path, library) if path is not None else library
+        libyices = CDLL(where)
         return True
-    except:
+    # iam: if someone can nail down what exceptions CDLL can raise we could be more specific
+    # but the documentation is pretty vague.
+    except Exception as exception: # pylint: disable=broad-except
+        sys.stderr.write('\nCDLL({0}) raised {1}.\n'.format(where, exception))
         return False
 
 def loadYices():
@@ -5168,11 +5170,12 @@ def yices_new_mpq(num=None, den=None):
         yices_set_mpq(new_mpq_, num, den)
     return new_mpq_
 
+#iam: what am I missing here? this returns a value or raises and exception
 @catch_uninitialized()
-def yices_set_mpz(vmpz, val):
+def yices_set_mpz(vmpz, val):  # pylint: disable=inconsistent-return-statements
     """Sets the value of an existing mpz object."""
     if not hasGMP():
-        return None
+        return False
     if isinstance(val, basestring):
         ret = libgmp.__gmpz_set_str(byref(vmpz), val, 0)
         if ret == -1:
@@ -5188,7 +5191,7 @@ def yices_set_mpz(vmpz, val):
 def yices_set_mpq(vmpq, num, den):
     """Sets the value of an existing mpz object."""
     if not hasGMP():
-        return None
+        return False
     if isinstance(num, basestring):
         if isinstance(den, basestring):
             ret = libgmp.__gmpq_set_str(byref(vmpq), num +'/'+ den, 0)
@@ -5200,9 +5203,9 @@ def yices_set_mpq(vmpq, num, den):
     elif isinstance(num, (int, long)):
         if isinstance(den, (int, long)):
             libgmp.__gmpq_set_si(byref(vmpq), num, den)
-            return True
         else:
             raise TypeError('set_mpq: num and den should both be strings or integers')
     else:
         raise TypeError('set_mpq: num and den should both be strings or integers')
     libgmp.__gmpq_canonicalize(byref(vmpq))
+    return True

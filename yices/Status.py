@@ -1,5 +1,6 @@
 import yices_api as yapi
 
+from .YicesException import YicesException
 
 class Status(object):
 
@@ -28,3 +29,4 @@ class Status(object):
             return 'INTERRUPTED'
         if status == Status.ERROR:
             return 'ERROR'
+        raise YicesException('unknown status: {0}'.format(status))
