@@ -155,7 +155,7 @@ contains tests of the API routines.
 
 #### Sudoku
 
-A more advanced example is in directory [sudoku](https://github.com/SRI-CSL/yices2/tree/master/src/bindings/python/examples/sudoku). 
+A more advanced example is in directory [sudoku](https://github.com/SRI-CSL/yices2_python_bindings/tree/master/examples/sudoku). 
 It shows three different ways of solving the same sudoku puzzle using Yices:
 
 - `sudoku.ys` is a Yices input file
