@@ -188,7 +188,8 @@ To use the API, it is sufficient to just import the `yices` module:
 ```
 from yices import *
 ```
-or, in a more verbose fashion:
+This will automatically load the `libyices` dynamic library.
+You can also import incrementally if needed:
 ```
 from yices.Config import Config
 from yices.Context import Context
@@ -202,9 +203,9 @@ from yices.YicesException import YicesException
 from yices.Yices import Yices
 from yices.Yvals import Yval
 ```
-This will automatically load the `libyices` dynamic library.
 
-Most functions in the C-API have a corresponing Python method of the same name, except 
+
+Most functions in the C-API have a corresponding Python method of the same name, except 
 where this would clash with Python's reserved words. To avoid such a clash, we prepend the
 function names with 'y'. Currently, this affects a few functions in the `Terms` class:
 ```
