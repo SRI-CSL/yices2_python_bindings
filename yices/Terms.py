@@ -430,7 +430,6 @@ class Terms(object):
 
     @staticmethod
     def bvconst_integer(nbits, i):
-        #FIXME: nbit needs to fit into a 32 bit int
         retval = yapi.yices_bvconst_int64(nbits, long(i))
         if retval == Terms.NULL_TERM:
             raise YicesException('yices_bvconst_int64')
