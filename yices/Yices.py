@@ -1,8 +1,26 @@
 import yices_api as yapi
 
+# int32_t max (2^31 - 1)
+MAX_VALUE = 2147483647
+
 
 class Yices(object):
 
+    # Maximal number of terms and types
+    MAX_TYPES = MAX_VALUE/4
+    MAX_TERMS = MAX_VALUE/4
+
+    # Maximal arity
+    MAX_ARITY = MAX_VALUE/8
+
+    # Maximal polynomial degree
+    MAX_DEGREE = MAX_VALUE
+
+    # Maximal number of variables in quantifiers/lambdas
+    MAX_VARS = MAX_VALUE/8
+
+    # Maximal bitvector size
+    MAX_BVSIZE = MAX_VALUE/8
 
     @staticmethod
     def error_code():
