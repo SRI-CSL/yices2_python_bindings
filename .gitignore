@@ -1,1 +1,6 @@
-.cache
+build
+dist
+yices.egg-info
+.pytest_cache
+**/*.cache
+**/*.pyc

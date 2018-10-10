@@ -1,3 +1,4 @@
+import ctypes
 import yices_api as yapi
 
 from .YicesException import YicesException
@@ -994,15 +995,57 @@ class Terms(object):
         return retval
 
 
-#FIXME finish these
-#yices_bool_const_value(term)
-#yices_bv_const_value(term)
-#yices_scalar_const_value(term)
+    @staticmethod
+    def bool_const_value(term):
+        value = ctypes.c_int32()
+        errcode =  yapi.yices_bool_const_value(term, value)
+        if errcode == 0:
+            return value.value
+        raise YicesException('yices_bool_const_value')
+
+    @staticmethod
+    def bv_const_value(term):
+        bitsize = Terms.bitsize(term)
+        bvarray = yapi.make_empty_int32_array(bitsize)
+        errcode =  yapi.yices_bv_const_value(term, bvarray)
+        if errcode == 0:
+            return [ bvarray[i] for i in range(0, bitsize) ]
+        raise YicesException('yices_bool_const_value')
+
+    @staticmethod
+    def scalar_const_value(term):
+        value = ctypes.c_int32()
+        errcode =  yapi.yices_scalar_const_value(term, value)
+        if errcode == 0:
+            return value.value
+        raise YicesException('yices_scalar_const_value')
+
+    @staticmethod
+    def bvsum_component(term, i):
+        bitsize = Terms.bitsize(term)
+        if i >= bitsize:
+            raise YicesException('bvsum_component', 'index {0} too big >= bitsize {1}'.format(i, bitsize))
+        bvarray = yapi.make_empty_int32_array(bitsize)
+        termv = ctypes.c_int32()
+        errcode =  yapi.yices_bvsum_component(term, i, bvarray, termv)
+        if errcode == 0:
+            return ([ bvarray[i] for i in range(0, bitsize) ], termv.value)
+        raise YicesException('yices_bvsum_component')
+
+    @staticmethod
+    def product_component(term, i):
+        expv = ctypes.c_uint32()
+        termv = ctypes.c_int32()
+        errcode =  yapi.yices_bvsum_component(term, i, termv, expv)
+        if errcode == 0:
+            return (termv.value, expv.value)
+        raise YicesException('yices_bvsum_component')
+
+
+
+# TBD: gmp issues
 #yices_rational_const_value
 #yices_sum_component
-#yices_bvsum_component(term)
-#yices_product_component(term)
-
 
     # names
 

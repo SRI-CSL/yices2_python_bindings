@@ -42,7 +42,7 @@ install:
 	pip install
 
 clean:
-	rm -rf  *.pyc *~ __pycache__ */*.pyc */*~ */__pycache__ */*/*.pyc */*/*~ */*/__pycache__
+	rm -rf  *.pyc *~ __pycache__ */*.pyc */*~ */__pycache__ */*/*.pyc */*/*~ */*/__pycache__ examples/mcsat/mcsat
 
 
 

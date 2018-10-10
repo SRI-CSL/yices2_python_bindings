@@ -1,14 +1,14 @@
 
-[] 1. Move exceptions out of yices_api and into yices. yices_api should not throw exceptions.
+[X] 1. Move exceptions out of yices_api and into yices. yices_api should not throw exceptions.
 yices should throw them instead.
 
 [] 2. doc strings in yices to reflect this. do the yices_api doc strings need TLC?
 
 [] 3. Solve the gmp and libpoly conundrums, maybe ask Dejan?
 
-[] 4. Add tests for the yices package.
+[X] 4. Add tests for the yices package.
 
-[] 5. Fix the `lint_all` complaints.
+[X] 5. Fix the `lint_all` complaints.
 
 [] 6. Investigate the new type annotation mechanism.
 

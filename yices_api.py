@@ -95,7 +95,8 @@ def yices_python_info_main():
 # 1.0.6    -  2.5.3    -  9/28/2017      -  LD_LIBRARY_PATH hackery, III.                      #
 # 1.0.7    -  2.5.4    -  9/29/2017      -  patch level version bump for PPA goodness          #
 # 1.0.8    -  2.5.4    -  10/4/2017      -  improving the user experience  (less SIGSEGVs)     #
-# 1.1.0    -  2.6.0    -  10/8/2018      -  major changes (addition of pythonesque api)        #
+# 1.1.0    -  2.6.0    -  10/8/2018      -  major changes (addition of pythonesque API)        #
+# 1.1.1    -  2.6.0    -  10/9/2018      -  tweaks and finish the pythonesque API              #
 ################################################################################################
 
 #
@@ -103,7 +104,7 @@ def yices_python_info_main():
 # while the bindings are moving so fast we should keep them separate.
 #
 #
-yices_python_version = '1.1.0'
+yices_python_version = '1.1.1'
 
 #
 # 1.0.1 needs yices_has_mcsat
