@@ -317,6 +317,26 @@ def hasGMP():
     libgmpFailed = True
     return False
 
+# From yices_limits.h
+
+# int32_t max (2^31 - 1)
+MAX_VALUE = 2147483647
+
+# Maximal number of terms and types
+MAX_TYPES = MAX_VALUE/4
+MAX_TERMS = MAX_VALUE/4
+
+# Maximal arity
+MAX_ARITY = MAX_VALUE/8
+
+# Maximal polynomial degree
+MAX_DEGREE = MAX_VALUE
+
+# Maximal number of variables in quantifiers/lambdas
+MAX_VARS = MAX_VALUE/8
+
+# Maximal bitvector size
+MAX_BVSIZE = MAX_VALUE/8
 
 # From yices_types.h
 
@@ -756,6 +776,7 @@ libyices.yices_bv_type.argtypes = [c_uint32]
 @catch_error(-1)
 def yices_bv_type(size):
     """Returns the type of bitvectors of given size (number of bits), size > 0."""
+    assert size > 0 and size < MAX_BVSIZE
     return libyices.yices_bv_type(size)
 
 # type_t yices_new_scalar_type(uint32_t card)
@@ -2020,6 +2041,7 @@ def yices_bvconst_uint32(n, x):
         code = MAX_BVSIZE_EXCEEDED
         badval = n.
     """
+    assert n > 0 and n < MAX_BVSIZE
     return libyices.yices_bvconst_uint32(n, x)
 
 # term_t yices_bvconst_uint64(uint32_t n, uint64_t x)
@@ -2046,6 +2068,7 @@ def yices_bvconst_uint64(n, x):
         code = MAX_BVSIZE_EXCEEDED
         badval = n.
     """
+    assert n > 0 and n < MAX_BVSIZE
     return libyices.yices_bvconst_uint64(n, x)
 
 # term_t yices_bvconst_int32(uint32_t n, int32_t x)
@@ -2072,6 +2095,7 @@ def yices_bvconst_int32(n, x):
         code = MAX_BVSIZE_EXCEEDED
         badval = n.
     """
+    assert n > 0 and n < MAX_BVSIZE
     return libyices.yices_bvconst_int32(n, x)
 
 # term_t yices_bvconst_int64(uint32_t n, int64_t x)
@@ -2098,6 +2122,7 @@ def yices_bvconst_int64(n, x):
         code = MAX_BVSIZE_EXCEEDED
         badval = n.
     """
+    assert n > 0 and n < MAX_BVSIZE
     return libyices.yices_bvconst_int64(n, x)
 
 # term_t yices_bvconst_mpz(uint32_t n, const mpz_t x)
@@ -2124,6 +2149,7 @@ def yices_bvconst_mpz(n, x):
         code = MAX_BVSIZE_EXCEEDED
         badval = n.
     """
+    assert n > 0 and n < MAX_BVSIZE
     return libyices.yices_bvconst_mpz(n, x)
 
 
@@ -2159,6 +2185,7 @@ def yices_bvconst_one(n):
         code = MAX_BVSIZE_EXCEEDED
         badval = n.
     """
+    assert n > 0 and n < MAX_BVSIZE
     return libyices.yices_bvconst_one(n)
 
 # term_t yices_bvconst_minus_one(uint32_t n)
@@ -2176,6 +2203,7 @@ def yices_bvconst_minus_one(n):
         code = MAX_BVSIZE_EXCEEDED
         badval = n.
     """
+    assert n > 0 and n < MAX_BVSIZE
     return libyices.yices_bvconst_minus_one(n)
 
 # term_t yices_bvconst_from_array(uint32_t n, const int32_t a[])
@@ -2197,6 +2225,7 @@ def yices_bvconst_from_array(n, a):
         code = MAX_BVSIZE_EXCEEDED
         badval = n.
     """
+    assert n > 0 and n < MAX_BVSIZE
     return libyices.yices_bvconst_from_array(n, a)
 
 # term_t yices_parse_bvbin(const char *s)
@@ -2798,6 +2827,7 @@ def yices_bvand(n, t):
         term2 = t[i]
         type2 = type of t[i].
     """
+    assert n > 0 and n < MAX_BVSIZE
     return libyices.yices_bvand(n, t)
 
 # term_t yices_bvor(uint32_t n, const term_t t[])
@@ -2828,6 +2858,7 @@ def yices_bvor(n, t):
         term2 = t[i]
         type2 = type of t[i].
     """
+    assert n > 0 and n < MAX_BVSIZE
     return libyices.yices_bvor(n, t)
 
 # term_t yices_bvxor(uint32_t n, const term_t t[])
@@ -2858,6 +2889,7 @@ def yices_bvxor(n, t):
         term2 = t[i]
         type2 = type of t[i].
     """
+    assert n > 0 and n < MAX_BVSIZE
     return libyices.yices_bvxor(n, t)
 
 # term_t yices_bvand2(term_t t1, term_t t2)
@@ -3063,6 +3095,7 @@ def yices_bvsum(n, t):
        term2 = t[i]
        type2 = type of t[i]
     """
+    assert n > 0 and n < MAX_BVSIZE
     return libyices.yices_bvsum(n, t)
 
 # term_t yices_bvproduct(uint32_t n, const term_t t[])
@@ -3097,6 +3130,7 @@ def yices_bvproduct(n, t):
        code = DEGREE_OVERFLOW
        badval = degree
     """
+    assert n > 0 and n < MAX_BVSIZE
     return libyices.yices_bvproduct(n, t)
 
 # term_t yices_shift_left0(term_t t, uint32_t n)
@@ -3352,6 +3386,7 @@ def yices_bvconcat(n, t):
        code = MAX_BVSIZE_EXCEEDED
        badval = sum of the size of t[i]s.
     """
+    assert n > 0 and n < MAX_BVSIZE
     return libyices.yices_bvconcat(n, t)
 
 # term_t yices_bvrepeat(term_t t, uint32_t n)
@@ -3381,6 +3416,7 @@ def yices_bvrepeat(t, n):
        code = MAX_BVSIZE_EXCEEDED
        badval = n * size of t.
     """
+    assert n > 0 and n < MAX_BVSIZE  # must be less than this /size, but at least we catch truncation?
     return libyices.yices_bvrepeat(t, n)
 
 # term_t yices_sign_extend(term_t t, uint32_t n)
@@ -3427,6 +3463,7 @@ def yices_zero_extend(t, n):
       code = MAX_BVSIZE_EXCEEDED
       badval = n * size of t.
     """
+    assert n > 0 and n < MAX_BVSIZE
     return libyices.yices_zero_extend(t, n)
 
 # term_t yices_redand(term_t t)
@@ -3523,6 +3560,7 @@ def yices_bvarray(n, arg):
        term1 = arg[i]
        type1 = bool.
     """
+    assert n > 0 and n < MAX_BVSIZE
     return libyices.yices_bvarray(n, arg)
 
 # term_t yices_bitextract(term_t t, uint32_t i)
@@ -3547,6 +3585,7 @@ def yices_bitextract(t, i):
     if i >= t's bitsize
        code = INVALID_BITEXTRACT.
     """
+    assert i >= 0 and i < MAX_BVSIZE
     return libyices.yices_bitextract(t, i)
 
 
