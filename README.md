@@ -162,7 +162,7 @@ It shows three different ways of solving the same sudoku puzzle using Yices:
 
 - `sudoku.py` does the same thing using the Python `yices` API
 
-- `sudoku_api.pu` does it using the low-level `yices_api` module and `ctypes`
+- `sudoku_api.py` does it using the low-level `yices_api` module and `ctypes`
 
 ### SudokuSolver
 
