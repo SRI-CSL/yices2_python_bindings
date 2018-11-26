@@ -1,9 +1,17 @@
+import sys
 import unittest
 
 from yices.Terms import Terms
 from yices.Types import Types
 from yices.Yices import Yices
 from yices.YicesException import YicesException
+
+def assertRaisesRegex(cxt, e, s):
+    if sys.version_info < (3,):
+        return cxt.assertRaisesRegexp(e, s)
+    else:
+        return cxt.assertRaisesRegex(e, s)
+
 
 class TestError(unittest.TestCase):
 
@@ -18,9 +26,9 @@ class TestError(unittest.TestCase):
 
         # First with no error
         errcode = Yices.error_code()
-        self.assertEqual(errcode, 0L)
+        self.assertEqual(errcode, 0)
         errep = Yices.error_report()
-        self.assertEqual(errep.code, 0L)
+        self.assertEqual(errep.code, 0)
         Yices.clear_error()
         errstr = Yices.error_string()
         self.assertEqual(errstr, 'no error')
@@ -29,7 +37,7 @@ class TestError(unittest.TestCase):
         # Illegal - only scalar or uninterpreted types allowed
         bool_t = Types.bool_type()
         self.assertTrue(Types.is_bool(bool_t))
-        with self.assertRaisesRegexp(YicesException, 'The function yices_constant failed because: invalid type in constant creation'):
+        with assertRaisesRegex(self, YicesException, 'The function yices_constant failed because: invalid type in constant creation'):
             Terms.constant(bool_t, 0)
         Yices.clear_error()
         errpt = Yices.error_report()
@@ -39,4 +47,4 @@ class TestError(unittest.TestCase):
         self.assertEqual(errstr, 'no error')
         Yices.print_error(1)
         Yices.clear_error()
-        self.assertEqual(Yices.error_code(), 0L)
+        self.assertEqual(Yices.error_code(), 0)

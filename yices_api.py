@@ -33,6 +33,7 @@ iam: 9/19/2018 this module has been renamed to yices_api
 
 """
 from __future__ import with_statement
+from __future__ import print_function
 
 import os
 import sys
@@ -97,6 +98,7 @@ def yices_python_info_main():
 # 1.0.8    -  2.5.4    -  10/4/2017      -  improving the user experience  (less SIGSEGVs)     #
 # 1.1.0    -  2.6.0    -  10/8/2018      -  major changes (addition of pythonesque API)        #
 # 1.1.1    -  2.6.0    -  10/9/2018      -  tweaks and finish the pythonesque API              #
+# 1.1.2    -  2.6.0    -  11/26/2018     -  ctype string conversions for python 3              #
 ################################################################################################
 
 #
@@ -104,7 +106,7 @@ def yices_python_info_main():
 # while the bindings are moving so fast we should keep them separate.
 #
 #
-yices_python_version = '1.1.1'
+yices_python_version = '1.1.2'
 
 #
 # 1.0.1 needs yices_has_mcsat
@@ -225,6 +227,34 @@ def loadYices():
 
 
 loadYices()
+
+###########################
+#  2.7 to 3.6  FIX
+###########################
+
+
+def str2bytes(s):
+    if s is not None:
+        return str(s).encode()
+    return None
+
+def bytes2str(b):
+    if b is not None:
+        return b.decode()
+    return None
+
+def isstr(s):
+    if sys.version_info < (3,):
+        return isinstance(s, basestring)
+    else:
+        return isinstance(s, str)
+
+def isinteger(i):
+    if sys.version_info < (3,):
+        return isinstance(i, (int, long))
+    else:
+        return isinstance(i, int)
+
 
 ###########################
 #  VERSION AND RELATIVES  #
@@ -589,7 +619,7 @@ libyices.yices_free_string.argtypes = [c_void_p]
 def yices_error_string():
     """Build a string from the current error code + error report structure."""
     cstrptr = libyices.yices_error_string()
-    errstr = cast(cstrptr, c_char_p).value
+    errstr = bytes2str(cast(cstrptr, c_char_p).value)
     libyices.yices_free_string(cstrptr)
     return errstr
 
@@ -1379,7 +1409,7 @@ def yices_parse_rational(s):
       code = DIVISION_BY_ZERO if the denominator is zero
 
     """
-    return libyices.yices_parse_rational(s)
+    return libyices.yices_parse_rational(str2bytes(s))
 
 # term_t yices_parse_float(const char *s)
 libyices.yices_parse_float.restype = term_t
@@ -1399,7 +1429,7 @@ def yices_parse_float(s):
     Error report:
     code = INVALID_FLOAT_FORMAT
     """
-    return libyices.yices_parse_float(s)
+    return libyices.yices_parse_float(str2bytes(s))
 
 #
 # ARITHMETIC OPERATIONS
@@ -2252,7 +2282,7 @@ def yices_parse_bvbin(s):
        code = MAX_BVSIZE_EXCEEDED
        badval = n.
     """
-    return libyices.yices_parse_bvbin(s)
+    return libyices.yices_parse_bvbin(str2bytes(s))
 
 # term_t yices_parse_bvhex(const char *s)
 libyices.yices_parse_bvhex.restype = term_t
@@ -2274,7 +2304,7 @@ def yices_parse_bvhex(s):
        code = MAX_BVSIZE_EXCEEDED
        badval = 4n.
     """
-    return libyices.yices_parse_bvhex(s)
+    return libyices.yices_parse_bvhex(str2bytes(s))
 
 #
 # BIT-VECTOR ARITHMETIC
@@ -3859,7 +3889,7 @@ libyices.yices_parse_type.argtypes = [c_char_p]
 @catch_error(-1)
 def yices_parse_type(s):
     """Returns the result of parsing s as a Yices type."""
-    return libyices.yices_parse_type(s)
+    return libyices.yices_parse_type(str2bytes(s))
 
 # term_t yices_parse_term(const char *s)
 libyices.yices_parse_term.restype = term_t
@@ -3867,7 +3897,7 @@ libyices.yices_parse_term.argtypes = [c_char_p]
 @catch_error(-1)
 def yices_parse_term(s):
     """Returns the result of parsing s as a Yices term."""
-    return libyices.yices_parse_term(s)
+    return libyices.yices_parse_term(str2bytes(s))
 
 
 #####################
@@ -3900,7 +3930,7 @@ libyices.yices_set_type_name.argtypes = [type_t, c_char_p]
 @catch_error(-1)
 def yices_set_type_name(tau, name):
     """Attaches the name to the type tau, for subsequent retrieval."""
-    return libyices.yices_set_type_name(tau, name)
+    return libyices.yices_set_type_name(tau, str2bytes(name))
 
 # int32_t yices_set_term_name(term_t t, const char *name)
 libyices.yices_set_term_name.restype = c_int32
@@ -3908,21 +3938,21 @@ libyices.yices_set_term_name.argtypes = [type_t, c_char_p]
 @catch_error(-1)
 def yices_set_term_name(t, name):
     """Attaches the name to the term t, for subsequent retrieval."""
-    return libyices.yices_set_term_name(t, name)
+    return libyices.yices_set_term_name(t, str2bytes(name))
 
 # void yices_remove_type_name(const char *name)
 libyices.yices_remove_type_name.argtypes = [c_char_p]
 @catch_error(-1)
 def yices_remove_type_name(name):
     """Removes the name from its attachment to the type."""
-    libyices.yices_remove_type_name(name)
+    libyices.yices_remove_type_name(str2bytes(name))
 
 # void yices_remove_term_name(const char *name)
 libyices.yices_remove_term_name.argtypes = [c_char_p]
 @catch_error(-1)
 def yices_remove_term_name(name):
     """Removes the name from its attachment to the term."""
-    libyices.yices_remove_term_name(name)
+    libyices.yices_remove_term_name(str2bytes(name))
 
 # type_t yices_get_type_by_name(const char *name)
 libyices.yices_get_type_by_name.restype = type_t
@@ -3930,7 +3960,7 @@ libyices.yices_get_type_by_name.argtypes = [c_char_p]
 @catch_error(-1)
 def yices_get_type_by_name(name):
     """Retrieves the type named by name."""
-    return libyices.yices_get_type_by_name(name)
+    return libyices.yices_get_type_by_name(str2bytes(name))
 
 # term_t yices_get_term_by_name(const char *name)
 libyices.yices_get_term_by_name.restype = term_t
@@ -3938,7 +3968,7 @@ libyices.yices_get_term_by_name.argtypes = [c_char_p]
 @catch_error(-1)
 def yices_get_term_by_name(name):
     """Retrieves the term named by name."""
-    return libyices.yices_get_term_by_name(name)
+    return libyices.yices_get_term_by_name(str2bytes(name))
 
 # int32_t yices_clear_type_name(type_t tau)
 libyices.yices_clear_type_name.restype = c_int32
@@ -3962,7 +3992,7 @@ libyices.yices_get_type_name.argtypes = [type_t]
 @catch_error(0)
 def yices_get_type_name(tau):
     """Retrieves the name attached to the type tau."""
-    return libyices.yices_get_type_name(tau)
+    return bytes2str(libyices.yices_get_type_name(tau))
 
 # const char *yices_get_term_name(term_t t)
 libyices.yices_get_term_name.restype = c_char_p
@@ -3970,7 +4000,7 @@ libyices.yices_get_term_name.argtypes = [term_t]
 @catch_error(0)
 def yices_get_term_name(t):
     """Retrieves the name attached to the term t."""
-    return libyices.yices_get_term_name(t)
+    return bytes2str(libyices.yices_get_term_name(t))
 
 
 ########################
@@ -4328,7 +4358,7 @@ libyices.yices_set_config.argtypes = [ctx_config_t, c_char_p, c_char_p]
 def yices_set_config(config, name, value):
     """Sets the value of name in the context configuration, returns 0 on success, -1 on failure."""
     assert config is not None
-    return libyices.yices_set_config(config, name, value)
+    return libyices.yices_set_config(config, str2bytes(name), str2bytes(value))
 
 # int32_t yices_default_config_for_logic(ctx_config_t *config, const char *logic)
 libyices.yices_default_config_for_logic.restype = c_int32
@@ -4337,7 +4367,7 @@ libyices.yices_default_config_for_logic.argtypes = [ctx_config_t, c_char_p]
 def yices_default_config_for_logic(config, logic):
     """Sets the logic of the context configuration, returns 0 on success, -1 on failure."""
     assert config is not None
-    return libyices.yices_default_config_for_logic(config, logic)
+    return libyices.yices_default_config_for_logic(config, str2bytes(logic))
 
 #################
 #   CONTEXTS    #
@@ -4404,7 +4434,7 @@ libyices.yices_context_enable_option.argtypes = [context_t, c_char_p]
 def yices_context_enable_option(ctx, option):
     """Used to tune the amount of simplification used when evaluating assertions."""
     assert ctx is not None
-    return libyices.yices_context_enable_option(ctx, option)
+    return libyices.yices_context_enable_option(ctx, str2bytes(option))
 
 # int32_t yices_context_disable_option(context_t *ctx, const char *option)
 libyices.yices_context_disable_option.restype = c_int32
@@ -4413,7 +4443,7 @@ libyices.yices_context_disable_option.argtypes = [context_t, c_char_p]
 def yices_context_disable_option(ctx, option):
     """Used to tune the amount of simplification used when evaluating assertions."""
     assert ctx is not None
-    return libyices.yices_context_disable_option(ctx, option)
+    return libyices.yices_context_disable_option(ctx, str2bytes(option))
 
 # int32_t yices_assert_formula(context_t *ctx, term_t t)
 libyices.yices_assert_formula.restype = c_int32
@@ -4525,7 +4555,7 @@ libyices.yices_set_param.argtypes = [param_t, c_char_p, c_char_p]
 @catch_error(-1)
 def yices_set_param(p, pname, value):
     """Sets the value of the parameter pname in the param object to be value."""
-    return libyices.yices_set_param(p, pname, value)
+    return libyices.yices_set_param(p, str2bytes(pname), str2bytes(value))
 
 # void yices_free_param_record(param_t *param)
 libyices.yices_free_param_record.argtypes = [param_t]
@@ -5175,7 +5205,7 @@ libyices.yices_type_to_string.argtypes = [type_t, c_uint32, c_uint32, c_uint32]
 def yices_type_to_string(tau, width, height, offset):
     """Convert a type tau to a string using the pretty printer."""
     cstrptr = libyices.yices_type_to_string(tau, width, height, offset)
-    typestr = cast(cstrptr, c_char_p).value
+    typestr = bytes2str(cast(cstrptr, c_char_p).value)
     libyices.yices_free_string(cstrptr)
     return typestr
 
@@ -5187,7 +5217,7 @@ libyices.yices_term_to_string.argtypes = [term_t, c_uint32, c_uint32, c_uint32]
 def yices_term_to_string(t, width, height, offset):
     """Convert a term t to a string using the pretty printer."""
     cstrptr = libyices.yices_term_to_string(t, width, height, offset)
-    termstr = cast(cstrptr, c_char_p).value
+    termstr = bytes2str(cast(cstrptr, c_char_p).value)
     libyices.yices_free_string(cstrptr)
     return termstr
 
@@ -5201,7 +5231,7 @@ def yices_model_to_string(mdl, width, height, offset):
     """Converts a model to a string using the pretty printer."""
     assert mdl is not None
     cstrptr = libyices.yices_model_to_string(mdl, width, height, offset)
-    mdlstr = cast(cstrptr, c_char_p).value
+    mdlstr = bytes2str(cast(cstrptr, c_char_p).value)
     libyices.yices_free_string(cstrptr)
     return mdlstr
 
@@ -5241,12 +5271,12 @@ def yices_set_mpz(vmpz, val):  # pylint: disable=inconsistent-return-statements
     """Sets the value of an existing mpz object."""
     if not hasGMP():
         return False
-    if isinstance(val, basestring):
+    if isstr(val):
         ret = libgmp.__gmpz_set_str(byref(vmpz), val, 0)
         if ret == -1:
             raise TypeError('set_mpz: val is an invalid integer string: '
                             'should be decimal or start with 0x (hex), 0b (binary), or 0 (octal)')
-    elif isinstance(val, (int, long)):
+    elif isinteger(val):
         libgmp.__gmpz_set_si(byref(vmpz), val)
         return True
     else:
@@ -5257,16 +5287,16 @@ def yices_set_mpq(vmpq, num, den):
     """Sets the value of an existing mpz object."""
     if not hasGMP():
         return False
-    if isinstance(num, basestring):
-        if isinstance(den, basestring):
+    if isstr(num):
+        if isstr(den):
             ret = libgmp.__gmpq_set_str(byref(vmpq), num +'/'+ den, 0)
             if ret == -1:
                 raise TypeError('set_mpq: num or den is an invalid integer string: '
                                 'should be decimal or start with 0x (hex), 0b (binary), or 0 (octal)')
         else:
             raise TypeError('set_mpq: num and den should both be strings or integers')
-    elif isinstance(num, (int, long)):
-        if isinstance(den, (int, long)):
+    elif isinteger(num):
+        if isinteger(den):
             libgmp.__gmpq_set_si(byref(vmpq), num, den)
         else:
             raise TypeError('set_mpq: num and den should both be strings or integers')

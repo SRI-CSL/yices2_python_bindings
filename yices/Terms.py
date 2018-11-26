@@ -1,9 +1,17 @@
 import ctypes
+import sys
 import yices_api as yapi
 
 from .YicesException import YicesException
 from .Types import Types
 from .Constructors import Constructor
+
+
+def LONG(v):
+    if sys.version_info < (3,):
+        return long(v)
+    else:
+        return int(v)
 
 class Terms(object):
 
@@ -58,7 +66,7 @@ class Terms(object):
 
     @staticmethod
     def integer(value):
-        return yapi.yices_int64(long(value))
+        return yapi.yices_int64(LONG(value))
 
 
     @staticmethod
@@ -201,14 +209,14 @@ class Terms(object):
     @staticmethod
     def rational(n, d):
         assert d
-        retval = yapi.yices_rational64(long(n), long(d))
+        retval = yapi.yices_rational64(LONG(n), LONG(d))
         if retval == Terms.NULL_TERM:
             raise YicesException('yices_rational64')
         return retval
 
     @staticmethod
     def rational_from_fraction(f):
-        retval = yapi.yices_rational64(long(f.numerator), long(f.denominator))
+        retval = yapi.yices_rational64(LONG(f.numerator), LONG(f.denominator))
         if retval == Terms.NULL_TERM:
             raise YicesException('yices_rational64')
         return retval
@@ -430,7 +438,7 @@ class Terms(object):
 
     @staticmethod
     def bvconst_integer(nbits, i):
-        retval = yapi.yices_bvconst_int64(nbits, long(i))
+        retval = yapi.yices_bvconst_int64(nbits, LONG(i))
         if retval == Terms.NULL_TERM:
             raise YicesException('yices_bvconst_int64')
         return retval
@@ -1095,7 +1103,7 @@ class Terms(object):
 
 
     @staticmethod
-    def to_string(term, width, height, offset):
+    def to_string(term, width=80, height=100, offset=0):
         retval = yapi.yices_term_to_string(term, int(width), int(height), int(offset))
         if retval == 0:
             raise YicesException('yices_term_to_string')

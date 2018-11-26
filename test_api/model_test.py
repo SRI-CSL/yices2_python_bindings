@@ -6,12 +6,20 @@ from yices_api import YicesAPIException
 
 from ctypes import ( c_int, c_int32, c_uint32, c_int64, c_uint64, c_double )
 
+try:
+    basestring
+    def isstr(s):
+        return isinstance(s, basestring)
+except NameError:
+    def isstr(s):
+        return isinstance(s, str)
+
 
 def define_type(name, ytype=None):
     '''Tries to emulate yices type declarations'''
     if ytype is None:
         ytyp = yapi.yices_new_uninterpreted_type()
-    elif isinstance(ytype, basestring):
+    elif isstr(ytype):
         ytyp = yapi.yices_parse_type(ytype)
     else:
         ytyp = ytype
@@ -27,7 +35,7 @@ def define_const(name, ytype, defn=None):
         yapi.yices_set_term_name(term, name)
         return term
     # Have a defn
-    if isinstance(defn, basestring):
+    if isstr(defn):
         term = yapi.yices_parse_term(defn)
     else:
         term = defn
@@ -38,7 +46,7 @@ def define_const(name, ytype, defn=None):
     return term
 
 def assert_formula(formula, ctx):
-    if isinstance(formula, basestring):
+    if isstr(formula):
         formula = yapi.yices_parse_term(formula)
     yapi.yices_assert_formula(ctx, formula)
 

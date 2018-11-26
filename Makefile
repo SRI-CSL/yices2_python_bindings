@@ -8,17 +8,23 @@ help:
 	@echo 'Here are the targets:'
 	@echo ''
 	@echo 'To test                :    "make check"'
-	@echo 'To develop             :    "make develop"'
+	@echo 'To develop python      :    "make develop"'
 	@echo 'To install             :    "make install"'
 	@echo 'To publish             :    "make publish"'
 	@echo 'To pylint (errors)     :    "make lint"'
 	@echo 'To pylint (all)        :    "make lint_all"'
 	@echo ''
 
+PYTEST ?= $(shell which pytest)
+
+check_pytest:
+ifeq ($(PYTEST),)
+   $(error you need to set the env var PYTEST to your installation of pytest)
+endif
 
 
-check:
-	pytest test_api test
+check: check_pytest
+	$(PYTEST) test_api test
 
 
 #local editable install for developing

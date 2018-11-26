@@ -1,3 +1,4 @@
+import sys
 import unittest
 
 from yices.Config import Config
@@ -9,6 +10,13 @@ from yices.Types import Types
 from yices.Terms import Terms
 from yices.YicesException import YicesException
 from yices.Yices import Yices
+
+
+def assertRaisesRegex(cxt, e, s):
+    if sys.version_info < (3,):
+        return cxt.assertRaisesRegexp(e, s)
+    else:
+        return cxt.assertRaisesRegex(e, s)
 
 
 class TestContext(unittest.TestCase):
@@ -24,10 +32,10 @@ class TestContext(unittest.TestCase):
         # Valid call
         cfg.set_config("mode", "push-pop")
         # Invalid name
-        with self.assertRaisesRegexp(YicesException, 'invalid parameter'):
+        with assertRaisesRegex(self, YicesException, 'invalid parameter'):
             cfg.set_config("baz", "bar")
         # Invalid value
-        with self.assertRaisesRegexp(YicesException, 'value not valid for parameter'):
+        with assertRaisesRegex(self, YicesException, 'value not valid for parameter'):
             cfg.set_config("mode", "bar")
         cfg.default_config_for_logic("QF_UFNIRA")
         cfg.dispose()
@@ -46,7 +54,7 @@ class TestContext(unittest.TestCase):
         ctx.reset_context()
         bool_t = Types.bool_type()
         bvar1 = Terms.new_variable(bool_t)
-        with self.assertRaisesRegexp(YicesException, 'assertion contains a free variable'):
+        with assertRaisesRegex(self, YicesException, 'assertion contains a free variable'):
             ctx.assert_formula(bvar1)
         bv_t = Types.bv_type(3)
         bvvar1 = Terms.new_uninterpreted_term(bv_t, 'x')
@@ -64,9 +72,9 @@ class TestContext(unittest.TestCase):
         param = Parameters()
         param.default_params_for_context(ctx)
         param.set_param("dyn-ack", "true")
-        with self.assertRaisesRegexp(YicesException, 'invalid parameter'):
+        with assertRaisesRegex(self, YicesException, 'invalid parameter'):
             param.set_param("foo", "bar")
-        with self.assertRaisesRegexp(YicesException, 'value not valid for parameter'):
+        with assertRaisesRegex(self, YicesException, 'value not valid for parameter'):
             param.set_param("dyn-ack", "bar")
         param.dispose()
         ctx.dispose()

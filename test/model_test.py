@@ -10,13 +10,20 @@ from yices.Terms import Terms
 from yices.YicesException import YicesException
 from yices.Yices import Yices
 
+try:
+    basestring
+    def isstr(s):
+        return isinstance(s, basestring)
+except NameError:
+    def isstr(s):
+        return isinstance(s, str)
 
 
 def define_type(name, ytype=None):
     '''Tries to emulate yices type declarations'''
     if ytype is None:
         ytyp = Types.new_uninterpreted_type()
-    elif isinstance(ytype, basestring):
+    elif isstr(ytype):
         ytyp = Types.parse_type(ytype)
     else:
         ytyp = ytype
@@ -32,7 +39,7 @@ def define_const(name, ytype, defn=None):
         Terms.set_name(term, name)
         return term
     # Have a defn
-    if isinstance(defn, basestring):
+    if isstr(defn):
         term = Terms.parse_term(defn)
     else:
         term = defn
@@ -43,7 +50,7 @@ def define_const(name, ytype, defn=None):
     return term
 
 def assert_formula(formula, ctx):
-    if isinstance(formula, basestring):
+    if isstr(formula):
         formula = Terms.parse_term(formula)
     ctx.assert_formula(formula)
 

@@ -18,9 +18,9 @@ class TestError(unittest.TestCase):
 
         # First with no error
         errcode = yapi.yices_error_code()
-        self.assertEqual(errcode, 0L)
+        self.assertEqual(errcode, 0)
         errep = yapi.yices_error_report()
-        self.assertEqual(errep.code, 0L)
+        self.assertEqual(errep.code, 0)
         yapi.yices_clear_error()
         errstr = yapi.yices_error_string()
         self.assertEqual(errstr, 'no error')
@@ -43,4 +43,4 @@ class TestError(unittest.TestCase):
         self.assertEqual(errstr, 'no error')
         yapi.yices_print_error_fd(1)
         yapi.yices_clear_error()
-        self.assertEqual(yapi.yices_error_code(), 0L)
+        self.assertEqual(yapi.yices_error_code(), 0)
