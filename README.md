@@ -149,7 +149,7 @@ The complete file is [here.](https://github.com/SRI-CSL/yices2_python_bindings/b
 
 ### More Examples
 
-Directory [test](https://github.com/SRI-CSL/yices2/tree/master/src/bindings/python/test) of Yices
+Directory [test](https://github.com/SRI-CSL/yices2_python_bindings/tree/master/test)
 contains tests of the API routines.
 
 #### Sudoku
