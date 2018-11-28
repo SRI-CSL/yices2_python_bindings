@@ -72,8 +72,7 @@ if status == Status.SAT:
     yval = model.get_value(y)
     print('x = {0}, y = {1}'.format(xval, yval))
 ```
-
-The complete file can be found [here.](https://github.com/SRI-CSL/yices2_python_bindings/examples/readme_qf_lra.py)
+The complete file can be found [here.](https://github.com/SRI-CSL/yices2_python_bindings/blob/master.examples/readme_qf_lra.py)
 Running this example should show this:
 
 ```
@@ -115,7 +114,7 @@ if status == Status.SAT:
     print('x = {0}\ny = {1}'.format(xval, yval))
 
 ```
-The complete file is [here.](https://github.com/SRI-CSL/yices2_python_bindings/examples/readme_qf_bv.py)
+The complete file is [here.](https://github.com/SRI-CSL/yices2_python_bindings/blob/master/examples/readme_qf_bv.py)
 
 #### Non-Linear Real Arithmetic
 
@@ -146,7 +145,7 @@ if status == Status.SAT:
     yval = model.get_value(y)
     print('x = {0}, y = {1}'.format(xval, yval))
 ```
-The complete file is [here.](https://github.com/SRI-CSL/yices2_python_bindings/examples/readme_qf_nra.py)
+The complete file is [here.](https://github.com/SRI-CSL/yices2_python_bindings/blob/master/examples/readme_qf_nra.py)
 
 ### More Examples
 
