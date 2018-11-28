@@ -170,7 +170,7 @@ We keep a GUI-based Sudoku solver written using the Yices Python API in a separa
 
 #### MC-SAT
 
-Another example in [mcsat](https://github.com/SRI-CSL/yices2/tree/master/src/bindings/python/examples/mcsat) 
+Another example in [mcsat](https://github.com/SRI-CSL/yices2_python_bindings/tree/master/examples/mcsat) 
 demonstrates simple use of Yices' non-linear capabilites. Because this example requires the libpoly library, 
 the python code uses the low-level API.
 
