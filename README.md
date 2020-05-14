@@ -1,4 +1,6 @@
+[![License: MIT](https://img.shields.io/badge/License-MIT-blueviolet.svg)](https://opensource.org/licenses/MIT)
 [![PyPI version](https://badge.fury.io/py/yices.svg)](https://badge.fury.io/py/yices)
+[![PyPI Statistics](https://img.shields.io/pypi/dm/yices.svg)](https://pypistats.org/packages/yices)
 
 #  Python Bindings for Yices 2
 
@@ -16,13 +18,13 @@ This will install two python packages and a binary.
 
 - yices_api
 
-  This gives you access to the low-level Yices API from Python. To use this API, you will need to be familiar 
+  This gives you access to the low-level Yices API from Python. To use this API, you will need to be familiar
   with `ctypes`   and know the Yices C API, see [yices.h](https://github.com/SRI-CSL/yices2/blob/master/src/include/yices.h).
   Unless you really need it, we recommend that you use the Pythonesque API below.
 
 - yices
 
-  This a more Pythonesque API that bridges the gap between the low level yices_api and the python user. It provides 
+  This a more Pythonesque API that bridges the gap between the low level yices_api and the python user. It provides
   Python classes to represent Yices context, models, configurations, etc.
 
 - yices_python_info
@@ -76,7 +78,7 @@ The complete file can be found [here.](https://github.com/SRI-CSL/yices2_python_
 Running this example should show this:
 
 ```
-> python examples/readme_qf_lra.py 
+> python examples/readme_qf_lra.py
 (= x 2)
 (= y -1)
 x = 2, y = -1
@@ -154,7 +156,7 @@ contains tests of the API routines.
 
 #### Sudoku
 
-A more advanced example is in directory [sudoku](https://github.com/SRI-CSL/yices2_python_bindings/tree/master/examples/sudoku). 
+A more advanced example is in directory [sudoku](https://github.com/SRI-CSL/yices2_python_bindings/tree/master/examples/sudoku).
 It shows three different ways of solving the same sudoku puzzle using Yices:
 
 - `sudoku.ys` is a Yices input file
@@ -165,19 +167,19 @@ It shows three different ways of solving the same sudoku puzzle using Yices:
 
 ### SudokuSolver
 
-We keep a GUI-based Sudoku solver written using the Yices Python API in a separate 
+We keep a GUI-based Sudoku solver written using the Yices Python API in a separate
 [repository](https://github.com/SRI-CSL/SudokuSolver).
 
 #### MC-SAT
 
-Another example in [mcsat](https://github.com/SRI-CSL/yices2_python_bindings/tree/master/examples/mcsat) 
-demonstrates simple use of Yices' non-linear capabilites. Because this example requires the libpoly library, 
+Another example in [mcsat](https://github.com/SRI-CSL/yices2_python_bindings/tree/master/examples/mcsat)
+demonstrates simple use of Yices' non-linear capabilites. Because this example requires the libpoly library,
 the python code uses the low-level API.
 
 
 ## Details
 
-The `yices` Python API introduces different classes to represent Yices objects such as 
+The `yices` Python API introduces different classes to represent Yices objects such as
 contexts, models, configurations, and search parameters. Term and type constructors are
 implemented as static methods of the Python classes `Terms` and `Types`, respectively.
 We do not wrap the Yices notions of terms and types into Python classes. Just as in the C-API,
@@ -204,7 +206,7 @@ from yices.Yvals import Yval
 ```
 
 
-Most functions in the C-API have a corresponding Python method of the same name, except 
+Most functions in the C-API have a corresponding Python method of the same name, except
 where this would clash with Python's reserved words. To avoid such a clash, we prepend the
 function names with 'y'. Currently, this affects a few functions in the `Terms` class:
 ```
@@ -221,7 +223,7 @@ We have made incompatible changes to the low-level `yices_api` module. In our pr
 (pip package version 1.0.8), low-level operations raised exception on error. In the current
 version (pip package version 1.1.0), we have changed this to return an error code.
 
-We have also changed the module names. What used to be module `yices` in version 1.0.8 is 
+We have also changed the module names. What used to be module `yices` in version 1.0.8 is
 now called `yices_api`. So to keep using the low-level Python API, you have to change
 ```
 import yices
