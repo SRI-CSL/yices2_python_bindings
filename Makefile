@@ -19,7 +19,7 @@ PYTEST ?= $(shell which pytest)
 
 check_pytest:
 ifeq ($(PYTEST),)
-   $(error you need to set the env var PYTEST to your installation of pytest)
+   $(error either you do not have pytest installed, or you need to set the env var PYTEST to your installation of pytest)
 endif
 
 

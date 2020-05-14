@@ -69,7 +69,10 @@ def yices_python_info_main():
     loadYices()
     sys.stdout.write('Python Yices Bindings. Version {0}\n'.format(yices_python_version))
     sys.stdout.write('Yices library loaded from {0}\n'.format(libyicespath))
-    sys.stdout.write('Version: {0}\nArchitecture: {1}\nBuild mode: {2}\nBuild date: {3}\nMCSat support: {4}\n'.format(yices_version, yices_build_arch, yices_build_mode, yices_build_date, 'yes' if yices_has_mcsat() else 'no'))
+    msg = 'Version: {0}\nArchitecture: {1}\nBuild mode: {2}\nBuild date: {3}\nMCSat support: {4}\nThread safe: {5}\n'
+    mcsat = 'yes' if yices_has_mcsat() else 'no'
+    thread_safe = 'yes' if yices_is_thread_safe() else 'no'
+    sys.stdout.write(msg.format(yices_version, yices_build_arch, yices_build_mode, yices_build_date, mcsat, thread_safe))
 
 
 
@@ -99,6 +102,7 @@ def yices_python_info_main():
 # 1.1.0    -  2.6.0    -  10/8/2018      -  major changes (addition of pythonesque API)        #
 # 1.1.1    -  2.6.0    -  10/9/2018      -  tweaks and finish the pythonesque API              #
 # 1.1.2    -  2.6.0    -  11/26/2018     -  ctype string conversions for python 3              #
+# 1.1.3    -  2.6.2    -  05/14/2020     -  new API routines  (not sure where 2.6.1 was?)      #
 ################################################################################################
 
 #
@@ -106,13 +110,13 @@ def yices_python_info_main():
 # while the bindings are moving so fast we should keep them separate.
 #
 #
-yices_python_version = '1.1.2'
+yices_python_version = '1.1.3'
 
 #
 # 1.0.1 needs yices_has_mcsat
 # 1.0.1-7 needs the _fd api additions that appear in 2.5.4
 # 1.1.0 hooks into the new unsat core stuff
-yices_recommended_version = '2.6.0'
+yices_recommended_version = '2.6.2'
 
 #iam: 10/4/2017 try to make the user experience a little more pythony.
 #BD suggests doing this in the loadYices routine; he might be right
@@ -285,6 +289,13 @@ libyices.yices_has_mcsat.restype = c_int32
 def yices_has_mcsat():
     """Returns 1 if the yices library has mcsat support, 0 otherwise."""
     return libyices.yices_has_mcsat()
+
+# new in 2.6.2
+# int32_t yices_is_thread_safe(void)
+libyices.yices_has_mcsat.restype = c_int32
+def yices_is_thread_safe():
+    """Returns 1 if the yices library has been compiled for thread safety, 0 otherwise."""
+    return libyices.yices_is_thread_safe()
 
 
 def checkYices():
@@ -4178,6 +4189,14 @@ def yices_term_child(t, i):
     """Returns the i-th child of the composite term t, or a NULL_TERM if there is an error."""
     return libyices.yices_term_child(t, i)
 
+# int32_t yices_term_children(term_t tau, term_vector_t *v)
+libyices.yices_term_children.restype = c_int32
+libyices.yices_term_children.argtypes = [term_t, POINTER(term_vector_t)]
+@catch_error(-1)
+def yices_term_children(t, v):
+    """Collect all the children of term t in vector v."""
+    return libyices.yices_term_children(t, v)
+
 # int32_t yices_proj_index(term_t t)
 libyices.yices_proj_index.restype = c_int32
 libyices.yices_proj_index.argtypes = [term_t]
@@ -4648,6 +4667,96 @@ def yices_model_collect_defined_terms(mdl, v):
     return libyices.yices_model_collect_defined_terms(mdl, v)
 
 
+# new in 2.6.2
+# int32_t yices_has_delegate(const char *delegate)
+libyices.yices_has_delegate.restype = c_int32
+libyices.yices_has_delegate.argtypes = [c_char_p]
+@catch_error(-1)
+def yices_has_delegate(delegate):
+    """Indicates if the delegate is available in the yices library.
+
+     - returns 0 if it's not supported.
+     - return 1 if delegate is NULL or it's the name of a supported delegate
+    Which delegate is supported depends on how this version of Yices was compiled.
+    """
+    return libyices.yices_has_delegate(str2bytes(delegate))
+
+
+# new in 2.6.2
+# smt_status_t yices_check_formula(term_t f, const char *logic, model_t **model, const char *delegate);
+libyices.yices_check_formula.restype = smt_status_t
+libyices.yices_check_formula.argtypes = [term_t, c_char_p, POINTER(model_t), c_char_p]
+def yices_check_formula(f, logic, model, delegate):
+    return libyices.yices_check_formula(f, str2bytes(logic), pointer(model), str2bytes(delegate))
+
+# new in 2.6.2
+# smt_status_t yices_check_formulas(const term_t f[], uint32_t n, const char *logic, model_t **model, const char *delegate)
+libyices.yices_check_formulas.restype = smt_status_t
+libyices.yices_check_formulas.argtypes = [POINTER(term_t), c_uint32, c_char_p, POINTER(model_t), c_char_p]
+def yices_check_formula(f, n, logic, model, delegate):
+    return libyices.yices_check_formulas(f, n, str2bytes(logic), pointer(model), str2bytes(delegate))
+
+# new in 2.6.2
+# int32_t yices_export_formula_to_dimacs(term_t f, const char *filename, int32_t simplify_cnf, smt_status_t *status)
+libyices.yices_export_formula_to_dimacs.restype = c_int32
+libyices.yices_export_formula_to_dimacs.argtypes = [term_t, c_char_p, c_int32, POINTER(smt_status_t)]
+@catch_error(-1)
+def yices_export_formula_to_dimacs(f, filename, simplify_cnf, status):
+    """ Bit-blast then export the CNF to a file.
+
+     - f = a Boolean formula (in the QF_BV theory)
+     - filename = name of the ouput file
+     - simplify_cnf = boolean flag
+     - status = pointer to a variable that stores the formula's status.
+     If simplify_cnf is non-zero, it is also possible for CNF simplification to detect
+    that the CNF is sat or unsat. In this case, no DIMACS file is produced and the status
+    is returned in variable status.
+    """
+    return libyices.yices_export_formula_to_dimacs(f, str2bytes(filename), simplify_cnf, pointer(status))
+
+# new in 2.6.2
+# int32_t yices_export_formulas_to_dimacs(const term_t f[], uint32_t n, const char *filename, int32_t simplify_cnf, smt_status_t *status)
+libyices.yices_export_formulas_to_dimacs.restype = c_int32
+libyices.yices_export_formulas_to_dimacs.argtypes = [POINTER(term_t), c_uint32, c_char_p, c_int32, POINTER(smt_status_t)]
+@catch_error(-1)
+def yices_export_formulas_to_dimacs(f, n, filename, simplify_cnf, status):
+    """ Bit-blast then export the CNF to a file.
+
+     - f = an array of Boolean formula (in the QF_BV theory)
+     - n = the number of formulas in the array
+     - filename = name of the ouput file
+     - simplify_cnf = boolean flag
+     - status = pointer to a variable that stores the formula's status.
+     If simplify_cnf is non-zero, it is also possible for CNF simplification to detect
+    that the CNF is sat or unsat. In this case, no DIMACS file is produced and the status
+    is returned in variable status.
+    """
+    return libyices.yices_export_formulas_to_dimacs(f, n, str2bytes(filename), simplify_cnf, pointer(status))
+
+
+# int32_t yices_model_term_support(model_t *mdl, term_t t, term_vector_t *v)
+libyices.yices_model_term_support.restype = c_int32
+libyices.yices_model_term_support.argtypes = [model_t, term_t, POINTER(term_vector_t)]
+@catch_error(-1)
+def yices_model_term_support(mdl, t, v):
+    """Get the support of a term t in mdl."""
+    return libyices.yices_model_term_support(mdl, t, pointer(v))
+
+# int32_t yices_model_term_array_support(model_t *mdl, uint32_t n, const term_t a[], term_vector_t *v)
+libyices.yices_model_term_array_support.restype = c_int32
+libyices.yices_model_term_array_support.argtypes = [model_t, c_uint32, POINTER(term_t), POINTER(term_vector_t)]
+@catch_error(-1)
+def yices_model_term_array_support(mdl, n, t, v):
+    """Get the support of a term t in mdl."""
+    return libyices.yices_model_term_array_support(mdl, n, t, pointer(v))
+
+# int32_t yices_print_term_values(FILE *f, model_t *mdl, uint32_t n, const term_t a[])
+
+# int32_t yices_pp_term_values(FILE *f, model_t *mdl, uint32_t n, const term_t a[], uint32_t width, uint32_t height, uint32_t offset)
+
+# int32_t yices_print_term_values_fd(int fd, model_t *mdl, uint32_t n, const term_t a[])
+
+# int32_t yices_pp_term_values_fd(int fd, model_t *mdl, uint32_t n, const term_t a[], uint32_t width, uint32_t height, uint32_t offset)
 
 ########################
 #  VALUES IN A MODEL  #
@@ -4860,7 +4969,7 @@ def yices_val_bitsize(mdl, v):
 # uint32_t yices_val_tuple_arity(model_t *mdl, const yval_t *v)
 libyices.yices_val_tuple_arity.restype = c_uint32
 libyices.yices_val_tuple_arity.argtypes = [model_t, POINTER(yval_t)]
-@catch_error(-1)
+@catch_error(0)
 def yices_val_tuple_arity(mdl, v):
     """Gets the arity of the tuple value, or 0 if v is not a tuple."""
     assert mdl is not None
@@ -4869,7 +4978,7 @@ def yices_val_tuple_arity(mdl, v):
 # uint32_t yices_val_mapping_arity(model_t *mdl, const yval_t *v)
 libyices.yices_val_mapping_arity.restype = c_uint32
 libyices.yices_val_mapping_arity.argtypes = [model_t, POINTER(yval_t)]
-@catch_error(-1)
+@catch_error(0)
 def yices_val_mapping_arity(mdl, v):
     """Gets the cardinality of the map value, or 0 if v is not a map."""
     assert mdl is not None
@@ -4878,11 +4987,20 @@ def yices_val_mapping_arity(mdl, v):
 # uint32_t yices_val_function_arity(model_t *mdl, const yval_t *v)
 libyices.yices_val_function_arity.restype = c_uint32
 libyices.yices_val_function_arity.argtypes = [model_t, POINTER(yval_t)]
-@catch_error(-1)
+@catch_error(0)
 def yices_val_function_arity(mdl, v):
     """Gets the arity of the function value, or 0 if v is not a function."""
     assert mdl is not None
     return libyices.yices_val_function_arity(mdl, v)
+
+# new in 2.6.2
+# type_t yices_val_function_type(model_t *mdl, const yval_t *v)
+libyices.yices_val_function_type.restype = type_t
+libyices.yices_val_function_type.argtypes = [model_t, POINTER(yval_t)]
+def yices_val_function_type(mdl, v):
+    """Gets the type of a function node."""
+    return libyices.yices_val_function_type(mdl, v)
+
 
 # int32_t yices_val_get_bool(model_t *mdl, const yval_t *v, int32_t *val)
 libyices.yices_val_get_bool.restype = c_int32

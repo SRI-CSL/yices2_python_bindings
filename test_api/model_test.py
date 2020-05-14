@@ -545,7 +545,6 @@ class TestModels(unittest.TestCase):
         tvec = yapi.term_vector_t()
         yapi.yices_init_term_vector(tvec)
         yapi.yices_implicant_for_formula(mdl, fml, tvec)
-        # I don't understand
         self.assertEqual(tvec.size, 1)
         implstr = yapi.yices_term_to_string(tvec.data[0], 200, 10, 0)
         self.assertEqual(implstr, '(>= (+ -3 i1) 0)')
