@@ -4734,6 +4734,7 @@ def yices_export_formulas_to_dimacs(f, n, filename, simplify_cnf, status):
     return libyices.yices_export_formulas_to_dimacs(f, n, str2bytes(filename), simplify_cnf, pointer(status))
 
 
+# new in 2.6.2
 # int32_t yices_model_term_support(model_t *mdl, term_t t, term_vector_t *v)
 libyices.yices_model_term_support.restype = c_int32
 libyices.yices_model_term_support.argtypes = [model_t, term_t, POINTER(term_vector_t)]
@@ -4742,6 +4743,7 @@ def yices_model_term_support(mdl, t, v):
     """Get the support of a term t in mdl."""
     return libyices.yices_model_term_support(mdl, t, pointer(v))
 
+# new in 2.6.2
 # int32_t yices_model_term_array_support(model_t *mdl, uint32_t n, const term_t a[], term_vector_t *v)
 libyices.yices_model_term_array_support.restype = c_int32
 libyices.yices_model_term_array_support.argtypes = [model_t, c_uint32, POINTER(term_t), POINTER(term_vector_t)]
@@ -4750,12 +4752,16 @@ def yices_model_term_array_support(mdl, n, t, v):
     """Get the support of a term t in mdl."""
     return libyices.yices_model_term_array_support(mdl, n, t, pointer(v))
 
+# new in 2.6.2
 # int32_t yices_print_term_values(FILE *f, model_t *mdl, uint32_t n, const term_t a[])
 
+# new in 2.6.2
 # int32_t yices_pp_term_values(FILE *f, model_t *mdl, uint32_t n, const term_t a[], uint32_t width, uint32_t height, uint32_t offset)
 
+# new in 2.6.2
 # int32_t yices_print_term_values_fd(int fd, model_t *mdl, uint32_t n, const term_t a[])
 
+# new in 2.6.2
 # int32_t yices_pp_term_values_fd(int fd, model_t *mdl, uint32_t n, const term_t a[], uint32_t width, uint32_t height, uint32_t offset)
 
 ########################
