@@ -242,24 +242,34 @@ class Model:
     def implicant_for_formula(self, term):
         termv = yapi.term_vector_t()
         yapi.yices_init_term_vector(termv)
-        yapi.yices_implicant_for_formula(self.model, term, termv)
-        retval = []
-        for i in range(0, termv.size):
-            retval.append(termv.data[i])
-        yapi.yices_delete_term_vector(termv)
-        return retval
+        try:
+            code = yapi.yices_implicant_for_formula(self.model, term, termv)
+            retval = []
+            if code != -1:
+                for i in range(0, termv.size):
+                    retval.append(termv.data[i])
+            yapi.yices_delete_term_vector(termv)
+            return retval
+        except yapi.YicesAPIException:
+            yapi.yices_delete_term_vector(termv)
+            raise YicesException('implicant_for_formula')
+
 
     def implicant_for_formulas(self, term_array):
         tarray = yapi.make_term_array(term_array)
         termv = yapi.term_vector_t()
         yapi.yices_init_term_vector(termv)
-        # FIXME: if this chucks a wobbly, then we leak the term vector
-        yapi.yices_implicant_for_formulas(self.model, len(term_array), tarray, termv)
-        retval = []
-        for i in range(0, termv.size):
-            retval.append(termv.data[i])
-        yapi.yices_delete_term_vector(termv)
-        return retval
+        try:
+            code = yapi.yices_implicant_for_formulas(self.model, len(term_array), tarray, termv)
+            retval = []
+            if code != -1:
+                for i in range(0, termv.size):
+                    retval.append(termv.data[i])
+            yapi.yices_delete_term_vector(termv)
+            return retval
+        except yapi.YicesAPIException:
+            yapi.yices_delete_term_vector(termv)
+            raise YicesException('implicant_for_formulas')
 
     def generalize_model(self, term, elim_array, mode):
         var_array = yapi.make_term_array(elim_array)
@@ -296,13 +306,17 @@ class Model:
         """Returns the list of uninterpreted terms that fix the value of the given term in the model."""
         termv = yapi.term_vector_t()
         yapi.yices_init_term_vector(termv)
-        # FIXME: if this chucks a wobbly, then we leak the term vector
-        yapi.yices_model_term_support(self.model, term, termv)
-        retval = []
-        for i in range(0, termv.size):
-            retval.append(termv.data[i])
-        yapi.yices_delete_term_vector(termv)
-        return retval
+        try:
+            code = yapi.yices_model_term_support(self.model, term, termv)
+            retval = []
+            if code != -1:
+                for i in range(0, termv.size):
+                    retval.append(termv.data[i])
+            yapi.yices_delete_term_vector(termv)
+            return retval
+        except yapi.YicesAPIException:
+            yapi.yices_delete_term_vector(termv)
+            raise YicesException('support_for_term')
 
     # new in 2.6.2
     # term array support
@@ -310,14 +324,18 @@ class Model:
         """Returns the list of uninterpreted terms that fix the value in the model of every term in the given array."""
         tarray = yapi.make_term_array(term_array)
         termv = yapi.term_vector_t()
-        yapi.yices_init_term_vector(termv)
-        # FIXME: if this chucks a wobbly, then we leak the term vector
-        yapi.yices_model_term_array_support(self.model, len(term_array), tarray, termv)
-        retval = []
-        for i in range(0, termv.size):
-            retval.append(termv.data[i])
-        yapi.yices_delete_term_vector(termv)
-        return retval
+        try:
+            yapi.yices_init_term_vector(termv)
+            code = yapi.yices_model_term_array_support(self.model, len(term_array), tarray, termv)
+            retval = []
+            if code != -1:
+                for i in range(0, termv.size):
+                    retval.append(termv.data[i])
+            yapi.yices_delete_term_vector(termv)
+            return retval
+        except yapi.YicesAPIException:
+            yapi.yices_delete_term_vector(termv)
+            raise YicesException('support_for_terms')
 
 
     # printing
