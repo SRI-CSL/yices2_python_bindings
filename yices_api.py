@@ -4705,7 +4705,7 @@ def yices_export_formula_to_dimacs(f, filename, simplify_cnf, status):
     that the CNF is sat or unsat. In this case, no DIMACS file is produced and the status
     is returned in variable status.
     """
-    return libyices.yices_export_formula_to_dimacs(f, str2bytes(filename), simplify_cnf, pointer(status))
+    return libyices.yices_export_formula_to_dimacs(f, str2bytes(filename), simplify_cnf, status)
 
 # new in 2.6.2
 # int32_t yices_export_formulas_to_dimacs(const term_t f[], uint32_t n, const char *filename, int32_t simplify_cnf, smt_status_t *status)
