@@ -4760,9 +4760,20 @@ def yices_model_term_array_support(mdl, n, t, v):
 
 # new in 2.6.2
 # int32_t yices_print_term_values_fd(int fd, model_t *mdl, uint32_t n, const term_t a[])
+libyices.yices_print_term_values_fd.restype = c_int32
+libyices.yices_print_term_values_fd.argtypes = [c_int32, model_t, c_uint32, POINTER(term_t)]
+@catch_error(-1)
+def yices_print_term_values_fd(fd, model, n, a):
+    return libyices.yices_print_term_values_fd(fd, model, n, a)
+
 
 # new in 2.6.2
 # int32_t yices_pp_term_values_fd(int fd, model_t *mdl, uint32_t n, const term_t a[], uint32_t width, uint32_t height, uint32_t offset)
+libyices.yices_pp_term_values_fd.restype = c_int32
+libyices.yices_pp_term_values_fd.argtypes = [c_int32, model_t, c_uint32, POINTER(term_t), c_uint32, c_uint32, c_uint32]
+@catch_error(-1)
+def yices_pp_term_values_fd(fd, model, n, a, width, height, offet):
+    return libyices.yices_pp_term_values_fd(fd, model, n, a, width, height, offet)
 
 ########################
 #  VALUES IN A MODEL  #
