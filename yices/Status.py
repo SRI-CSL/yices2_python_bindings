@@ -2,7 +2,7 @@ import yices_api as yapi
 
 from .YicesException import YicesException
 
-class Status(object):
+class Status:
 
     IDLE         = yapi.STATUS_IDLE
     SEARCHING    = yapi.STATUS_SEARCHING

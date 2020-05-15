@@ -8,7 +8,7 @@ from .Yvals import Yval
 from .YicesException import YicesException
 
 
-class Model(object):
+class Model:
 
     GEN_DEFAULT    = yapi.YICES_GEN_DEFAULT
     GEN_BY_SUBST   = yapi.YICES_GEN_BY_SUBST
@@ -58,7 +58,7 @@ class Model(object):
         errcode = yapi.yices_get_bool_value(self.model, term, ytval)
         if errcode == -1:
             raise YicesException('yices_get_bool_value')
-        return True if ytval.value else False
+        return bool(ytval.value)
 
 
     def get_integer_value(self, term):
@@ -94,11 +94,11 @@ class Model(object):
 
 
     def formula_true_in_model(self, term):
-        return True if yapi.yices_formula_true_in_model(self.model, term) == 1 else False
+        return yapi.yices_formula_true_in_model(self.model, term) == 1
 
     def formulas_true_in_model(self, term_array):
         tarray = yapi.make_term_array(term_array)
-        return True if yapi.yices_formulas_true_in_model(self.model, len(term_array), tarray) == 1 else False
+        return yapi.yices_formulas_true_in_model(self.model, len(term_array), tarray) == 1
 
 
     def get_value_from_rational_yval(self, yval):
@@ -108,26 +108,25 @@ class Model(object):
             if errcode == -1:
                 raise YicesException('yices_val_get_int64')
             return val.value
-        elif yapi.yices_val_is_rational64(self.model, yval):
+        if yapi.yices_val_is_rational64(self.model, yval):
             ytnum = ctypes.c_int64()
             ytden = ctypes.c_uint64()
             errcode = yapi.yices_val_get_rational64(self.model,  yval, ytnum, ytden)
             if errcode == -1:
                 raise YicesException('yices_val_get_rational64')
             return Fraction(ytnum.value, ytden.value)
-        else:
-            val = ctypes.c_double()
-            errcode = yapi.yices_val_get_double(self.model,  yval, val)
-            if errcode == -1:
-                raise YicesException('yices_val_get_double')
-            return val.value
+        val = ctypes.c_double()
+        errcode = yapi.yices_val_get_double(self.model,  yval, val)
+        if errcode == -1:
+            raise YicesException('yices_val_get_double')
+        return val.value
 
     def get_value_from_bool_yval(self, yval):
         value = ctypes.c_int32()
         errcode =  yapi.yices_val_get_bool(self.model, yval, value)
         if errcode == -1:
             raise YicesException('yices_val_get_bool')
-        return True if value.value else False
+        return bool(value.value)
 
     def get_value_from_scalar_yval(self, yval):
         value = ctypes.c_int32()
@@ -205,38 +204,27 @@ class Model(object):
 
     def get_value_from_yval(self, yval):
         tag = yval.node_tag
-
         if tag == Yval.BOOL:
             return self.get_value_from_bool_yval(yval)
-
         if tag == Yval.RATIONAL:
             return self.get_value_from_rational_yval(yval)
-
         if tag == Yval.SCALAR:
             return self.get_value_from_scalar_yval(yval)
-
         if tag == Yval.BV:
             return self.get_value_from_bv_yval(yval)
-
         if tag == Yval.ALGEBRAIC:
-
             return self.get_value_from_algebraic_yval(yval)
-
         if tag == Yval.TUPLE:
             return self.get_value_from_tuple_yval(yval)
-
         if tag == Yval.MAPPING:
             return self.get_value_from_mapping_yval(yval)
-
         if tag == Yval.FUNCTION:
             return self.get_value_from_function_yval(yval)
-
         raise YicesException(msg='Model.get_value_from_yval: unexpected yval tag {0}\n'.format(tag))
 
 
 
     def get_value(self, term):
-
         yval = yapi.yval_t()
         errcode = yapi.yices_get_value(self.model, term, yval)
         if errcode == -1:
@@ -252,7 +240,6 @@ class Model(object):
         return yapi.yices_get_value_as_term(self.model, term)
 
     def implicant_for_formula(self, term):
-        retval = []
         termv = yapi.term_vector_t()
         yapi.yices_init_term_vector(termv)
         yapi.yices_implicant_for_formula(self.model, term, termv)
@@ -266,6 +253,7 @@ class Model(object):
         tarray = yapi.make_term_array(term_array)
         termv = yapi.term_vector_t()
         yapi.yices_init_term_vector(termv)
+        # FIXME: if this chucks a wobbly, then we leak the term vector
         yapi.yices_implicant_for_formulas(self.model, len(term_array), tarray, termv)
         retval = []
         for i in range(0, termv.size):
@@ -302,6 +290,36 @@ class Model(object):
         yapi.yices_delete_term_vector(termv)
         return retval
 
+    # new in 2.6.2
+    # term support
+    def support_for_term(self, term):
+        """Returns the list of uninterpreted terms that fix the value of the given term in the model."""
+        termv = yapi.term_vector_t()
+        yapi.yices_init_term_vector(termv)
+        # FIXME: if this chucks a wobbly, then we leak the term vector
+        yapi.yices_model_term_support(self.model, term, termv)
+        retval = []
+        for i in range(0, termv.size):
+            retval.append(termv.data[i])
+        yapi.yices_delete_term_vector(termv)
+        return retval
+
+    # new in 2.6.2
+    # term array support
+    def support_for_terms(self, term_array):
+        """Returns the list of uninterpreted terms that fix the value in the model of every term in the given array."""
+        tarray = yapi.make_term_array(term_array)
+        termv = yapi.term_vector_t()
+        yapi.yices_init_term_vector(termv)
+        # FIXME: if this chucks a wobbly, then we leak the term vector
+        yapi.yices_model_term_array_support(self.model, len(term_array), tarray, termv)
+        retval = []
+        for i in range(0, termv.size):
+            retval.append(termv.data[i])
+        yapi.yices_delete_term_vector(termv)
+        return retval
+
+
     # printing
 
     def print_to_fd(self, fd, width=None, height=None, offset=None):
@@ -313,6 +331,14 @@ class Model(object):
             errcode = yapi.yices_pp_model_fd(fd, self.model, int(width), int(height), int(offset))
             if errcode == -1:
                 raise YicesException('yices_pp_print_model_fd')
+
+    def print_term_values(self, fd, term_array, width=None, height=None, offset=None):
+        """Print the values of the terms in the model to the file descriptor, pretty print if width, height, and offset are supplied."""
+        tarray = yapi.make_term_array(term_array)
+        if (width is None) or (height is None) or (offset is None):
+            yapi.yices_print_term_values_fd(fd, self.model, len(term_array), tarray)
+        else:
+            yapi.yices_pp_term_values_fd(fd, self.model, len(term_array), tarray, int(width), int(height), int(offset))
 
 
     def to_string(self, width, height, offset):

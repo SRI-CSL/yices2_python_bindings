@@ -1,7 +1,7 @@
 import yices_api as yapi
 
 
-class Constructor(object):
+class Constructor:
 
     CONSTRUCTOR_ERROR = yapi.YICES_CONSTRUCTOR_ERROR
     BOOL_CONSTANT = yapi.YICES_BOOL_CONSTANT

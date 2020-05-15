@@ -2,7 +2,7 @@ import yices_api as yapi
 
 from .YicesException import YicesException
 
-class Parameters(object):
+class Parameters:
 
     def __init__(self):
         self.params =  yapi.yices_new_param_record()

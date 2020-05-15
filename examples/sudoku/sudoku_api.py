@@ -93,9 +93,9 @@ for k in range(3):
 #initial conditions (part of the UI)
 def set_value(ctx, position, value):
     (row, column) = position
-    assert row >= 1 and row <= 9
-    assert column >= 1 and column <= 9
-    assert value >= 1  and value <= 9
+    assert 1 <= row <= 9
+    assert 1 <= column <= 9
+    assert 1 <= value <= 9
     yices_assert_formula(ctx, yices_arith_eq_atom(V(row - 1, column - 1), C[value]))
 
 
@@ -157,7 +157,7 @@ set_value(context, (9, 7), 2)
 smt_stat = yices_check_context(context, None)
 
 if smt_stat != STATUS_SAT:
-    print 'No solution: smt_stat = {0}\n'.format(smt_stat)
+    print('No solution: smt_stat = {0}\n'.format(smt_stat))
 else:
     #print model
     model = yices_get_model(context, 1)
@@ -165,10 +165,10 @@ else:
     for i in range(9):
         for j in range(9):
             yices_get_int32_value(model, V(i, j), val)
-            print 'V({0}, {1}) = {2}'.format(i, j, val.value)
+            print('V({0}, {1}) = {2}'.format(i, j, val.value))
     yices_free_model(model)
 
-print 'Cleaning up\n'
+print('Cleaning up\n')
 
 yices_free_context(context)
 yices_free_config(config)

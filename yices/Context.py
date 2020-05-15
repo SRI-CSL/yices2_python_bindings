@@ -4,7 +4,7 @@ from .YicesException import YicesException
 
 from .Status import Status
 
-class Context(object):
+class Context:
 
 
     def __init__(self, config=None):

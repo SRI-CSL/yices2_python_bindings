@@ -3,7 +3,7 @@ import yices_api as yapi
 from .YicesException import YicesException
 
 
-class Config(object):
+class Config:
 
 
     def __init__(self):

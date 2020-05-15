@@ -1,5 +1,4 @@
 import ctypes
-import sys
 import yices_api as yapi
 
 from .YicesException import YicesException
@@ -7,13 +6,7 @@ from .Types import Types
 from .Constructors import Constructor
 
 
-def LONG(v):
-    if sys.version_info < (3,):
-        return long(v)
-    else:
-        return int(v)
-
-class Terms(object):
+class Terms:
 
     NULL_TERM = -1
     TRUE      = yapi.yices_true()
@@ -66,7 +59,7 @@ class Terms(object):
 
     @staticmethod
     def integer(value):
-        return yapi.yices_int64(LONG(value))
+        return yapi.yices_int64(int(value))
 
 
     @staticmethod
@@ -209,14 +202,14 @@ class Terms(object):
     @staticmethod
     def rational(n, d):
         assert d
-        retval = yapi.yices_rational64(LONG(n), LONG(d))
+        retval = yapi.yices_rational64(int(n), int(d))
         if retval == Terms.NULL_TERM:
             raise YicesException('yices_rational64')
         return retval
 
     @staticmethod
     def rational_from_fraction(f):
-        retval = yapi.yices_rational64(LONG(f.numerator), LONG(f.denominator))
+        retval = yapi.yices_rational64(int(f.numerator), int(f.denominator))
         if retval == Terms.NULL_TERM:
             raise YicesException('yices_rational64')
         return retval
@@ -438,7 +431,7 @@ class Terms(object):
 
     @staticmethod
     def bvconst_integer(nbits, i):
-        retval = yapi.yices_bvconst_int64(nbits, LONG(i))
+        retval = yapi.yices_bvconst_int64(nbits, int(i))
         if retval == Terms.NULL_TERM:
             raise YicesException('yices_bvconst_int64')
         return retval
@@ -890,42 +883,42 @@ class Terms(object):
     @staticmethod
     def is_bool(term):
         retval = yapi.yices_term_is_bool(term)
-        return True if retval else False
+        return bool(retval)
 
     @staticmethod
     def is_int(term):
         retval = yapi.yices_term_is_int(term)
-        return True if retval else False
+        return bool(retval)
 
     @staticmethod
     def is_real(term):
         retval = yapi.yices_term_is_real(term)
-        return True if retval else False
+        return bool(retval)
 
     @staticmethod
     def is_arithmetic(term):
         retval = yapi.yices_term_is_arithmetic(term)
-        return True if retval else False
+        return bool(retval)
 
     @staticmethod
     def is_bitvector(term):
         retval = yapi.yices_term_is_bitvector(term)
-        return True if retval else False
+        return bool(retval)
 
     @staticmethod
     def is_scalar(term):
         retval = yapi.yices_term_is_scalar(term)
-        return True if retval else False
+        return bool(retval)
 
     @staticmethod
     def is_tuple(term):
         retval = yapi.yices_term_is_tuple(term)
-        return True if retval else False
+        return bool(retval)
 
     @staticmethod
     def is_function(term):
         retval = yapi.yices_term_is_function(term)
-        return True if retval else False
+        return bool(retval)
 
     @staticmethod
     def bitsize(term):
@@ -937,33 +930,33 @@ class Terms(object):
     @staticmethod
     def is_ground(term):
         retval = yapi.yices_term_is_ground(term)
-        return True if retval else False
+        return bool(retval)
 
 
     # term deconstruction
     @staticmethod
     def is_atomic(term):
-        return True if yapi.yices_term_is_atomic(term) else False
+        return bool(yapi.yices_term_is_atomic(term))
 
     @staticmethod
     def is_composite(term):
-        return True if yapi.yices_term_is_composite(term) else False
+        return bool(yapi.yices_term_is_composite(term))
 
     @staticmethod
     def is_projection(term):
-        return True if yapi.yices_term_is_projection(term) else False
+        return bool(yapi.yices_term_is_projection(term))
 
     @staticmethod
     def is_sum(term):
-        return True if yapi.yices_term_is_sum(term) else False
+        return bool(yapi.yices_term_is_sum(term))
 
     @staticmethod
     def is_bvsum(term):
-        return True if yapi.yices_term_is_bvsum(term) else False
+        return bool(yapi.yices_term_is_bvsum(term))
 
     @staticmethod
     def is_product(term):
-        return True if yapi.yices_term_is_product(term) else False
+        return bool(yapi.yices_term_is_product(term))
 
     @staticmethod
     def constructor(term):
@@ -1076,7 +1069,7 @@ class Terms(object):
     @staticmethod
     def clear_name(term):
         errcode = yapi.yices_clear_term_name(term)
-        return True if errcode == 0 else False
+        return errcode == 0
 
     @staticmethod
     def get_name(term):

@@ -77,9 +77,9 @@ for k in range(3):
 #initial conditions (part of the UI)
 def set_value(ctx, position, value):
     (row, column) = position
-    assert row >= 1 and row <= 9
-    assert column >= 1 and column <= 9
-    assert value >= 1  and value <= 9
+    assert 1 <= row <= 9
+    assert 1 <= column <= 9
+    assert 1 <= value <= 9
     ctx.assert_formula(Terms.arith_eq_atom(V(row - 1, column - 1), C[value]))
 
 
@@ -141,17 +141,17 @@ set_value(context, (9, 7), 2)
 smt_stat = context.check_context(None)
 
 if smt_stat != Status.SAT:
-    print 'No solution: smt_stat = {0}\n'.format(smt_stat)
+    print('No solution: smt_stat = {0}\n'.format(smt_stat))
 else:
     #print model
     model = Model.from_context(context, 1)
     for i in range(9):
         for j in range(9):
             val = model.get_value(V(i, j))
-            print 'V({0}, {1}) = {2}'.format(i, j, val)
+            print('V({0}, {1}) = {2}'.format(i, j, val))
     model.dispose()
 
-print 'Cleaning up\n'
+print('Cleaning up\n')
 
 context.dispose()
 config.dispose()

@@ -126,7 +126,6 @@ __yices_library_inited__ = False
 
 class YicesAPIException(Exception):
     """Base class for exceptions from Yices API."""
-    pass
 
 #iam: 9/29/2018 turn this on to get entry and exit log messages on stderr.
 YICES_API_TRACE = False
@@ -248,16 +247,10 @@ def bytes2str(b):
     return None
 
 def isstr(s):
-    if sys.version_info < (3,):
-        return isinstance(s, basestring)
-    else:
-        return isinstance(s, str)
+    return isinstance(s, str)
 
 def isinteger(i):
-    if sys.version_info < (3,):
-        return isinstance(i, (int, long))
-    else:
-        return isinstance(i, int)
+    return isinstance(i, int)
 
 
 ###########################
@@ -557,7 +550,7 @@ def yices_init():
 def yices_is_inited():
     """This function True if the yices library has been initied, False otherwise."""
     global __yices_library_inited__
-    return True if __yices_library_inited__ else False
+    return bool(__yices_library_inited__)
 
 
 # void yices_exit(void)
@@ -4693,7 +4686,7 @@ def yices_check_formula(f, logic, model, delegate):
 # smt_status_t yices_check_formulas(const term_t f[], uint32_t n, const char *logic, model_t **model, const char *delegate)
 libyices.yices_check_formulas.restype = smt_status_t
 libyices.yices_check_formulas.argtypes = [POINTER(term_t), c_uint32, c_char_p, POINTER(model_t), c_char_p]
-def yices_check_formula(f, n, logic, model, delegate):
+def yices_check_formulas(f, n, logic, model, delegate):
     return libyices.yices_check_formulas(f, n, str2bytes(logic), pointer(model), str2bytes(delegate))
 
 # new in 2.6.2
@@ -4751,12 +4744,6 @@ libyices.yices_model_term_array_support.argtypes = [model_t, c_uint32, POINTER(t
 def yices_model_term_array_support(mdl, n, t, v):
     """Get the support of a term t in mdl."""
     return libyices.yices_model_term_array_support(mdl, n, t, pointer(v))
-
-# new in 2.6.2
-# int32_t yices_print_term_values(FILE *f, model_t *mdl, uint32_t n, const term_t a[])
-
-# new in 2.6.2
-# int32_t yices_pp_term_values(FILE *f, model_t *mdl, uint32_t n, const term_t a[], uint32_t width, uint32_t height, uint32_t offset)
 
 # new in 2.6.2
 # int32_t yices_print_term_values_fd(int fd, model_t *mdl, uint32_t n, const term_t a[])

@@ -1,7 +1,7 @@
 import yices_api as yapi
 
 
-class Yval(object):
+class Yval:
 
     UNKNOWN   = yapi.YVAL_UNKNOWN
     BOOL      = yapi.YVAL_BOOL

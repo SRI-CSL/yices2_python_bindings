@@ -2,7 +2,7 @@ import yices_api as yapi
 
 from .YicesException import YicesException
 
-class Types(object):
+class Types:
 
 
     NULL_TYPE = -1
@@ -67,7 +67,7 @@ class Types(object):
         tlen = len(types)
         if tlen <= 0:
             raise YicesException(msg="new_tuple_type: len(types) must be positive")
-        elif tlen == 1:
+        if tlen == 1:
             tau = yapi.yices_tuple_type1(types[0])
         elif tlen == 2:
             tau = yapi.yices_tuple_type2(types[0], types[1])
@@ -89,7 +89,7 @@ class Types(object):
         dlen = len(doms)
         if dlen <= 0:
             raise YicesException(msg="new_function_type: len(doms) must be positive")
-        elif dlen == 1:
+        if dlen == 1:
             tau = yapi.yices_function_type1(doms[0], rng)
         elif dlen == 2:
             tau = yapi.yices_function_type2(doms[0], doms[1], rng)
@@ -134,47 +134,47 @@ class Types(object):
 
     @staticmethod
     def is_bool(tau):
-        return True if yapi.yices_type_is_bool(tau) else False
+        return bool(yapi.yices_type_is_bool(tau))
 
     @staticmethod
     def is_int(tau):
-        return True if yapi.yices_type_is_int(tau) else False
+        return bool(yapi.yices_type_is_int(tau))
 
     @staticmethod
     def is_real(tau):
-        return True if yapi.yices_type_is_real(tau) else False
+        return bool(yapi.yices_type_is_real(tau))
 
     @staticmethod
     def is_arithmetic(tau):
-        return True if yapi.yices_type_is_arithmetic(tau) else False
+        return bool(yapi.yices_type_is_arithmetic(tau))
 
     @staticmethod
     def is_bitvector(tau):
-        return True if yapi.yices_type_is_bitvector(tau) else False
+        return bool(yapi.yices_type_is_bitvector(tau))
 
     @staticmethod
     def is_scalar(tau):
-        return True if yapi.yices_type_is_scalar(tau) else False
+        return bool(yapi.yices_type_is_scalar(tau))
 
     @staticmethod
     def is_uninterpreted(tau):
-        return True if yapi.yices_type_is_uninterpreted(tau) else False
+        return bool(yapi.yices_type_is_uninterpreted(tau))
 
     @staticmethod
     def is_tuple(tau):
-        return True if yapi.yices_type_is_tuple(tau) else False
+        return bool(yapi.yices_type_is_tuple(tau))
 
     @staticmethod
     def is_function(tau):
-        return True if yapi.yices_type_is_function(tau) else False
+        return bool(yapi.yices_type_is_function(tau))
 
     @staticmethod
     def is_subtype(tau0, tau1):
-        return True if yapi.yices_test_subtype(tau0, tau1) else False
+        return bool(yapi.yices_test_subtype(tau0, tau1))
 
     @staticmethod
     def compatible_types(tau0, tau1):
-        return True if yapi.yices_compatible_types(tau0, tau1) else False
+        return bool(yapi.yices_compatible_types(tau0, tau1))
 
     # type deconstruction
 
@@ -250,7 +250,7 @@ class Types(object):
     @staticmethod
     def clear_name(tau):
         errcode = yapi.yices_clear_type_name(tau)
-        return True if errcode == 0 else False
+        return errcode == 0
 
     @staticmethod
     def get_name(tau):
