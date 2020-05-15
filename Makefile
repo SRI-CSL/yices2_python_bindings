@@ -42,13 +42,13 @@ dist: clean
 # otherwise the server will give you an error.
 
 publish: dist
-	python setup.py sdist upload
+	python -m twine upload --repository pypi dist/*
 
 install:
 	pip install
 
 clean:
-	rm -rf  *.pyc *~ __pycache__ */*.pyc */*~ */__pycache__ */*/*.pyc */*/*~ */*/__pycache__ examples/mcsat/mcsat
+	rm -rf  *.pyc *~ __pycache__ */*.pyc */*~ */__pycache__ */*/*.pyc */*/*~ */*/__pycache_
 
 
 

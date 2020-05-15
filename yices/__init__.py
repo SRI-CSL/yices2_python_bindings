@@ -8,6 +8,7 @@ yapi.yices_init()  # pylint: disable=wrong-import-position
 from yices.Config import Config
 from yices.Context import Context
 from yices.Constructors import Constructor
+from yices.Delegates import Delegates
 from yices.Model import Model
 from yices.Parameters import Parameters
 from yices.Status import Status
@@ -21,6 +22,7 @@ from yices.Yvals import Yval
 __all__ = ['Config',
            'Context',
            'Constructor',
+           'Delegates',
            'Model',
            'Parameters',
            'Status',
