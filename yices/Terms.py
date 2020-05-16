@@ -842,10 +842,6 @@ class Terms:
 
     # substitutions
 
-    #FIXME: do these but use a dictionary rather than two arrays of the same size.
-
-    #FIXME: these should really just be one function in the pythonesque API
-
     @staticmethod
     def subst(variables, terms, term):
         assert len(variables) == len(terms)
@@ -866,9 +862,6 @@ class Terms:
         for i in range(len(list_o_terms)):
             retval[i] = array_o_terms[i]
         return retval
-
-
-
 
 
     # term recognizers

@@ -146,7 +146,7 @@ class Model:
             raise YicesException('yices_val_get_bv')
         return [ bvarray[i] for i in range(0, bvsize) ]
 
-    #FIXME: this problem is part of the gmp libpoly conundrum
+    #this problem is part of the gmp libpoly conundrum
     def get_value_from_algebraic_yval(self, yval):
         val = ctypes.c_double()
         errcode = yapi.yices_val_get_double(self.model,  yval, val)
