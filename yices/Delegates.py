@@ -3,6 +3,7 @@ from ctypes import pointer
 import yices_api as yapi
 
 from .Model import Model
+from .Status import Status
 
 
 class Delegates:
@@ -29,7 +30,7 @@ class Delegates:
         if model_array is not None:
             model = pointer(yapi.model_t(model))
         status = yapi.yices_check_formula(f, logic, model, delegate)
-        if model_array is not None:
+        if status == Status.SAT and model_array is not None:
             model_array[0] = Model(model.contents)
         return status
 
@@ -47,6 +48,6 @@ class Delegates:
         if model_array is not None:
             model = pointer(yapi.model_t(model))
         status = yapi.yices_check_formulas(tarray, len(term_array), logic, model, delegate)
-        if model_array is not None:
+        if status == Status.SAT and model_array is not None:
             model_array[0] = Model(model.contents)
         return status
