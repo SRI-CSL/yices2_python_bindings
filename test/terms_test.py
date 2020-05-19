@@ -4,6 +4,10 @@ from yices.Terms import Terms
 from yices.Types import Types
 from yices.Yices import Yices
 
+# pylint: disable=R0914
+# pylint: disable=W0612
+# pylint: disable=R0915
+
 class TestTerms(unittest.TestCase):
 
     def setUp(self):

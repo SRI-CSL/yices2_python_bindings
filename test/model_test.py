@@ -10,13 +10,10 @@ from yices.Terms import Terms
 from yices.YicesException import YicesException
 from yices.Yices import Yices
 
-try:
-    basestring
-    def isstr(s):
-        return isinstance(s, basestring)
-except NameError:
-    def isstr(s):
-        return isinstance(s, str)
+# pylint: disable=W0612
+
+def isstr(s):
+    return isinstance(s, str)
 
 
 def define_type(name, ytype=None):
@@ -56,6 +53,8 @@ def assert_formula(formula, ctx):
 
 
 class TestModels(unittest.TestCase):
+
+    # pylint: disable=W0601
 
     def setUp(self):
         # this is required for some strange reason.

@@ -1,19 +1,17 @@
 import unittest
 
+from ctypes import ( c_int, c_int32, c_uint32, c_int64, c_uint64, c_double )
+
 import yices_api as yapi
 
 from yices_api import YicesAPIException
 
-from ctypes import ( c_int, c_int32, c_uint32, c_int64, c_uint64, c_double )
 
-try:
-    basestring
-    def isstr(s):
-        return isinstance(s, basestring)
-except NameError:
-    def isstr(s):
-        return isinstance(s, str)
+def isstr(s):
+    return isinstance(s, str)
 
+# pylint: disable=R0914
+# pylint: disable=R0915
 
 def define_type(name, ytype=None):
     '''Tries to emulate yices type declarations'''
@@ -59,20 +57,20 @@ class TestModels(unittest.TestCase):
         self.ctx = yapi.yices_new_context(self.cfg)
         self.param = yapi.yices_new_param_record()
         yapi.yices_default_params_for_context(self.ctx, self.param)
-        global bool_t, int_t, real_t
-        bool_t = yapi.yices_bool_type()
-        int_t = yapi.yices_int_type()
-        real_t = yapi.yices_real_type()
+        self.bool_t = yapi.yices_bool_type()
+        self.int_t = yapi.yices_int_type()
+        self.real_t = yapi.yices_real_type()
 
 
     def tearDown(self):
         #yapi.yices_exit()
         pass
 
+
     def test_bool_models(self):
-        b1 = define_const('b1', bool_t)
-        b2 = define_const('b2', bool_t)
-        b3 = define_const('b3', bool_t)
+        b1 = define_const('b1', self.bool_t)
+        b2 = define_const('b2', self.bool_t)
+        b3 = define_const('b3', self.bool_t)
         b_fml1 = yapi.yices_parse_term('(or b1 b2 b3)')
         yapi.yices_assert_formula(self.ctx, b_fml1)
         self.assertEqual(yapi.yices_check_context(self.ctx, self.param), yapi.STATUS_SAT)
@@ -107,8 +105,8 @@ class TestModels(unittest.TestCase):
 
     def test_int_models(self):
         ''' int32, int64 '''
-        i1 = define_const('i1', int_t)
-        i2 = define_const('i2', int_t)
+        i1 = define_const('i1', self.int_t)
+        i2 = define_const('i2', self.int_t)
         assert_formula('(> i1 3)', self.ctx)
         assert_formula('(< i2 i1)', self.ctx)
         self.assertEqual(yapi.yices_check_context(self.ctx, self.param), yapi.STATUS_SAT)
@@ -129,14 +127,14 @@ class TestModels(unittest.TestCase):
         yapi.yices_pp_model_fd(1, mdl, 80, 100, 0)
         mdlstr = yapi.yices_model_to_string(mdl, 80, 100, 0)
         self.assertEqual(mdlstr, '(= i1 4)\n(= i2 3)')
-        alg1 = yapi.lp_algebraic_number_t()
+        #alg1 = yapi.lp_algebraic_number_t()
         #yapi.yices_get_algebraic_number_value(mdl, i1, alg1)
 
 
     def test_rat_models(self):
         ''' rational32, rational64, double '''
-        r1 = define_const('r1', real_t)
-        r2 = define_const('r2', real_t)
+        r1 = define_const('r1', self.real_t)
+        r2 = define_const('r2', self.real_t)
         assert_formula('(> r1 3)', self.ctx)
         assert_formula('(< r1 4)', self.ctx)
         assert_formula('(< (- r1 r2) 0)', self.ctx)
@@ -172,8 +170,8 @@ class TestModels(unittest.TestCase):
         self.assertEqual(rdoub2.value, 4.0)
 
     def test_mpz_models(self):
-        i1 = define_const('i1', int_t)
-        i2 = define_const('i2', int_t)
+        i1 = define_const('i1', self.int_t)
+        i2 = define_const('i2', self.int_t)
         assert_formula('(> i1 987654321987654321987654321)', self.ctx)
         assert_formula('(< i2 i1)', self.ctx)
         self.assertEqual(yapi.yices_check_context(self.ctx, self.param), yapi.STATUS_SAT)
@@ -219,8 +217,8 @@ class TestModels(unittest.TestCase):
 
 
     def test_mpq_models(self):
-        r1 = define_const('r1', real_t)
-        r2 = define_const('r2', real_t)
+        r1 = define_const('r1', self.real_t)
+        r2 = define_const('r2', self.real_t)
         assert_formula('(> (* r1 3456666334217777794) 987654321987654321987654321)', self.ctx)
         assert_formula('(< r2 r1)', self.ctx)
         self.assertEqual(yapi.yices_check_context(self.ctx, self.param), yapi.STATUS_SAT)
@@ -263,16 +261,16 @@ class TestModels(unittest.TestCase):
         yapi.yices_default_config_for_logic(cfg, "QF_NRA")
         yapi.yices_set_config(cfg, "mode", "one-shot")
         ctx = yapi.yices_new_context(cfg)
-        x = define_const('x', real_t)
+        x0 = define_const('x', self.real_t)
         assert_formula('(= (* x x) 2)', ctx)
         self.assertEqual(yapi.yices_check_context(ctx, None), yapi.STATUS_SAT)
         mdl = yapi.yices_get_model(ctx, 1)
         mdlstr = yapi.yices_model_to_string(mdl, 80, 100, 0)
         self.assertEqual(mdlstr, '(= x -1.414214)')
         alg1 = yapi.lp_algebraic_number_t()
-        yapi.yices_get_algebraic_number_value(mdl, x, alg1)
+        yapi.yices_get_algebraic_number_value(mdl, x0, alg1)
         yv1 = yapi.yval_t()
-        yapi.yices_get_value(mdl, x, yv1)
+        yapi.yices_get_value(mdl, x0, yv1)
         alg2 = yapi.lp_algebraic_number_t()
         yapi.yices_val_get_algebraic_number(mdl, yv1, alg2)
 
@@ -315,7 +313,7 @@ class TestModels(unittest.TestCase):
         yapi.yices_free_model(mdl1)
 
     def test_tuple_models(self):
-        tup_t = yapi.yices_tuple_type3(bool_t, real_t, int_t)
+        tup_t = yapi.yices_tuple_type3(self.bool_t, self.real_t, self.int_t)
         t1 = define_const('t1', tup_t)
         assert_formula('(ite (select t1 1) (< (select t1 2) (select t1 3)) (> (select t1 2) (select t1 3)))', self.ctx)
         self.assertEqual(yapi.yices_check_context(self.ctx, self.param), 3)
@@ -338,14 +336,14 @@ class TestModels(unittest.TestCase):
 
     # bus error
     def test_function_models(self):
-        funtype = yapi.yices_function_type3(int_t, bool_t, real_t, real_t)
+        funtype = yapi.yices_function_type3(self.int_t, self.bool_t, self.real_t, self.real_t)
         ftystr = yapi.yices_type_to_string(funtype, 100, 80, 0)
         yapi.yices_pp_type_fd(1, funtype, 100, 80, 0)
         self.assertEqual(ftystr, '(-> int bool real real)')
         fun1 = define_const('fun1', funtype)
-        b1 = define_const('b1', bool_t)
-        i1 = define_const('i1', int_t)
-        r1 = define_const('r1', real_t)
+        define_const('b1', self.bool_t)
+        i1 = define_const('i1', self.int_t)
+        r1 = define_const('r1', self.real_t)
         assert_formula('(> (fun1 i1 b1 r1) (fun1 (+ i1 1) (not b1) (- r1 i1)))', self.ctx)
         self.assertEqual(yapi.yices_check_context(self.ctx, self.param), yapi.STATUS_SAT)
         mdl = yapi.yices_get_model(self.ctx, 1)
@@ -446,8 +444,6 @@ class TestModels(unittest.TestCase):
         self.assertEqual(val2.value, 8)
         self.assertEqual(val3.value, 8)
         yv1 = yapi.yval_t()
-        yv2 = yapi.yval_t()
-        yv3 = yapi.yval_t()
         ty1 = c_int32()
         self.assertEqual(yapi.yices_term_is_scalar(sc1), 1)
         sc1val = yapi.yices_get_value_as_term(mdl, sc1)
@@ -459,8 +455,8 @@ class TestModels(unittest.TestCase):
         self.assertEqual(val1.value, 9)
 
     def test_yval_numeric_models(self):
-        i1 = define_const('i1', int_t)
-        i2 = define_const('i2', int_t)
+        i1 = define_const('i1', self.int_t)
+        define_const('i2', self.int_t)
         assert_formula('(> i1 3)', self.ctx)
         assert_formula('(< i2 i1)', self.ctx)
         self.assertEqual(yapi.yices_check_context(self.ctx, self.param), yapi.STATUS_SAT)
@@ -521,21 +517,19 @@ class TestModels(unittest.TestCase):
 
     def test_model_from_map(self):
         bv_t = yapi.yices_bv_type(8)
-        i1 = define_const('i1', int_t)
-        r1 = define_const('r1', real_t)
+        i1 = define_const('i1', self.int_t)
+        r1 = define_const('r1', self.real_t)
         bv1 = define_const('bv1', bv_t)
         iconst1 = yapi.yices_int32(42)
         rconst1 = yapi.yices_rational32(13, 131)
         bvconst1 = yapi.yices_bvconst_int32(8, 134)
-        avar = yapi.make_term_array([i1, r1, bv1])
-        amap = yapi.make_term_array([i1, r1, bv1])
         mdl = yapi.yices_model_from_map(3, yapi.make_term_array([i1, r1, bv1]), yapi.make_term_array([iconst1, rconst1, bvconst1]))
         mdlstr = yapi.yices_model_to_string(mdl, 80, 100, 0)
         self.assertEqual(mdlstr, '(= i1 42)\n(= r1 13/131)\n(= bv1 0b10000110)')
         yapi.yices_free_model(mdl)
 
     def test_implicant(self):
-        i1 = define_const('i1', int_t)
+        i1 = define_const('i1', self.int_t)
         assert_formula('(and (> i1 2) (< i1 8) (/= i1 4))', self.ctx)
         self.assertEqual(yapi.yices_check_context(self.ctx, self.param), yapi.STATUS_SAT)
         mdl = yapi.yices_get_model(self.ctx, 1)

@@ -5,6 +5,9 @@ import unittest
 from yices.Types import Types
 from yices.Yices import Yices
 
+# pylint: disable=W0612
+# pylint: disable=R0914
+
 class TestTypes(unittest.TestCase):
 
     def setUp(self):

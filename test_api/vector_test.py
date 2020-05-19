@@ -18,6 +18,7 @@ from yices_api import (
     yices_reset_yval_vector
     )
 
+# pylint: disable=R0201
 
 class TestVector(unittest.TestCase):
 
@@ -26,7 +27,6 @@ class TestVector(unittest.TestCase):
 
     def tearDown(self):
         yices_exit()
-        pass
 
     def test_term_vector(self):
         term_v = term_vector_t()

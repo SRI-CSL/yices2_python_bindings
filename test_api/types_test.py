@@ -2,6 +2,9 @@ import unittest
 
 import yices_api as yapi
 
+
+# pylint: disable=R0914
+
 class TestTypes(unittest.TestCase):
 
     def setUp(self):
@@ -26,7 +29,7 @@ class TestTypes(unittest.TestCase):
         ta4 = yapi.make_type_array([bool_t, tup1_t, tup2_t, tup3_t])
         tup4_t = yapi.yices_tuple_type(4, ta4)
         fun1_t = yapi.yices_function_type1(int_t, bool_t)
-        fun2_t = yapi.yices_function_type2(real_t, bv_t, scal_t)
+        #fun2_t = yapi.yices_function_type2(real_t, bv_t, scal_t)
         fun3_t = yapi.yices_function_type3(tup1_t, tup2_t, tup3_t, fun1_t)
         fun4_t = yapi.yices_function_type(4, ta4, fun3_t)
 

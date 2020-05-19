@@ -2,7 +2,7 @@ import unittest
 
 import yices_api as yapi
 
-from yices_api import YicesAPIException
+#from yices_api import YicesAPIException
 
 
 class TestError(unittest.TestCase):

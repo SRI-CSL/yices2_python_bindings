@@ -2,7 +2,9 @@ import unittest
 
 import yices_api as yapi
 
-from yices_api import YicesAPIException
+#from yices_api import YicesAPIException
+
+# pylint: disable=R0914
 
 class TestContext(unittest.TestCase):
 
@@ -37,11 +39,11 @@ class TestContext(unittest.TestCase):
         cfg = yapi.yices_new_config()
         ctx = yapi.yices_new_context(cfg)
         stat = yapi.yices_context_status(ctx)
-        ret = yapi.yices_push(ctx)
-        ret = yapi.yices_pop(ctx)
+        yapi.yices_push(ctx)
+        yapi.yices_pop(ctx)
         yapi.yices_reset_context(ctx)
-        ret = yapi.yices_context_enable_option(ctx, "arith-elim")
-        ret = yapi.yices_context_disable_option(ctx, "arith-elim")
+        yapi.yices_context_enable_option(ctx, "arith-elim")
+        yapi.yices_context_disable_option(ctx, "arith-elim")
         stat = yapi.yices_context_status(ctx)
         self.assertEqual(stat, 0)
         yapi.yices_reset_context(ctx)

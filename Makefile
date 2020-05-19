@@ -63,10 +63,10 @@ endif
 
 lint: check_lint
 # for detecting just errors:
-	@ $(PYLINT) -E  yices_api.py yices/*.py test/*.py examples/sudoku/sudoku.py
+	@ $(PYLINT) -E  yices_api.py yices/*.py test/*.py test_api/*.py examples/sudoku/sudoku.py
 
 lint_all: check_lint
 # for detecting more than just errors:
-	@ $(PYLINT) --disable=missing-docstring --disable=global-statement --disable=duplicate-code --rcfile=.pylintrc yices_api.py yices/*.py examples/sudoku/*.py
+	@ $(PYLINT) --disable=missing-docstring --disable=global-statement --disable=duplicate-code --rcfile=.pylintrc yices_api.py yices/*.py test/*.py test_api/*.py examples/sudoku/*.py
 
 .PHONY: test lint lint check_lint

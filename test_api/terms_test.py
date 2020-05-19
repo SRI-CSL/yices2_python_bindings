@@ -1,9 +1,14 @@
 import unittest
 
+from ctypes import c_int32
+
 import yices_api as yapi
 
-from ctypes import (  c_int32, c_int64, pointer  )
 #import gmpy2
+
+# pylint: disable=R0914
+# pylint: disable=W0612
+# pylint: disable=R0915
 
 class TestTerms(unittest.TestCase):
 
@@ -208,14 +213,14 @@ class TestTerms(unittest.TestCase):
         pterm1 = yapi.yices_parse_term('42')
         self.assertEqual(pterm1, yapi.yices_int32(42))
         subst1 = yapi.yices_subst_term(2,
-                                  yapi.make_term_array([yapi.yices_new_variable(ptype1),yapi.yices_new_variable(ptype1)]),
-                                  yapi.make_term_array([yapi.yices_int32(2), yapi.yices_int32(3)]),
-                                  yapi.yices_int32(42))
+                                       yapi.make_term_array([yapi.yices_new_variable(ptype1),yapi.yices_new_variable(ptype1)]),
+                                       yapi.make_term_array([yapi.yices_int32(2), yapi.yices_int32(3)]),
+                                       yapi.yices_int32(42))
         substarr1 = yapi.yices_subst_term_array(2,
-                                           yapi.make_term_array([yapi.yices_new_variable(ptype1), yapi.yices_new_variable(ptype1)]),
-                                           yapi.make_term_array([yapi.yices_int32(2), yapi.yices_int32(3)]),
-                                           3,
-                                           yapi.make_term_array([yapi.yices_int32(2), yapi.yices_int32(3), yapi.yices_int32(7)]))
+                                                yapi.make_term_array([yapi.yices_new_variable(ptype1), yapi.yices_new_variable(ptype1)]),
+                                                yapi.make_term_array([yapi.yices_int32(2), yapi.yices_int32(3)]),
+                                                3,
+                                                yapi.make_term_array([yapi.yices_int32(2), yapi.yices_int32(3), yapi.yices_int32(7)]))
         settypename1 = yapi.yices_set_type_name(ptype1, 'I')
         self.assertEqual(settypename1, 0)
         settermname1 = yapi.yices_set_term_name(pterm1, 'answer')

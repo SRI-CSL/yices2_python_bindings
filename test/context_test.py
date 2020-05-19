@@ -1,9 +1,7 @@
-import sys
 import unittest
 
 from yices.Config import Config
 from yices.Context import Context
-from yices.Model import Model
 from yices.Parameters import Parameters
 from yices.Status import Status
 from yices.Types import Types
@@ -11,13 +9,11 @@ from yices.Terms import Terms
 from yices.YicesException import YicesException
 from yices.Yices import Yices
 
+# pylint: disable=R0914
+# pylint: disable=W0612
 
 def assertRaisesRegex(cxt, e, s):
-    if sys.version_info < (3,):
-        return cxt.assertRaisesRegexp(e, s)
-    else:
-        return cxt.assertRaisesRegex(e, s)
-
+    return cxt.assertRaisesRegex(e, s)
 
 class TestContext(unittest.TestCase):
 

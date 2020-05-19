@@ -1,4 +1,3 @@
-import sys
 import unittest
 
 from yices.Terms import Terms
@@ -7,10 +6,7 @@ from yices.Yices import Yices
 from yices.YicesException import YicesException
 
 def assertRaisesRegex(cxt, e, s):
-    if sys.version_info < (3,):
-        return cxt.assertRaisesRegexp(e, s)
-    else:
-        return cxt.assertRaisesRegex(e, s)
+    return cxt.assertRaisesRegex(e, s)
 
 
 class TestError(unittest.TestCase):
