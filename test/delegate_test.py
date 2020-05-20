@@ -34,7 +34,7 @@ def notify(message):
     sys.stdout.flush()
 
 
-class TestError(unittest.TestCase):
+class TestDelegates(unittest.TestCase):
 
     def setUp(self):
         Yices.init()
