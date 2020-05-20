@@ -102,8 +102,7 @@ def yices_python_info_main():
 # 1.1.0    -  2.6.0    -  10/8/2018      -  major changes (addition of pythonesque API)        #
 # 1.1.1    -  2.6.0    -  10/9/2018      -  tweaks and finish the pythonesque API              #
 # 1.1.2    -  2.6.0    -  11/26/2018     -  ctype string conversions for python 3              #
-# 1.1.3    -  2.6.2    -  05/14/2020     -  new API routines  (not sure where 2.6.1 was?)      #
-# 1.1.4    -  2.6.2    -  05/20/2020     -  debugged version of 1.1.3                          #
+# 1.1.3    -  2.6.2    -  05/20/2020     -  new API routines  (not sure where 2.6.1 was?)      #
 ################################################################################################
 
 #
@@ -111,7 +110,7 @@ def yices_python_info_main():
 # while the bindings are moving so fast we should keep them separate.
 #
 #
-yices_python_version = '1.1.4'
+yices_python_version = '1.1.3'
 
 #
 # 1.0.1 needs yices_has_mcsat
