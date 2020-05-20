@@ -66,6 +66,13 @@ class TestDimacs(unittest.TestCase):
             else:
                 self.assertEqual(status in [Status.SAT, Status.UNSAT], True)
 
+            term = Terms.yand(terms)
+            file_ok_c, status_c = Dimacs.export_formula(term, filename, simplify)
+
+            notify(f'Round 1: {file_ok_c}, {Status.name(status_c)} = export@{i}({term}, {filename}, {simplify})\n')
+
+
+
         # second round, simplify the CNF
         for i in range(1, bound):
             simplify = True
@@ -83,6 +90,14 @@ class TestDimacs(unittest.TestCase):
                 self.assertEqual(os.path.exists(filename), True)
             else:
                 self.assertEqual(status in [Status.SAT, Status.UNSAT], True)
+
+            term = Terms.yand(terms)
+            file_ok_c, status_c = Dimacs.export_formula(term, filename, simplify)
+
+            notify(f'Round 2: {file_ok_c}, {Status.name(status_c)} = export@{i}({term}, {filename}, {simplify})\n')
+
+            self.assertEqual(status_c, simplified[i])
+
 
         # third round check the results
         for i in range(1, bound):
