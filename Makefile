@@ -24,7 +24,7 @@ endif
 
 
 check: check_pytest
-	$(PYTEST) test_api test
+	$(PYTEST) -rP test_api test
 
 
 #local editable install for developing

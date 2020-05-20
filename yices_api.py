@@ -4680,14 +4680,14 @@ def yices_has_delegate(delegate):
 libyices.yices_check_formula.restype = smt_status_t
 libyices.yices_check_formula.argtypes = [term_t, c_char_p, POINTER(model_t), c_char_p]
 def yices_check_formula(f, logic, model, delegate):
-    return libyices.yices_check_formula(f, str2bytes(logic), pointer(model), str2bytes(delegate))
+    return libyices.yices_check_formula(f, str2bytes(logic), model, str2bytes(delegate))
 
 # new in 2.6.2
 # smt_status_t yices_check_formulas(const term_t f[], uint32_t n, const char *logic, model_t **model, const char *delegate)
 libyices.yices_check_formulas.restype = smt_status_t
 libyices.yices_check_formulas.argtypes = [POINTER(term_t), c_uint32, c_char_p, POINTER(model_t), c_char_p]
 def yices_check_formulas(f, n, logic, model, delegate):
-    return libyices.yices_check_formulas(f, n, str2bytes(logic), pointer(model), str2bytes(delegate))
+    return libyices.yices_check_formulas(f, n, str2bytes(logic), model, str2bytes(delegate))
 
 # new in 2.6.2
 # int32_t yices_export_formula_to_dimacs(term_t f, const char *filename, int32_t simplify_cnf, smt_status_t *status)

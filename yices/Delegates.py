@@ -31,7 +31,7 @@ class Delegates:
             model = pointer(yapi.model_t(model))
         status = yapi.yices_check_formula(f, logic, model, delegate)
         if status == Status.SAT and model_array is not None:
-            model_array[0] = Model(model.contents)
+            model_array.append(Model(model.contents))
         return status
 
 
@@ -49,5 +49,5 @@ class Delegates:
             model = pointer(yapi.model_t(model))
         status = yapi.yices_check_formulas(tarray, len(term_array), logic, model, delegate)
         if status == Status.SAT and model_array is not None:
-            model_array[0] = Model(model.contents)
+            model_array.append(Model(model.contents))
         return status
