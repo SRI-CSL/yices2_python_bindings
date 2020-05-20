@@ -33,13 +33,14 @@ This will install two python packages and a binary.
 
   ```
   > yices_python_info
-  Python Yices Bindings. Version 1.1.0
-  Yices library loaded from /usr/local/lib/libyices.dylib
-  Version: 2.6.0
-  Architecture: x86_64-apple-darwin17.6.0
-  Build mode: release
-  Build date: 2018-07-02
-  MCSat support: 1
+ Python Yices Bindings. Version 1.1.3
+ Yices library loaded from /usr/local/lib/libyices.dylib
+ Version: 2.6.2
+ Architecture: x86_64-apple-darwin18.7.0 
+ Build mode: debug
+ Build date: 2020-04-27
+ MCSat support: yes
+ Thread safe: no
   ```
 
 ##  Examples
