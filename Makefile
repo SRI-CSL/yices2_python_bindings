@@ -7,12 +7,14 @@ help:
 	@echo ''
 	@echo 'Here are the targets:'
 	@echo ''
-	@echo 'To test                :    "make check"'
-	@echo 'To develop python      :    "make develop"'
-	@echo 'To install             :    "make install"'
-	@echo 'To publish             :    "make publish"'
-	@echo 'To pylint (errors)     :    "make lint"'
-	@echo 'To pylint (all)        :    "make lint_all"'
+	@echo 'To test                         :    "make check"'
+	@echo 'To develop python               :    "make develop"'
+	@echo 'To install                      :    "make install"'
+	@echo 'To publish                      :    "make publish"'
+	@echo 'To pylint (errors)              :    "make lint"'
+	@echo 'To pylint (all)                 :    "make lint_all"'
+	@echo ''
+	@echo 'To check for missing docstrings :    "make doc_check"'
 	@echo ''
 
 PYTEST ?= $(shell which pytest)
@@ -69,4 +71,8 @@ lint_all: check_lint
 # for detecting more than just errors:
 	@ $(PYLINT) --disable=missing-docstring --disable=global-statement --disable=duplicate-code --rcfile=.pylintrc yices_api.py yices/*.py test/*.py test_api/*.py examples/sudoku/*.py
 
-.PHONY: test lint lint check_lint
+doc_check:
+# a target to help me add docstrings where they are required.
+	@ $(PYLINT) --disable=global-statement --disable=duplicate-code --rcfile=.pylintrc yices_api.py yices/*.py
+
+.PHONY: test lint lint_all check_lint doc_check

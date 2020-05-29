@@ -1,3 +1,4 @@
+"""Status wraps the smt_status_t enum, that enumerates a context's possible states."""
 import yices_api as yapi
 
 from .YicesException import YicesException
@@ -15,6 +16,7 @@ class Status:
 
     @staticmethod
     def name(status):
+        """given a status returns its name, a string describing it."""
         if status == Status.IDLE:
             return 'IDLE'
         if status == Status.SEARCHING:

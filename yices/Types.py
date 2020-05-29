@@ -1,3 +1,4 @@
+""" The Types class provides Pythonesque static methods for constructing and manipulating yices' types."""
 import yices_api as yapi
 
 from .YicesException import YicesException

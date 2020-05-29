@@ -1,3 +1,7 @@
+"""Yices allows one to bit blast and then export the results out to a file in the DIMACS format.
+
+This class encapsulates this feature."""
+
 from ctypes import pointer
 
 import yices_api as yapi

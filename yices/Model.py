@@ -1,3 +1,13 @@
+"""The Model class wraps the Yices model_t structure.
+
+If a context is satisfiable, Yices can build a model of the context’s
+assertions. Functions are provided to extract the values of terms in a
+model. Atomic values (e.g., integer or bitvector constants) can be
+obtained directly. Non-atomic values—that is, tuples or functions—are
+represented internally as nodes in a DAG. The API includes functions
+to explore this DAG and get the values of tuples or functions.
+"""
+
 import ctypes
 
 from fractions import Fraction

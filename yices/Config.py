@@ -1,3 +1,4 @@
+"""Config is a Pythonesque wrapper around a yices2 ctx_config_t object. Used to configure Contexts."""
 import yices_api as yapi
 
 from .YicesException import YicesException

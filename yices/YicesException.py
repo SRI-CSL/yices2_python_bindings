@@ -1,3 +1,5 @@
+"""YicesException is the base class for exceptions from the Pythonesque Yices Package."""
+
 import yices_api as yapi
 
 

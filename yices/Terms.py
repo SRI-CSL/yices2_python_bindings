@@ -1,3 +1,4 @@
+""" The Terms class provides Pythonesque static methods for constructing and manipulating yices' terms."""
 import ctypes
 import yices_api as yapi
 

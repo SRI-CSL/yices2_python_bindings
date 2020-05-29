@@ -1,3 +1,9 @@
+"""The Parameters class wraps the yicesparameter record structure param_t .
+
+A parameter record stores search parameters and options that control the heuristics used by a solver.
+"""
+
+
 import yices_api as yapi
 
 from .YicesException import YicesException

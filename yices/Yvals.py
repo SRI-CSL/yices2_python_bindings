@@ -1,3 +1,4 @@
+"""YVals is the Python representation of the yval_t enum, the node tags of value DAGS is a Model."""
 import yices_api as yapi
 
 

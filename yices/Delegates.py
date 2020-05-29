@@ -1,3 +1,7 @@
+"""Yices has the ability to use third-party SAT solvers as backends to the bit-vector solvers.
+
+The Delegate class encapulates this feature of the API."""
+
 from ctypes import pointer
 
 import yices_api as yapi

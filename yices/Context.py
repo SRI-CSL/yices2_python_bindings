@@ -1,3 +1,9 @@
+"""Contexts wrap the important yices2 context_t structure.
+
+A context contains one or more solvers and supports operations for
+manipulating assertions and for checking whether these assertions are
+satisfiable. If they are, a model can be constructed from the context."""
+
 import yices_api as yapi
 
 from .YicesException import YicesException

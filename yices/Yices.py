@@ -1,3 +1,4 @@
+"""Yices is the top level interface with the yices library."""
 import yices_api as yapi
 
 class Yices:

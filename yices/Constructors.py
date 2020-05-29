@@ -1,3 +1,4 @@
+"""Constructor replicates the yices2 term_constructor_t enum."""
 import yices_api as yapi
 
 

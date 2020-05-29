@@ -1,3 +1,4 @@
+"""This module defines the wild card imports from the yices package."""
 import yices_api as yapi
 
 # iam: this has to go before the imports below to ensure that the

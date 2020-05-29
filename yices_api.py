@@ -179,6 +179,7 @@ def catch_uninitialized():
 #########################################
 
 def guess_library_name(package_name):
+    """attempts to guess the name of the yices2 library."""
     lib_basename = 'lib' + package_name
     extension = '.so'
     if sys.platform == 'win32':
@@ -214,12 +215,10 @@ def _loadYicesFromPath(path, library):
         return False
 
 def loadYices():
-
+    """attempts to load the yices library, relying on CDLL, and using /usr/local/lib as a backup plan."""
     global libyicespath
     global libyices
-
     error_msg = "Yices dynamic library not found."
-
     if _loadYicesFromPath(None, libyicespath):
         return
     if _loadYicesFromPath('/usr/local/lib', libyicespath):
@@ -232,26 +231,17 @@ def loadYices():
 loadYices()
 
 ###########################
-#  2.7 to 3.6  FIX
+#  Utilities
 ###########################
 
 
 def str2bytes(s):
-    if s is not None:
-        return str(s).encode()
-    return None
+    """converts its argument into a bytes object using the default utf-8 encoding, or None if given None."""
+    return str(s).encode() if s is not None else None
 
 def bytes2str(b):
-    if b is not None:
-        return b.decode()
-    return None
-
-def isstr(s):
-    return isinstance(s, str)
-
-def isinteger(i):
-    return isinstance(i, int)
-
+    """converts the bytes into a string using utf-8, or None if given None."""
+    return b.decode() if b is not None else None
 
 ###########################
 #  VERSION AND RELATIVES  #
@@ -356,7 +346,12 @@ def hasGMP():
 # int32_t max (2^31 - 1)
 MAX_INT32_SIZE = 2147483647
 
-# From yices_types.h
+#########################################
+#                                       #
+#  Yices2's fundamental types.          #
+#  From yices_types.h                   #
+#                                       #
+#########################################
 
 error_code_t = c_uint32 # an enum type, in yices_types.h
 term_t = c_int32
@@ -5393,12 +5388,12 @@ def yices_set_mpz(vmpz, val):  # pylint: disable=inconsistent-return-statements
     """Sets the value of an existing mpz object."""
     if not hasGMP():
         return False
-    if isstr(val):
+    if isinstance(val, str):
         ret = libgmp.__gmpz_set_str(byref(vmpz), val, 0)
         if ret == -1:
             raise TypeError('set_mpz: val is an invalid integer string: '
                             'should be decimal or start with 0x (hex), 0b (binary), or 0 (octal)')
-    elif isinteger(val):
+    elif isinstance(val, int):
         libgmp.__gmpz_set_si(byref(vmpz), val)
         return True
     else:
@@ -5409,16 +5404,16 @@ def yices_set_mpq(vmpq, num, den):
     """Sets the value of an existing mpz object."""
     if not hasGMP():
         return False
-    if isstr(num):
-        if isstr(den):
+    if isinstance(num, str):
+        if isinstance(den, str):
             ret = libgmp.__gmpq_set_str(byref(vmpq), num +'/'+ den, 0)
             if ret == -1:
                 raise TypeError('set_mpq: num or den is an invalid integer string: '
                                 'should be decimal or start with 0x (hex), 0b (binary), or 0 (octal)')
         else:
             raise TypeError('set_mpq: num and den should both be strings or integers')
-    elif isinteger(num):
-        if isinteger(den):
+    elif isinstance(num, int):
+        if isinstance(den, int):
             libgmp.__gmpq_set_si(byref(vmpq), num, den)
         else:
             raise TypeError('set_mpq: num and den should both be strings or integers')
