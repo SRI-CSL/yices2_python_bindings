@@ -110,6 +110,34 @@ class Rules(Enum):
         return [Rules.BETWEEN_1_AND_9]
 
 
+class Cores:
+
+    def __init__(self, univ):
+        self.core_map = {}
+        self.universe = univ
+        self.maximum = len(univ) + 1
+
+    def add(self, i, j, val, core):
+        key = len(core)
+        entry = []
+        if key not in self.core_map:
+            self.core_map[key] = entry
+        else:
+            entry = self.core_map[key]
+        entry.append(tuple([i, j, val, core]))
+
+    def show(self, count):
+        counter = 0
+        for i in range(self.maximum + 1):
+            if i in self.core_map:
+                vec = self.core_map[i]
+                for v in vec: # pylint: disable=C0103
+                    print(f'OK: {v[0]} {v[1]} {v[2]}   {len(v[3])} / {self.maximum}')
+                counter += 1
+                if counter >= count:
+                    return
+
+
 class Solver:
 
     def __init__(self, pzl):
@@ -217,21 +245,22 @@ class Solver:
             model.dispose()
         else:
             core = context.get_unsat_core()
-            print(f'OK: {i} {j} {val}   {len(core)} / {len(self.duplicate_rules)}')
-
-
-        #self.assert_rules(context)
+            #print(f'OK: {i} {j} {val}   {len(core)} / {len(self.duplicate_rules)}')
         context.dispose()
-
+        return core
 
     def show_cores(self, sln):
+        cores = Cores(self.duplicate_rules)
         if sln is not None:
             for i in range(9):
                 for j in range(9):
                     slot = self.puzzle.get_slot(i, j)
                     if slot is None:
                         ans = sln.get_slot(i, j)
-                        self.investigate(i, j, ans)
+                        core = self.investigate(i, j, ans)
+                        cores.add(i, j, ans, core)
+        print('\nCores:\n')
+        cores.show(4)
 
 
 puzzle = Puzzle(puzzle_1)
@@ -251,4 +280,5 @@ solver.show_cores(solution)
 #</experimental zone>
 
 
+print('\nCensus:\n')
 Yices.exit(True)
