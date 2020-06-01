@@ -1,6 +1,8 @@
 """Yices is the top level interface with the yices library."""
 import yices_api as yapi
 
+from .Census import Census
+
 class Yices:
 
     version = yapi.yices_version
@@ -67,8 +69,10 @@ class Yices:
         return yapi.yices_is_inited()
 
     @staticmethod
-    def exit():
+    def exit(census=False):
         """Deletes all the internal data structure, must be called on exiting to prevent leaks."""
+        if census:
+            print(Census.dump())
         yapi.yices_exit()
 
     @staticmethod

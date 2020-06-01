@@ -9,16 +9,18 @@ import yices_api as yapi
 from .YicesException import YicesException
 
 from .Status import Status
+from .Census import Census
 
 class Context:
 
+    population = 0
 
     def __init__(self, config=None):
         cfg = config.config if config else None
         self.context = yapi.yices_new_context(cfg)
         if self.context == -1:
             raise YicesException('yices_new_context')
-
+        Census.contexts += 1
 
     # option is a string
     def enable_option(self, option):
@@ -106,7 +108,7 @@ class Context:
         a = yapi.make_term_array(python_array_or_tuple)
         status = yapi.yices_check_context_with_assumptions(self.context, params, alen, a)
         if status == Status.ERROR:
-            raise YicesException('yices_pop')
+            raise YicesException('check_context_with_assumptions')
         return status
 
 
@@ -126,3 +128,4 @@ class Context:
     def dispose(self):
         yapi.yices_free_context(self.context)
         self.context = None
+        Census.contexts -= 1

@@ -16,6 +16,7 @@ import yices_api as yapi
 
 from .Yvals import Yval
 from .YicesException import YicesException
+from .Census import Census
 
 
 class Model:
@@ -27,6 +28,7 @@ class Model:
 
     def __init__(self, model=None):
         self.model =  model
+        Census.models += 1
 
 
     @staticmethod
@@ -61,6 +63,7 @@ class Model:
         assert self.model is not None
         yapi.yices_free_model(self.model)
         self.model = None
+        Census.models -= 1
 
 
     def get_bool_value(self, term):
