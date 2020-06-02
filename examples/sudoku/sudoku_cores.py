@@ -33,13 +33,83 @@ def make_constants():
         constants[i] = Terms.integer(i)
     return constants
 
-C = make_constants()
-one = C[1]
-nine = C[9]
+#make the variables that we will need
+def make_variables():
+    variables = make_grid()
+    for i in range(9):
+        for j in range(9):
+            variables[i][j] = Terms.new_uninterpreted_term(int_t)
+    return variables
 
-# x is between 1 and 9
-def between_1_and_9(x):
-    return Terms.yand([Terms.arith_leq_atom(one, x), Terms.arith_leq_atom(x, nine)])
+def make_context():
+    config = Config()
+    config.default_config_for_logic("QF_LIA")
+    context = Context(config)
+    config.dispose()
+    return context
+
+
+def subsquare(row, column):
+    rname = { 0: 'Top', 1: 'Middle', 2: 'Bottom'}
+    cname = { 0: 'left', 1: 'center', 2: 'right'}
+    return f'{rname[row]}-{cname[column]}'
+
+
+class Syntax:
+
+    def __init__(self):
+        self.constants = make_constants()
+        self.one = self.constants[1]
+        self.nine = self.constants[9]
+        self.variables = make_variables()
+
+        # maps non-trivial rules to an informative string describing them
+        self.explanation = {}
+        # dividing the rules into trivial and non trivial is used in getting unsat cores (of non-trivial rules)
+        self.trivial_rules = self.make_trivial_rules()
+        self.duplicate_rules = self.make_duplicate_rules()
+        self.all_rules = self.trivial_rules.copy()
+        self.all_rules.extend(self.duplicate_rules)
+
+
+    def var(self, i, j):
+        return self.variables[i][j]
+
+    # x is between 1 and 9
+    def between_1_and_9(self, x):
+        return Terms.yand([Terms.arith_leq_atom(self.one, x), Terms.arith_leq_atom(x, self.nine)])
+
+
+    def make_trivial_rules(self):
+        rules = []
+        # Every variable is between 1 and 9 inclusive
+        for i in range(9):
+            for j in range(9):
+                rules.append(self.between_1_and_9(self.var(i, j)))
+        return rules
+
+
+    def make_duplicate_rules(self):
+        rules = []
+        # All elements in a row must be distinct
+        for i in range(9):
+            rule = Terms.distinct([self.var(i, j) for j in range(9)])
+            self.explanation[rule] = f'Row {i + 1} cannot contain duplicates'
+            rules.append(rule)
+        # All elements in a column must be distinct
+        for i in range(9):
+            rule = Terms.distinct([self.var(j, i) for j in range(9)]) # pylint: disable=W1114
+            self.explanation[rule] = f'Column {i + 1} cannot contain duplicates'
+            rules.append(rule)
+        # All elements in each 3x3 square must be distinct
+        for row in range(3):
+            for column in range(3):
+                rule = Terms.distinct([self.var(i + 3 * row, j + 3 * column) for i in range(3) for j in range(3)])
+                self.explanation[rule] = f'{subsquare(row,column)} subsquare cannot contain duplicates'
+                rules.append(rule)
+        return rules
+
+
 
 
 puzzle_1 = [
@@ -89,33 +159,13 @@ class Puzzle:
 
 
 
-class Rules(Enum):
-    BETWEEN_1_AND_9 = auto()
-    ROWS_HAVE_NO_DUPLICATES = auto()
-    COLUMNS_HAVE_NO_DUPLICATES = auto()
-    SUBSQUARES_HAVE_NO_DUPLICATES = auto()
-
-    @staticmethod
-    def all_rules():
-        return tuple(Rules)
-
-    @staticmethod
-    def duplicate_rules():
-        rlist = list(Rules)
-        rlist.remove(Rules.BETWEEN_1_AND_9)
-        return tuple(rlist)
-
-    @staticmethod
-    def numeral_rules():
-        return [Rules.BETWEEN_1_AND_9]
 
 
 class Cores:
 
-    def __init__(self, univ):
+    def __init__(self, card):
         self.core_map = {}
-        self.universe = univ
-        self.maximum = len(univ) + 1
+        self.maximum = card
 
     def add(self, i, j, val, core):
         key = len(core)
@@ -126,56 +176,37 @@ class Cores:
             entry = self.core_map[key]
         entry.append(tuple([i, j, val, core]))
 
-    def show(self, count):
+    def least(self, count):
+        retval = []
         counter = 0
         for i in range(self.maximum + 1):
             if i in self.core_map:
                 vec = self.core_map[i]
                 for v in vec: # pylint: disable=C0103
+                    retval.append(v)
                     print(f'OK: {v[0]} {v[1]} {v[2]}   {len(v[3])} / {self.maximum}')
-                counter += 1
-                if counter >= count:
-                    return
-
+                    counter += 1
+                    if counter >= count:
+                        return retval
+        return retval
 
 class Solver:
 
     def __init__(self, pzl):
         self.puzzle = pzl
-        self.variables = make_grid()
-        for i in range(9):
-            for j in range(9):
-                self.variables[i][j] = Terms.new_uninterpreted_term(int_t)
-        self.all_rules = self.make_rules()
-        self.duplicate_rules = self.make_rules(Rules.duplicate_rules())
-        self.numeral_rules = self.make_rules(Rules.numeral_rules())
+
+        # isolate all the syntax in one place
+        self.syntax = Syntax()
+
+        self.variables = self.syntax.variables
+        self.C = self.syntax.constants
+
+        self.duplicate_rules = self.syntax.duplicate_rules
+        self.trivial_rules = self.syntax.trivial_rules
+        self.all_rules = self.syntax.all_rules
 
     def var(self, i, j):
         return self.variables[i][j]
-
-
-    # make the rules of the game as a list of yices terms.
-    def make_rules(self, rules_wanted=Rules.all_rules()):
-        rules = []
-        # Every element is between 1 and 9
-        if Rules.BETWEEN_1_AND_9 in rules_wanted:
-            for i in range(9):
-                for j in range(9):
-                    rules.append(between_1_and_9(self.var(i, j)))
-        # All elements in a row must be distinct
-        if Rules.ROWS_HAVE_NO_DUPLICATES in rules_wanted:
-            for i in range(9):
-                rules.append(Terms.distinct([self.var(i, j) for j in range(9)]))
-        # All elements in a column must be distinct
-        if Rules.COLUMNS_HAVE_NO_DUPLICATES in rules_wanted:
-            for i in range(9):
-                rules.append(Terms.distinct([self.var(j, i) for j in range(9)])) # pylint: disable=W1114
-        # All elements in each 3x3 square must be distinct
-        if Rules.SUBSQUARES_HAVE_NO_DUPLICATES in rules_wanted:
-            for k in range(3):
-                for l in range(3): # pylint: disable=C0103
-                    rules.append(Terms.distinct([self.var(i + 3 * l, j + 3 * k) for i in range(3) for j in range(3)]))
-        return rules
 
     def assert_rules(self, ctx):
         ctx.assert_formulas(self.all_rules)
@@ -184,12 +215,12 @@ class Solver:
     def assert_value(self, ctx, i, j, val):
         if not (0 <= i <= 8 and 0 <= j <= 8 and 1 <= val <= 9):
             raise Exception(f'Index error: {i} {j} {val}')
-        ctx.assert_formula(Terms.arith_eq_atom(self.var(i,j), C[val]))
+        ctx.assert_formula(Terms.arith_eq_atom(self.var(i,j), self.C[val]))
 
     def assert_not_value(self, ctx, i, j, val):
         if not (0 <= i <= 8 and 0 <= j <= 8 and 1 <= val <= 9):
             raise Exception(f'Index error: {i} {j} {val}')
-        ctx.assert_formula(Terms.arith_neq_atom(self.var(i,j), C[val]))
+        ctx.assert_formula(Terms.arith_neq_atom(self.var(i,j), self.C[val]))
 
 
     def assert_puzzle(self, ctx):
@@ -209,10 +240,7 @@ class Solver:
         return Puzzle(matrix)
 
     def solve(self):
-        config = Config()
-        config.default_config_for_logic("QF_LIA")
-        context = Context(config)
-        config.dispose()
+        context = make_context()
         self.assert_rules(context)
         self.assert_puzzle(context)
         smt_stat = context.check_context(None)
@@ -229,13 +257,10 @@ class Solver:
         """We look at the unsat core of asserting self.var(i, j) != val (val is assumed to be the unique solution)."""
         if not (0 <= i <= 8 and 0 <= j <= 8 and 1 <= val <= 9):
             raise Exception(f'Index error: {i} {j} {val}')
-        config = Config()
-        config.default_config_for_logic("QF_LIA")
-        context = Context(config)
-        config.dispose()
+        context = make_context()
         self.assert_puzzle(context)
         self.assert_not_value(context, i, j, val)
-        context.assert_formulas(self.numeral_rules)
+        context.assert_formulas(self.trivial_rules)
         smt_stat = context.check_context_with_assumptions(None, self.duplicate_rules)
         if smt_stat != Status.UNSAT:
             print(f'Error: {i} {j} {val} - not UNSAT: {Status.name(smt_stat)}')
@@ -245,12 +270,12 @@ class Solver:
             model.dispose()
         else:
             core = context.get_unsat_core()
-            #print(f'OK: {i} {j} {val}   {len(core)} / {len(self.duplicate_rules)}')
+            #print(f'Before: {i} {j} {val}   {len(core)} / {len(self.duplicate_rules)}')
         context.dispose()
         return core
 
-    def show_cores(self, sln):
-        cores = Cores(self.duplicate_rules)
+    def filter_cores(self, sln):
+        cores = Cores(len(self.duplicate_rules))
         if sln is not None:
             for i in range(9):
                 for j in range(9):
@@ -260,7 +285,30 @@ class Solver:
                         core = self.investigate(i, j, ans)
                         cores.add(i, j, ans, core)
         print('\nCores:\n')
-        cores.show(4)
+        smallest = cores.least(5)
+        filtered = Cores(len(self.duplicate_rules))
+        for core in smallest:
+            ncore = self.filter_core(core)
+            filtered.add(*ncore)
+        print('\nFiltered Cores:\n')
+        smallest = filtered.least(5)
+        return smallest
+
+    def filter_core(self, core):
+        i, j, val, terms = core
+        context = make_context()
+        self.assert_puzzle(context)
+        self.assert_not_value(context, i, j, val)
+        context.assert_formulas(self.trivial_rules)
+        filtered = terms.copy()
+        for term in terms:
+            filtered.remove(term)
+            smt_stat = context.check_context_with_assumptions(None, filtered)
+            if smt_stat != Status.UNSAT:
+                filtered.append(term)
+        #print(f'Original: {len(terms)} Filtered: {len(filtered)}')
+        context.dispose()
+        return (i, j, val, filtered)
 
 
 puzzle = Puzzle(puzzle_1)
@@ -276,7 +324,12 @@ if solution is not None:
     solution.pprint()
 
 #<experimental zone>
-solver.show_cores(solution)
+simplest = solver.filter_cores(solution)
+for core in simplest:
+    i, j, val, terms = core
+    print(f'[{i}, {j}] = {val} is forced by the following rules:')
+    for term in terms:
+        print(f'\t{solver.syntax.explanation[term]}')
 #</experimental zone>
 
 
