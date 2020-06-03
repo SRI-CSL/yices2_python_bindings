@@ -1,7 +1,5 @@
 #!/usr/bin/env python
 
-from enum import Enum, auto
-
 from yices.Types import Types
 
 from yices.Terms import Terms
@@ -42,12 +40,12 @@ def make_variables():
     return variables
 
 def make_context():
-    config = Config()
-    config.default_config_for_logic("QF_LIA")
-    context = Context(config)
-    config.dispose()
-    return context
-
+    #config = Config()
+    #config.default_config_for_logic("QF_LIA")
+    #context = Context(config)
+    #config.dispose()
+    #return context
+    return Context()
 
 def subsquare(row, column):
     rname = { 0: 'Top', 1: 'Middle', 2: 'Bottom'}
@@ -59,8 +57,6 @@ class Syntax:
 
     def __init__(self):
         self.constants = make_constants()
-        self.one = self.constants[1]
-        self.nine = self.constants[9]
         self.variables = make_variables()
 
         # maps non-trivial rules to an informative string describing them
@@ -77,8 +73,7 @@ class Syntax:
 
     # x is between 1 and 9
     def between_1_and_9(self, x):
-        return Terms.yand([Terms.arith_leq_atom(self.one, x), Terms.arith_leq_atom(x, self.nine)])
-
+        return Terms.yor([Terms.eq(x, self.constants[i+1]) for i in range(9)])
 
     def make_trivial_rules(self):
         rules = []
@@ -199,7 +194,7 @@ class Solver:
         self.syntax = Syntax()
 
         self.variables = self.syntax.variables
-        self.C = self.syntax.constants
+        self.constants = self.syntax.constants
 
         self.duplicate_rules = self.syntax.duplicate_rules
         self.trivial_rules = self.syntax.trivial_rules
@@ -215,12 +210,12 @@ class Solver:
     def assert_value(self, ctx, i, j, val):
         if not (0 <= i <= 8 and 0 <= j <= 8 and 1 <= val <= 9):
             raise Exception(f'Index error: {i} {j} {val}')
-        ctx.assert_formula(Terms.arith_eq_atom(self.var(i,j), self.C[val]))
+        ctx.assert_formula(Terms.arith_eq_atom(self.var(i,j), self.constants[val]))
 
     def assert_not_value(self, ctx, i, j, val):
         if not (0 <= i <= 8 and 0 <= j <= 8 and 1 <= val <= 9):
             raise Exception(f'Index error: {i} {j} {val}')
-        ctx.assert_formula(Terms.arith_neq_atom(self.var(i,j), self.C[val]))
+        ctx.assert_formula(Terms.arith_neq_atom(self.var(i,j), self.constants[val]))
 
 
     def assert_puzzle(self, ctx):
@@ -311,6 +306,14 @@ class Solver:
         return (i, j, val, filtered)
 
 
+    def show_hints(self, cores):
+        for core in cores:
+            i, j, val, terms = core
+            print(f'[{i}, {j}] = {val} is forced by the following rules:')
+            for term in terms:
+                print(f'\t{self.syntax.explanation[term]}')
+
+
 puzzle = Puzzle(puzzle_1)
 
 puzzle.pprint()
@@ -325,11 +328,7 @@ if solution is not None:
 
 #<experimental zone>
 simplest = solver.filter_cores(solution)
-for core in simplest:
-    i, j, val, terms = core
-    print(f'[{i}, {j}] = {val} is forced by the following rules:')
-    for term in terms:
-        print(f'\t{solver.syntax.explanation[term]}')
+solver.show_hints(simplest)
 #</experimental zone>
 
 
