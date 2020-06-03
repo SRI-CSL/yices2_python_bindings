@@ -39,14 +39,6 @@ def make_variables():
             variables[i][j] = Terms.new_uninterpreted_term(int_t)
     return variables
 
-def make_context():
-    #config = Config()
-    #config.default_config_for_logic("QF_LIA")
-    #context = Context(config)
-    #config.dispose()
-    #return context
-    return Context()
-
 def subsquare(row, column):
     rname = { 0: 'Top', 1: 'Middle', 2: 'Bottom'}
     cname = { 0: 'left', 1: 'center', 2: 'right'}
@@ -235,7 +227,7 @@ class Solver:
         return Puzzle(matrix)
 
     def solve(self):
-        context = make_context()
+        context = Context()
         self.assert_rules(context)
         self.assert_puzzle(context)
         smt_stat = context.check_context(None)
@@ -252,7 +244,7 @@ class Solver:
         """We look at the unsat core of asserting self.var(i, j) != val (val is assumed to be the unique solution)."""
         if not (0 <= i <= 8 and 0 <= j <= 8 and 1 <= val <= 9):
             raise Exception(f'Index error: {i} {j} {val}')
-        context = make_context()
+        context = Context()
         self.assert_puzzle(context)
         self.assert_not_value(context, i, j, val)
         context.assert_formulas(self.trivial_rules)
@@ -265,7 +257,7 @@ class Solver:
             model.dispose()
         else:
             core = context.get_unsat_core()
-            #print(f'Before: {i} {j} {val}   {len(core)} / {len(self.duplicate_rules)}')
+            print(f'Core: {i} {j} {val}   {len(core)} / {len(self.duplicate_rules)}')
         context.dispose()
         return core
 
@@ -291,7 +283,7 @@ class Solver:
 
     def filter_core(self, core):
         i, j, val, terms = core
-        context = make_context()
+        context = Context()
         self.assert_puzzle(context)
         self.assert_not_value(context, i, j, val)
         context.assert_formulas(self.trivial_rules)
@@ -332,5 +324,5 @@ solver.show_hints(simplest)
 #</experimental zone>
 
 
-print('\nCensus:\n')
+print('\nCensus:')
 Yices.exit(True)
