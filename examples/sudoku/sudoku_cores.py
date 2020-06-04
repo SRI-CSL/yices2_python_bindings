@@ -115,17 +115,32 @@ extreme_4 = [
     [ 0, 8, 0, 9, 0, 0, 0, 0, 1],
 ]
 
+#https://www.conceptispuzzles.com/index.aspx?uri=info/article/424
+hardest = [
+    [ 8, 0, 0, 0, 0, 0, 0, 0, 0],
+    [ 0, 0, 3, 6, 0, 0, 0, 0, 0],
+    [ 0, 7, 0, 0, 9, 0, 2, 0, 0],
+    #
+    [ 0, 5, 0, 0, 0, 7, 0, 0, 0],
+    [ 0, 0, 0, 0, 4, 5, 7, 0, 0],
+    [ 0, 0, 0, 1, 0, 0, 0, 3, 0],
+    #
+    [ 0, 0, 1, 0, 0, 0, 0, 6, 8],
+    [ 0, 0, 8, 5, 0, 0, 0, 1, 0],
+    [ 0, 9, 0, 0, 0, 0, 4, 0, 0],
+]
 
 
 
 def analyze(rawpuzzle, name):
     puzzle = Puzzle(rawpuzzle)
+    print(f'\nPuzzle ({name}):\n')
     puzzle.pprint()
     solver = Solver(puzzle)
     solution = solver.solve()
 
     if solution is not None:
-        print(f'\nSolution {name}:\n')
+        print(f'\nSolution ({name}):\n')
         solution.pprint()
 
         #<experimental zone>
@@ -142,6 +157,7 @@ analyze(extreme_1, "extreme #1")
 analyze(extreme_2, "extreme #2")
 analyze(extreme_3, "extreme #3")
 analyze(extreme_4, "extreme #4")
+analyze(hardest, "hardest")
 
 print('\nCensus:')
 Yices.exit(True)
