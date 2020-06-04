@@ -6,8 +6,11 @@ import sys
 import random
 
 
-from SudokuLib import Puzzle
+from yices.Context import Context
+from yices.Yices import Yices
 
+from SudokuLib import Puzzle
+from Solver import Solver
 
 
 def make_solution():
@@ -38,15 +41,56 @@ def make_solution():
             pass
 
 
+def pluck(puzzle, cardinality):
 
-def  run(n = 28, iterations=100):
+    # prepare our solver and context
+    solver = Solver(puzzle)
+    context = Context()
+    solver.assert_rules(context)
+
+    # start with a set of all 81 cells, and tries to remove one (randomly) at a time
+    # but not before checking that the cell can still be deduced from the remaining cells.
+    cells = set(range(81))
+    cells_remaining = cells.copy()
+
+    while len(cells) > cardinality and len(cells_remaining) != 0:
+        cell = random.choice(list(cells_remaining))
+        cells_remaining.discard(cell)
+        row, column = cell // 9, cell % 9
+        val = puzzle.get_slot(row, column)
+        assert val is not None
+        if solver.erasable(context, row, column, val):
+            puzzle.erase_slot(row, column)
+            cells.discard(cell)
+
+    context.dispose()
+
+    return (puzzle, len(cells))
+
+
+def  run(n = 28, iterations=10):
     all_results = {}
     print(f'Using n={n} and iterations={iterations}')
     solution = make_solution()
     answer = Puzzle(solution)
     answer.pprint()
 
+    for i in range(iterations):
+        puzzle = answer.clone()
+        (result, number_of_cells) = pluck(puzzle, n)
+        all_results.setdefault(number_of_cells, []).append(result)
+        if number_of_cells <= n:
+            print(f'success of iteration {i}')
+            break
+
     return all_results
+
+def best(set_of_puzzles):
+    # Could run some evaluation function here. For now just pick
+    # the one with the fewest "givens".
+    least = min(set_of_puzzles.keys())
+    print(f'least number of givens: {least}')
+    return set_of_puzzles[least][0]
 
 def main():
     results = None
@@ -56,11 +100,11 @@ def main():
         results = run(n, iterations)
     else:
         results = run()
-    print(results)
 
-
-
+    puzzle = best(results)  # use the best one of those puzzles.
+    puzzle.pprint()         # display that puzzle.
 
 
 if __name__ == '__main__':
     main()
+    Yices.exit(True)

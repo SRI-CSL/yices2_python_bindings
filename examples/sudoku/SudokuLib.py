@@ -1,5 +1,7 @@
 """The shared code used in the cores and generator scripts."""
 
+import copy
+
 from yices.Types import Types
 from yices.Terms import Terms
 
@@ -90,12 +92,23 @@ class Puzzle:
 
     def __init__(self, matrix):
         self.grid = make_grid()
-        for i in range(9):
-            for j in range(9):
-                val =  matrix[i][j]
-                if val != 0:
-                    self.set_slot(i, j, matrix[i][j])
+        if matrix is not None:
+            for i in range(9):
+                for j in range(9):
+                    val =  matrix[i][j]
+                    if val != 0:
+                        self.set_slot(i, j, matrix[i][j])
 
+    def clone(self):
+        result = Puzzle(None)
+        result.grid = copy.deepcopy(self.grid)
+        return result
+
+    def erase_slot(self, i, j):
+        if 0 <= i <= 8 and 0 <= j <= 8:
+            self.grid[i][j] = None
+            return None
+        raise Exception(f'Index error: {i} {j}')
 
     def set_slot(self, i, j, val):
         if 0 <= i <= 8 and 0 <= j <= 8 and 1 <= val <= 9:

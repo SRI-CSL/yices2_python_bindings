@@ -31,24 +31,42 @@ class Solver:
     def assert_rules(self, ctx):
         ctx.assert_formulas(self.all_rules)
 
+    def _equality(self, i, j, val):
+        return Terms.arith_eq_atom(self.var(i,j), self.constants[val])
+
+    def _inequality(self, i, j, val):
+        return Terms.arith_neq_atom(self.var(i,j), self.constants[val])
 
     def assert_value(self, ctx, i, j, val):
         if not (0 <= i <= 8 and 0 <= j <= 8 and 1 <= val <= 9):
             raise Exception(f'Index error: {i} {j} {val}')
-        ctx.assert_formula(Terms.arith_eq_atom(self.var(i,j), self.constants[val]))
+        ctx.assert_formula(self._equality(i, j, val))
 
     def assert_not_value(self, ctx, i, j, val):
         if not (0 <= i <= 8 and 0 <= j <= 8 and 1 <= val <= 9):
             raise Exception(f'Index error: {i} {j} {val}')
-        ctx.assert_formula(Terms.arith_neq_atom(self.var(i,j), self.constants[val]))
-
+        ctx.assert_formula(self._inequality(i, j, val))
 
     def assert_puzzle(self, ctx):
+        terms = []
         for i in range(9):
             for j in range(9):
                 val = self.puzzle.get_slot(i, j)
                 if val is not None:
-                    self.assert_value(ctx, i, j, val)
+                    terms.append(self._equality(i, j, val))
+        ctx.assert_formulas(terms)
+
+    def assert_puzzle_except(self, ctx, row, col, ans):
+        assert ans == self.puzzle.get_slot(row, col)
+        terms = []
+        for i in range(9):
+            for j in range(9):
+                if i != row and j != col:
+                    val = self.puzzle.get_slot(i, j)
+                    if val is not None:
+                        terms.append(self._equality(i, j, val))
+        ctx.assert_formulas(terms)
+
 
     def puzzle_from_model(self, model):
         if model is None:
@@ -71,6 +89,22 @@ class Solver:
             model.dispose()
         context.dispose()
         return answer
+
+
+
+    def erasable(self, ctx, i, j, val):
+        """erasable returns True if puzzle (with [row, col] = val omitted) implies that [row, col] = val, it returns False otherwise.
+
+        It is assumed that puzzle.get_slot(i,j) == val
+        The context has already been informed of the rules.
+        """
+        ctx.push()
+        self.assert_puzzle_except(ctx, i, j, val)
+        self.assert_not_value(ctx, i, j, val)
+        smt_stat = ctx.check_context(None)
+        ctx.pop()
+        return smt_stat == Status.UNSAT
+
 
 
     def investigate(self, i, j, val):
