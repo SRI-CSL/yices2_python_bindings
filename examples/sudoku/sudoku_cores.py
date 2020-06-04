@@ -4,8 +4,6 @@ from yices.Types import Types
 
 from yices.Terms import Terms
 
-from yices.Config import Config
-
 from yices.Context import Context
 
 from yices.Status import Status
@@ -96,7 +94,19 @@ class Syntax:
                 rules.append(rule)
         return rules
 
-
+puzzle_blank = [
+    [ 0, 0, 0, 0, 0, 0, 0, 0, 0],
+    [ 0, 0, 0, 0, 0, 0, 0, 0, 0],
+    [ 0, 0, 0, 0, 0, 0, 0, 0, 0],
+    #
+    [ 0, 0, 0, 0, 0, 0, 0, 0, 0],
+    [ 0, 0, 0, 0, 0, 0, 0, 0, 0],
+    [ 0, 0, 0, 0, 0, 0, 0, 0, 0],
+    #
+    [ 0, 0, 0, 0, 0, 0, 0, 0, 0],
+    [ 0, 0, 0, 0, 0, 0, 0, 0, 0],
+    [ 0, 0, 0, 0, 0, 0, 0, 0, 0],
+]
 
 
 puzzle_1 = [
@@ -111,6 +121,27 @@ puzzle_1 = [
     [ 0, 0, 0, 0, 7, 0, 0, 0, 1],
     [ 0, 5, 0, 0, 0, 0, 3, 0, 0],
     [ 4, 3, 0, 1, 0, 0, 0, 8, 0],
+]
+
+
+# puzzle_2 come from here:
+# https://puzzling.stackexchange.com/questions/29/what-are-the-criteria-for-determining-the-difficulty-of-sudoku-puzzle
+# where it is claimed to be the "hardest sudoku in the world"
+# but in fact is not a valid sudoku since it has more than one solution. tut tut.
+# I added it to one of the predefined boards ('escargot') of SudokuSensei and
+# it has 29 non isomorphic models (aka solutions).
+puzzle_ai_escargot = [
+    [ 1, 0, 0, 0, 0, 7, 0, 9, 0],
+    [ 0, 3, 0, 0, 2, 0, 0, 0, 8],
+    [ 0, 0, 9, 6, 0, 0, 5, 0, 0],
+    #
+    [ 0, 0, 5, 3, 0, 0, 9, 0, 0],
+    [ 0, 1, 0, 0, 8, 0, 0, 0, 2],
+    [ 6, 0, 0, 0, 0, 4, 0, 0, 0],
+    #
+    [ 3, 0, 0, 0, 0, 0, 0, 1, 0],
+    [ 0, 4, 0, 0, 0, 0, 0, 0, 7],
+    [ 0, 0, 7, 0, 0, 0, 0, 3, 0],
 ]
 
 
@@ -213,7 +244,7 @@ class Solver:
     def assert_puzzle(self, ctx):
         for i in range(9):
             for j in range(9):
-                val = puzzle.get_slot(i, j)
+                val = self.puzzle.get_slot(i, j)
                 if val is not None:
                     self.assert_value(ctx, i, j, val)
 
@@ -253,8 +284,10 @@ class Solver:
             print(f'Error: {i} {j} {val} - not UNSAT: {Status.name(smt_stat)}')
             model = Model.from_context(context, 1)
             answer = self.puzzle_from_model(model)
+            print(f'Counter example (i.e. orginal puzzle does not have a unique solution):')
             answer.pprint()
             model.dispose()
+            return None
         else:
             core = context.get_unsat_core()
             print(f'Core: {i} {j} {val}   {len(core)} / {len(self.duplicate_rules)}')
@@ -270,6 +303,8 @@ class Solver:
                     if slot is None:
                         ans = sln.get_slot(i, j)
                         core = self.investigate(i, j, ans)
+                        if core is None:
+                            return None
                         cores.add(i, j, ans, core)
         print('\nCores:\n')
         smallest = cores.least(5)
@@ -306,23 +341,26 @@ class Solver:
                 print(f'\t{self.syntax.explanation[term]}')
 
 
-puzzle = Puzzle(puzzle_1)
 
-puzzle.pprint()
+def analyze(rawpuzzle):
+    puzzle = Puzzle(rawpuzzle)
+    puzzle.pprint()
+    solver = Solver(puzzle)
+    solution = solver.solve()
 
-solver = Solver(puzzle)
+    if solution is not None:
+        print('\nSolution:\n')
+        solution.pprint()
 
-solution = solver.solve()
+        #<experimental zone>
+        simplest = solver.filter_cores(solution)
+        if simplest is not None:
+            solver.show_hints(simplest)
+        #</experimental zone>
 
-if solution is not None:
-    print('\nSolution:\n')
-    solution.pprint()
+analyze(puzzle_1)
 
-#<experimental zone>
-simplest = solver.filter_cores(solution)
-solver.show_hints(simplest)
-#</experimental zone>
-
+analyze(puzzle_ai_escargot)
 
 print('\nCensus:')
 Yices.exit(True)
