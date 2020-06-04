@@ -59,18 +59,73 @@ puzzle_ai_escargot = [
     [ 0, 0, 7, 0, 0, 0, 0, 3, 0],
 ]
 
+extreme_1 = [
+    [ 0, 0, 0, 0, 0, 0, 0, 0, 0],
+    [ 0, 0, 2, 0, 0, 7, 1, 5, 0],
+    [ 4, 0, 0, 0, 0, 9, 3, 0, 6],
+    #
+    [ 0, 1, 0, 0, 0, 3, 0, 0, 5],
+    [ 0, 0, 0, 5, 2, 4, 0, 0, 0],
+    [ 3, 0, 0, 7, 0, 0, 0, 6, 0],
+    #
+    [ 1, 0, 7, 6, 0, 0, 0, 0, 9],
+    [ 0, 5, 6, 8, 0, 0, 4, 0, 0],
+    [ 0, 0, 0, 0, 0, 0, 0, 0, 0],
+]
+
+extreme_2 = [
+    [ 0, 0, 0, 0, 0, 0, 7, 0, 3],
+    [ 0, 0, 6, 0, 0, 8, 5, 4, 0],
+    [ 5, 0, 0, 0, 7, 0, 0, 0, 0],
+    #
+    [ 0, 1, 9, 0, 0, 4, 8, 0, 0],
+    [ 7, 0, 0, 0, 0, 0, 0, 0, 9],
+    [ 0, 0, 8, 9, 0, 0, 2, 1, 0],
+    #
+    [ 0, 0, 0, 0, 5, 0, 0, 0, 2],
+    [ 0, 5, 7, 3, 0, 0, 1, 0, 0],
+    [ 4, 0, 3, 0, 0, 0, 0, 0, 0],
+]
+
+extreme_3 = [
+    [ 8, 0, 1, 0, 9, 0, 0, 0, 0],
+    [ 0, 7, 2, 0, 0, 1, 0, 0, 0],
+    [ 0, 0, 0, 3, 0, 0, 8, 0, 0],
+    #
+    [ 5, 0, 0, 1, 0, 0, 0, 4, 0],
+    [ 1, 0, 0, 0, 3, 0, 0, 0, 9],
+    [ 0, 2, 0, 0, 0, 7, 0, 0, 5],
+    #
+    [ 0, 0, 5, 0, 0, 2, 0, 0, 0],
+    [ 0, 0, 0, 4, 0, 0, 5, 9, 0],
+    [ 0, 0, 0, 0, 8, 0, 4, 0, 3],
+]
+
+extreme_4 = [
+    [ 7, 0, 0, 0, 0, 4, 0, 5, 0],
+    [ 0, 0, 0, 5, 0, 0, 1, 0, 0],
+    [ 0, 0, 0, 0, 0, 6, 0, 7, 8],
+    #
+    [ 0, 0, 4, 0, 0, 0, 8, 0, 0],
+    [ 3, 5, 0, 0, 8, 0, 0, 1, 9],
+    [ 0, 0, 8, 0, 0, 0, 2, 0, 0],
+    #
+    [ 5, 4, 0, 1, 0, 0, 0, 0, 0],
+    [ 0, 0, 6, 0, 0, 5, 0, 0, 0],
+    [ 0, 8, 0, 9, 0, 0, 0, 0, 1],
+]
 
 
 
 
-def analyze(rawpuzzle):
+def analyze(rawpuzzle, name):
     puzzle = Puzzle(rawpuzzle)
     puzzle.pprint()
     solver = Solver(puzzle)
     solution = solver.solve()
 
     if solution is not None:
-        print('\nSolution:\n')
+        print(f'\nSolution {name}:\n')
         solution.pprint()
 
         #<experimental zone>
@@ -79,9 +134,14 @@ def analyze(rawpuzzle):
             solver.show_hints(simplest)
         #</experimental zone>
 
-analyze(puzzle_1)
+analyze(puzzle_1, "evil")
 
-analyze(puzzle_ai_escargot)
+analyze(puzzle_ai_escargot, "escargot")
+
+analyze(extreme_1, "extreme #1")
+analyze(extreme_2, "extreme #2")
+analyze(extreme_3, "extreme #3")
+analyze(extreme_4, "extreme #4")
 
 print('\nCensus:')
 Yices.exit(True)

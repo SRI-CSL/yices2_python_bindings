@@ -116,7 +116,7 @@ class Solver:
         self.assert_not_value(context, i, j, val)
         context.assert_formulas(self.trivial_rules)
         smt_stat = context.check_context_with_assumptions(None, self.duplicate_rules)
-        # a valid puzzle should have a unique solution, so this should not happen
+        # a valid puzzle should have a unique solution, so this should not happen, if it does we bail
         if smt_stat != Status.UNSAT:
             print(f'Error: {i} {j} {val} - not UNSAT: {Status.name(smt_stat)}')
             model = Model.from_context(context, 1)
@@ -124,8 +124,8 @@ class Solver:
             print('Counter example (i.e. origonal puzzle does not have a unique solution):')
             answer.pprint()
             model.dispose()
+            context.dispose()
             return None
-
         core = context.get_unsat_core()
         print(f'Core: {i} {j} {val}   {len(core)} / {len(self.duplicate_rules)}')
         context.dispose()
