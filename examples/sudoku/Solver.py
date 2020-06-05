@@ -51,18 +51,18 @@ class Solver:
         terms = []
         for i in range(9):
             for j in range(9):
-                val = self.puzzle.get_slot(i, j)
+                val = self.puzzle.get_cell(i, j)
                 if val is not None:
                     terms.append(self._equality(i, j, val))
         ctx.assert_formulas(terms)
 
     def assert_puzzle_except(self, ctx, row, col, ans):
-        assert ans == self.puzzle.get_slot(row, col)
+        assert ans == self.puzzle.get_cell(row, col)
         terms = []
         for i in range(9):
             for j in range(9):
                 if i != row and j != col:
-                    val = self.puzzle.get_slot(i, j)
+                    val = self.puzzle.get_cell(i, j)
                     if val is not None:
                         terms.append(self._equality(i, j, val))
         ctx.assert_formulas(terms)
@@ -95,7 +95,7 @@ class Solver:
     def erasable(self, ctx, i, j, val):
         """erasable returns True if puzzle (with [row, col] = val omitted) implies that [row, col] = val, it returns False otherwise.
 
-        It is assumed that puzzle.get_slot(i,j) == val
+        It is assumed that puzzle.get_cell(i,j) == val
         The context has already been informed of the rules.
         """
         ctx.push()
@@ -136,9 +136,9 @@ class Solver:
         if sln is not None:
             for i in range(9):
                 for j in range(9):
-                    slot = self.puzzle.get_slot(i, j)
+                    slot = self.puzzle.get_cell(i, j)
                     if slot is None:
-                        ans = sln.get_slot(i, j)
+                        ans = sln.get_cell(i, j)
                         core = self.investigate(i, j, ans)
                         if core is None:
                             return None

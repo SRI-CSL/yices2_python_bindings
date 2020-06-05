@@ -4,7 +4,7 @@
 
 import sys
 import random
-
+from datetime import date
 
 from yices.Context import Context
 from yices.Yices import Yices
@@ -57,10 +57,10 @@ def pluck(puzzle, cardinality):
         cell = random.choice(list(cells_remaining))
         cells_remaining.discard(cell)
         row, column = cell // 9, cell % 9
-        val = puzzle.get_slot(row, column)
+        val = puzzle.get_cell(row, column)
         assert val is not None
         if solver.erasable(context, row, column, val):
-            puzzle.erase_slot(row, column)
+            puzzle.erase_cell(row, column)
             cells.discard(cell)
 
     context.dispose()
@@ -75,10 +75,17 @@ def  run(n = 28, iterations=10):
     answer = Puzzle(solution)
     answer.pprint()
 
+    best_so_far = 81
+
     for i in range(iterations):
         puzzle = answer.clone()
         (result, number_of_cells) = pluck(puzzle, n)
+        if number_of_cells < best_so_far:
+            best_so_far = number_of_cells
         all_results.setdefault(number_of_cells, []).append(result)
+        if i % 100 == 0:
+            print(f'iteration {i}: {best_so_far}')
+
         if number_of_cells <= n:
             print(f'success of iteration {i}')
             break
@@ -90,7 +97,7 @@ def best(set_of_puzzles):
     # the one with the fewest "givens".
     least = min(set_of_puzzles.keys())
     print(f'least number of givens: {least}')
-    return set_of_puzzles[least][0]
+    return least, set_of_puzzles[least][0]
 
 def main():
     results = None
@@ -101,8 +108,9 @@ def main():
     else:
         results = run()
 
-    puzzle = best(results)  # use the best one of those puzzles.
-    puzzle.pprint()         # display that puzzle.
+    least, puzzle = best(results)      # use the best one of those puzzles.
+    puzzle.pprint()             # display that puzzle.
+    puzzle.puzzle2path(f'puzzle_{least}_{str(date.today())}.sudoku')
 
 
 if __name__ == '__main__':
