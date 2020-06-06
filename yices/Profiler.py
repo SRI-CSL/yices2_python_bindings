@@ -9,6 +9,10 @@ class Profiler:
     """maps (yices API) function names to the total accumulated time spent within them."""
     __line_items = {}
 
+    """keeps track of the total time spent in the shared library."""
+    __total = 0
+
+    __max_len = 0
 
     @staticmethod
     def set_enabled(value):
@@ -23,6 +27,9 @@ class Profiler:
     @staticmethod
     def delta(fname, start, stop):
         nanos = stop - start
+        Profiler.__total += nanos
+        if Profiler.__max_len < len(fname):
+            Profiler.__max_len = len(fname)
         if fname in Profiler.__line_items:
             Profiler.__line_items[fname] += nanos
         else:
@@ -30,11 +37,15 @@ class Profiler:
 
     @staticmethod
     def dump():
-        total = 0
+        def percent(nanos):
+            return (nanos * 100) // Profiler.__total
+        def pad(fname):
+            return ' ' * (Profiler.__max_len - len(fname))
         sb = StringBuilder()
         sb.append('\n')
         for fname, cost in Profiler.__line_items.items():
-            total += cost
-            sb.append(f'{fname}\t\t{cost}\n')
-        sb.append(f'\nTotal:\t\t{total}\n')
+            pc = percent(cost)
+            if pc > 0:
+                sb.append(f'{fname}{pad(fname)}\t\t{pc}%\n')
+        #sb.append(f'\nTotal:\t\t{Profiler.__total}\n')
         return str(sb)

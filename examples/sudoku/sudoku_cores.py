@@ -159,8 +159,6 @@ def main():
     analyze(extreme_3, "extreme #3")
     analyze(extreme_4, "extreme #4")
     analyze(hardest, "hardest")
-    print('\nCensus:')
-    Yices.exit(True)
 
 
 if __name__ == '__main__':
