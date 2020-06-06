@@ -144,3 +144,61 @@ class Yices:
     def pop(ctx):
         """Backtracks to the previous backtrack point."""
         return yapi.yices_pop(ctx)
+
+    @staticmethod
+    @profile
+    def context_enable_option(ctx, option):
+        """Used to tune the amount of simplification used when evaluating assertions."""
+        return yapi.yices_context_enable_option(ctx, option)
+
+    @staticmethod
+    @profile
+    def context_disable_option(ctx, option):
+        """Used to tune the amount of simplification used when evaluating assertions."""
+        return yapi.yices_context_disable_option(ctx, option)
+
+    @staticmethod
+    @profile
+    def assert_formula(ctx, t):
+        """Assert the formula t in the context ctx."""
+        return yapi.yices_assert_formula(ctx, t)
+
+    @staticmethod
+    @profile
+    def assert_formulas(ctx, n, t):
+        """Assert an array of formulas of length n in the context ctx."""
+        return yapi.yices_assert_formulas(ctx, n, t)
+
+    @staticmethod
+    @profile
+    def check_context(ctx, params):
+        """Checks whether all the assertions stored in the context ctx are satisfiable."""
+        return yapi.yices_check_context(ctx, params)
+
+    @staticmethod
+    @profile
+    def check_context_with_assumptions(ctx, params, n, t):
+        """Checks whether the assertions in the context ctx together with n assumptions are satisfiable."""
+        return yapi.yices_check_context_with_assumptions(ctx, params, n, t)
+
+    @staticmethod
+    @profile
+    def assert_blocking_clause(ctx):
+        """Adds a blocking clause, this is intended to help enumerate different models for a set of assertions."""
+        return yapi.yices_assert_blocking_clause(ctx)
+
+    @staticmethod
+    @profile
+    def stop_search(ctx):
+        """Interupts the search."""
+        yapi.yices_stop_search(ctx)
+
+#################
+#  UNSAT CORES  #
+#################
+
+    @staticmethod
+    @profile
+    def get_unsat_core(ctx, v):
+        """Compute an unsat core after a call to yices_check_with_assumptions."""
+        return yapi.yices_get_unsat_core(ctx, v)

@@ -30,8 +30,11 @@ class Profiler:
 
     @staticmethod
     def dump():
+        total = 0
         sb = StringBuilder()
         sb.append('\n')
         for fname, cost in Profiler.__line_items.items():
+            total += cost
             sb.append(f'{fname}\t\t{cost}\n')
+        sb.append(f'\nTotal:\t\t{total}\n')
         return str(sb)
