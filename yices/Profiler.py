@@ -47,5 +47,5 @@ class Profiler:
             pc = percent(cost)
             if pc > 0:
                 sb.append(f'{fname}{pad(fname)}\t\t{pc}%\n')
-        #sb.append(f'\nTotal:\t\t{Profiler.__total}\n')
+        sb.append(f'\nTotal:{pad("Total:")}\t\t{int(Profiler.__total / 10e6)} milliseconds\n')
         return str(sb)
