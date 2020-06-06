@@ -1,9 +1,31 @@
 """Yices is the top level interface with the yices library."""
+
+import functools
+
+import time
+
 import yices_api as yapi
 
 from .Census import Census
+from .Profiler import Profiler
+
+
+def profile(func):
+    """Record the runtime of the decorated function"""
+    @functools.wraps(func)
+    def wrapper_timer(*args, **kwargs):
+        if Profiler.is_enabled():
+            start = time.perf_counter_ns()
+            value = func(*args, **kwargs)
+            stop = time.perf_counter_ns()
+            Profiler.delta(func.__name__, start, stop)
+            return value
+        return func(*args, **kwargs)
+    return wrapper_timer
+
 
 class Yices:
+    """A thin wrapper to the yices_api class used for things like profiling."""
 
     version = yapi.yices_version
 
@@ -14,6 +36,7 @@ class Yices:
     build_date = yapi.yices_build_date
 
     @staticmethod
+    @profile
     def has_mcsat():
         """Return true if the underlying libyices has been compiled with mcsat support, false otherwise."""
         return yapi.yices_has_mcsat() == 1
@@ -73,9 +96,51 @@ class Yices:
         """Deletes all the internal data structure, must be called on exiting to prevent leaks."""
         if census:
             print(Census.dump())
+            print(Profiler.dump())
         yapi.yices_exit()
 
     @staticmethod
     def reset():
         """Resets all the internal data structures."""
         yapi.yices_reset()
+
+
+    #################
+    #   CONTEXTS    #
+    #################
+
+    @staticmethod
+    @profile
+    def new_context(config):
+        """Returns a newly allocated context; a context is a stack of assertions."""
+        return yapi.yices_new_context(config)
+
+    @staticmethod
+    @profile
+    def free_context(ctx):
+        """Frees the given context."""
+        yapi.yices_free_context(ctx)
+
+    @staticmethod
+    @profile
+    def context_status(ctx):
+        """The context status."""
+        return yapi.yices_context_status(ctx)
+
+    @staticmethod
+    @profile
+    def reset_context(ctx):
+        """Removes all assertions from the context."""
+        yapi.yices_reset_context(ctx)
+
+    @staticmethod
+    @profile
+    def push(ctx):
+        """Marks a backtrack point in the context."""
+        return yapi.yices_push(ctx)
+
+    @staticmethod
+    @profile
+    def pop(ctx):
+        """Backtracks to the previous backtrack point."""
+        return yapi.yices_pop(ctx)

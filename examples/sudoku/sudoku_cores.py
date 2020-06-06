@@ -149,15 +149,20 @@ def analyze(rawpuzzle, name):
             solver.show_hints(simplest)
         #</experimental zone>
 
-analyze(puzzle_1, "evil")
 
-analyze(puzzle_ai_escargot, "escargot")
 
-analyze(extreme_1, "extreme #1")
-analyze(extreme_2, "extreme #2")
-analyze(extreme_3, "extreme #3")
-analyze(extreme_4, "extreme #4")
-analyze(hardest, "hardest")
+def main():
+    analyze(puzzle_1, "evil")
+    analyze(puzzle_ai_escargot, "escargot")
+    analyze(extreme_1, "extreme #1")
+    analyze(extreme_2, "extreme #2")
+    analyze(extreme_3, "extreme #3")
+    analyze(extreme_4, "extreme #4")
+    analyze(hardest, "hardest")
+    print('\nCensus:')
+    Yices.exit(True)
 
-print('\nCensus:')
-Yices.exit(True)
+
+if __name__ == '__main__':
+    main()
+    Yices.exit(True)

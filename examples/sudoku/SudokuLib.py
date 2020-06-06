@@ -107,7 +107,7 @@ class Puzzle:
             row = 0
             col = 0
             for line in fp:
-                line=line.strip()
+                line = line.strip()
                 if len(line) != 9:
                     raise SudokuError('Each line in the sudoku puzzle must be 9 chars long.')
                 for char in line:
@@ -154,20 +154,19 @@ class Puzzle:
             return self.grid[i][j]
         raise Exception(f'Index error: {i} {j}')
 
-    def pp(self, i, j, blank='.'):
-        val = self.get_cell(i,j)
-        return f'{val}' if val is not None else blank
-
     def to_string(self, pad='  ', blank='.', newline='\n'):
+        def pp(i, j, blank='.'):
+            val = self.get_cell(i, j)
+            return str(val) if val is not None else blank
         rows = []
         for row in range(9):
-            line = [self.pp(row, col, blank) for col in range(9)]
+            line = [pp(row, col, blank) for col in range(9)]
             rows.append(pad.join(line))
         return newline.join(rows)
 
 
     def pprint(self, pad='  ', blank='.', newline='\n'):
-        print(self.to_string(pad, blank,newline))
+        print(self.to_string(pad, blank, newline))
 
 class Cores:
 

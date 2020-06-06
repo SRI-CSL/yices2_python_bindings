@@ -10,6 +10,7 @@ from .YicesException import YicesException
 
 from .Status import Status
 from .Census import Census
+from .Yices import Yices
 
 class Context:
 
@@ -17,7 +18,8 @@ class Context:
 
     def __init__(self, config=None):
         cfg = config.config if config else None
-        self.context = yapi.yices_new_context(cfg)
+        #self.context = yapi.yices_new_context(cfg)
+        self.context = Yices.new_context(cfg)
         if self.context == -1:
             raise YicesException('yices_new_context')
         Census.contexts += 1
@@ -41,7 +43,8 @@ class Context:
 
     def status(self):
         assert self.context is not None
-        return yapi.yices_context_status(self.context)
+        #return yapi.yices_context_status(self.context)
+        return Yices.context_status(self.context)
 
 
     def assert_formula(self, term):
@@ -126,6 +129,7 @@ class Context:
 
 
     def dispose(self):
-        yapi.yices_free_context(self.context)
+        #yapi.yices_free_context(self.context)
+        Yices.free_context(self.context)
         self.context = None
         Census.contexts -= 1

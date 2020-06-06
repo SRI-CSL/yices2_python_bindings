@@ -13,4 +13,4 @@ class Census:
 
     @staticmethod
     def dump():
-        return f'\tContexts: {Census.contexts}\n\tConfigs: {Census.configs}\n\tModels: {Census.models}\n\tParams: {Census.params}'
+        return f'Contexts: {Census.contexts}\tConfigs: {Census.configs}\tModels: {Census.models}\tParams: {Census.params}'
