@@ -9,25 +9,22 @@ import yices_api as yapi
 from .YicesException import YicesException
 
 from .Status import Status
-from .Census import Census
 from .Yices import Yices
 
 class Context:
 
-    population = 0
+    __population = 0
 
     def __init__(self, config=None):
         cfg = config.config if config else None
-        #self.context = yapi.yices_new_context(cfg)
         self.context = Yices.new_context(cfg)
         if self.context == -1:
             raise YicesException('yices_new_context')
-        Census.contexts += 1
+        Context.__population += 1
 
     # option is a string
     def enable_option(self, option):
         assert self.context is not None
-        #errcode = yapi.yices_context_enable_option(self.context, option)
         errcode = Yices.context_enable_option(self.context, option)
         if errcode == -1:
             raise YicesException('yices_context_enable_option')
@@ -36,7 +33,6 @@ class Context:
     # option is a string
     def disable_option(self, option):
         assert self.context is not None
-        #errcode = yapi.yices_context_disable_option(self.context, option)
         errcode = Yices.context_disable_option(self.context, option)
         if errcode == -1:
             raise YicesException('yices_context_disable_option')
@@ -45,13 +41,11 @@ class Context:
 
     def status(self):
         assert self.context is not None
-        #return yapi.yices_context_status(self.context)
         return Yices.context_status(self.context)
 
 
     def assert_formula(self, term):
         assert self.context is not None
-        #errcode = yapi.yices_assert_formula(self.context, term)
         errcode = Yices.assert_formula(self.context, term)
         if errcode == -1:
             raise YicesException('yices_assert_formula')
@@ -62,7 +56,6 @@ class Context:
         assert self.context is not None
         alen = len(python_array_or_tuple)
         a = yapi.make_term_array(python_array_or_tuple)
-        #errcode = yapi.yices_assert_formulas(self.context, alen, a)
         errcode = Yices.assert_formulas(self.context, alen, a)
         if errcode == -1:
             raise YicesException('yices_assert_formulas')
@@ -74,7 +67,6 @@ class Context:
         #unwrap the params object
         if params is not None:
             params = params.params
-        #status = yapi.yices_check_context(self.context, params)
         status = Yices.check_context(self.context, params)
         if status == -1:
             raise YicesException('yices_check_context')
@@ -92,7 +84,6 @@ class Context:
 
     def assert_blocking_clause(self):
         assert self.context is not None
-        #errcode = yapi.yices_assert_blocking_clause(self.context)
         errcode = Yices.assert_blocking_clause(self.context)
         if errcode == -1:
             raise YicesException('yices_assert_blocking_clause')
@@ -101,7 +92,6 @@ class Context:
 
     def push(self):
         assert self.context is not None
-        #errcode = yapi.yices_push(self.context)
         errcode = Yices.push(self.context)
         if errcode == -1:
             raise YicesException('yices_push')
@@ -109,7 +99,6 @@ class Context:
 
     def pop(self):
         assert self.context is not None
-        #errcode = yapi.yices_pop(self.context)
         errcode = Yices.pop(self.context)
         if errcode == -1:
             raise YicesException('yices_pop')
@@ -119,7 +108,6 @@ class Context:
     def check_context_with_assumptions(self, params, python_array_or_tuple):
         alen = len(python_array_or_tuple)
         a = yapi.make_term_array(python_array_or_tuple)
-        #status = yapi.yices_check_context_with_assumptions(self.context, params, alen, a)
         status = Yices.check_context_with_assumptions(self.context, params, alen, a)
         if status == Status.ERROR:
             raise YicesException('check_context_with_assumptions')
@@ -130,7 +118,6 @@ class Context:
         retval = []
         unsat_core = yapi.term_vector_t()
         yapi.yices_init_term_vector(unsat_core)
-        #errcode = yapi.yices_get_unsat_core(self.context, unsat_core)
         errcode = Yices.get_unsat_core(self.context, unsat_core)
         if errcode == -1:
             raise YicesException('yices_get_unsat_core')
@@ -141,7 +128,11 @@ class Context:
 
 
     def dispose(self):
-        #yapi.yices_free_context(self.context)
         Yices.free_context(self.context)
         self.context = None
-        Census.contexts -= 1
+        Context.__population -= 1
+
+    @staticmethod
+    def population():
+        """returns the current live population of Context objects."""
+        return Context.__population

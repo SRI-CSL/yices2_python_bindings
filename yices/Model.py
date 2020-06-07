@@ -16,8 +16,7 @@ import yices_api as yapi
 
 from .Yvals import Yval
 from .YicesException import YicesException
-from .Census import Census
-
+from .Yices import Yices
 
 class Model:
 
@@ -26,14 +25,18 @@ class Model:
     GEN_BY_PROJ    = yapi.YICES_GEN_BY_PROJ
 
 
+    __population = 0
+
+
     def __init__(self, model=None):
         self.model =  model
-        Census.models += 1
+        Model.__population += 1
 
 
     @staticmethod
     def from_context(context, keep_subst):
-        model = yapi.yices_get_model(context.context, keep_subst)
+        #model = yapi.yices_get_model(context.context, keep_subst)
+        model = Yices.get_model(context.context, keep_subst)
         if model == 0:
             raise YicesException('yices_get_model')
         return Model(model)
@@ -43,7 +46,8 @@ class Model:
     def from_map(mapping):
         dom = mapping.keys()
         rng = [ mapping[d] for d in dom]
-        model = yapi.yices_model_from_map(len(dom), yapi.make_term_array(dom), yapi.make_term_array(rng))
+        #model = yapi.yices_model_from_map(len(dom), yapi.make_term_array(dom), yapi.make_term_array(rng))
+        model = Yices.model_from_map(len(dom), yapi.make_term_array(dom), yapi.make_term_array(rng))
         if model == 0:
             raise YicesException('yices_model_from_map')
         return Model(model)
@@ -52,7 +56,8 @@ class Model:
     def collect_defined_terms(self):
         defined_terms = yapi.term_vector_t()
         yapi.yices_init_term_vector(defined_terms)
-        yapi.yices_model_collect_defined_terms(self.model, defined_terms)
+        #yapi.yices_model_collect_defined_terms(self.model, defined_terms)
+        Yices.model_collect_defined_terms(self.model, defined_terms)
         retval = []
         for i in range(0, defined_terms.size):
             retval.append(defined_terms.data[i])
@@ -61,9 +66,10 @@ class Model:
 
     def dispose(self):
         assert self.model is not None
-        yapi.yices_free_model(self.model)
+        #yapi.yices_free_model(self.model)
+        Yices.free_model(self.model)
         self.model = None
-        Census.models -= 1
+        Model.__population -= 1
 
 
     def get_bool_value(self, term):
@@ -108,11 +114,12 @@ class Model:
 
     def formula_true_in_model(self, term):
         return yapi.yices_formula_true_in_model(self.model, term) == 1
+        #return Yices.formula_true_in_model(self.model, term) == 1
 
     def formulas_true_in_model(self, term_array):
         tarray = yapi.make_term_array(term_array)
         return yapi.yices_formulas_true_in_model(self.model, len(term_array), tarray) == 1
-
+        #return Yices.yices_formulas_true_in_model(self.model, len(term_array), tarray) == 1
 
     def get_value_from_rational_yval(self, yval):
         if yapi.yices_val_is_int64(self.model, yval):
@@ -375,3 +382,9 @@ class Model:
     def to_string(self, width, height, offset):
         #this gonna just have to leak
         return yapi.yices_model_to_string(self.model, int(width), int(height), int(offset))
+
+
+    @staticmethod
+    def population():
+        """returns the current live population of Model objects."""
+        return Model.__population

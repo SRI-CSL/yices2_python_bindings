@@ -6,7 +6,6 @@ import time
 
 import yices_api as yapi
 
-from .Census import Census
 from .Profiler import Profiler
 
 
@@ -92,10 +91,9 @@ class Yices:
         return yapi.yices_is_inited()
 
     @staticmethod
-    def exit(census=False):
+    def exit(show_profile=False):
         """Deletes all the internal data structure, must be called on exiting to prevent leaks."""
-        if census:
-            print(Census.dump())
+        if show_profile:
             print(Profiler.dump())
         yapi.yices_exit()
 
@@ -202,3 +200,77 @@ class Yices:
     def get_unsat_core(ctx, v):
         """Compute an unsat core after a call to yices_check_with_assumptions."""
         return yapi.yices_get_unsat_core(ctx, v)
+
+################
+#   MODELS     #
+################
+
+    @staticmethod
+    @profile
+    def get_model(ctx, keep_subst):
+        """Builds a model from the context ctx."""
+        return yapi.yices_get_model(ctx, keep_subst)
+
+    @staticmethod
+    @profile
+    def free_model(mdl):
+        """Frees the model."""
+        yapi.yices_free_model(mdl)
+
+    @staticmethod
+    @profile
+    def model_from_map(n, var, mp):
+        """Builds a model from a term to term mapping."""
+        return yapi.yices_model_from_map(n, var, mp)
+
+    @staticmethod
+    @profile
+    def model_collect_defined_terms(mdl, v):
+        """Collects all the uninterpreted terms that have a value in mdl and store them in v."""
+        return yapi.yices_model_collect_defined_terms(mdl, v)
+
+     # new in 2.6.2
+    @staticmethod
+    @profile
+    def check_formula(f, logic, model, delegate):
+        return yapi.yices_check_formula(f, logic, model, delegate)
+
+    # new in 2.6.2
+    @staticmethod
+    @profile
+    def check_formulas(f, n, logic, model, delegate):
+        return yapi.yices_check_formulas(f, n, logic, model, delegate)
+
+    # new in 2.6.2
+    @staticmethod
+    @profile
+    def export_formula_to_dimacs(f, filename, simplify_cnf, status):
+        """Bit-blast then export the CNF to a file."""
+        return yapi.yices_export_formula_to_dimacs(f, filename, simplify_cnf, status)
+
+
+    # new in 2.6.2
+    @staticmethod
+    @profile
+    def export_formulas_to_dimacs(f, n, filename, simplify_cnf, status):
+        """Bit-blast then export the CNF to a file."""
+        return yapi.yices_export_formulas_to_dimacs(f, n, filename, simplify_cnf, status)
+
+    # new in 2.6.2
+    @staticmethod
+    @profile
+    def model_term_support(mdl, t, v):
+        """Get the support of a term t in mdl."""
+        return yapi.yices_model_term_support(mdl, t, v)
+
+    # new in 2.6.2
+    @staticmethod
+    @profile
+    def model_term_array_support(mdl, n, t, v):
+        """Get the support of a term t in mdl."""
+        return yapi.yices_model_term_array_support(mdl, n, t, v)
+
+
+########################
+#  VALUES IN A MODEL  #
+########################

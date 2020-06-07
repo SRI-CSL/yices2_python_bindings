@@ -7,6 +7,7 @@ import random
 from datetime import date
 
 from yices.Context import Context
+from yices.Census import Census
 from yices.Yices import Yices
 
 from SudokuLib import Puzzle
@@ -115,4 +116,5 @@ def main():
 
 if __name__ == '__main__':
     main()
+    print(Census.dump())
     Yices.exit(True)

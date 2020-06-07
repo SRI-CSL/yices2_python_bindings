@@ -4,6 +4,7 @@
 """Using unsat cores to give hints."""
 
 from yices.Yices import Yices
+from yices.Census import Census
 
 from SudokuLib import Puzzle
 from Solver import Solver
@@ -160,7 +161,7 @@ def main():
     analyze(extreme_4, "extreme #4")
     analyze(hardest, "hardest")
 
-
 if __name__ == '__main__':
     main()
+    print(Census.dump())
     Yices.exit(True)

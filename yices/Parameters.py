@@ -7,13 +7,14 @@ A parameter record stores search parameters and options that control the heurist
 import yices_api as yapi
 
 from .YicesException import YicesException
-from .Census import Census
 
 class Parameters:
 
+    __population = 0
+
     def __init__(self):
         self.params =  yapi.yices_new_param_record()
-        Census.params += 1
+        Parameters.__population += 1
 
     def set_param(self, key, value):
         assert self.params is not None
@@ -30,4 +31,9 @@ class Parameters:
         assert self.params is not None
         yapi.yices_free_param_record(self.params)
         self.params = None
-        Census.params -= 1
+        Parameters.__population -= 1
+
+    @staticmethod
+    def population():
+        """returns the current live population of Parameters objects."""
+        return Parameters.__population

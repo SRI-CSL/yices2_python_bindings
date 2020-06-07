@@ -2,15 +2,14 @@
 import yices_api as yapi
 
 from .YicesException import YicesException
-from .Census import Census
-
 
 class Config:
 
+    __population = 0
 
     def __init__(self):
         self.config = yapi.yices_new_config()
-        Census.configs += 1
+        Config.__population += 1
 
     def default_config_for_logic(self, logicstr):
         assert self.config is not None
@@ -27,4 +26,9 @@ class Config:
     def dispose(self):
         yapi.yices_free_config(self.config)
         self.config = None
-        Census.configs -= 1
+        Config.__population -= 1
+
+    @staticmethod
+    def population():
+        """returns the current live population of Config objects."""
+        return Config.__population

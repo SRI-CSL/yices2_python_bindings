@@ -1,6 +1,7 @@
-"""Profiler is for mesuring how much time (nanoseconds) spent in the Yices shared library."""
+"""Profiler is for measuring how much time (nanoseconds) spent in the Yices shared library."""
 
 from .StringBuilder import StringBuilder
+
 
 class Profiler:
 
@@ -23,6 +24,9 @@ class Profiler:
     def is_enabled():
         return Profiler.__enabled
 
+    @staticmethod
+    def get_time(fname):
+        return Profiler.__line_items.get(fname, 0)
 
     @staticmethod
     def delta(fname, start, stop):
