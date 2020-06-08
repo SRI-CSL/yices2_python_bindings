@@ -1,26 +1,11 @@
 """Yices is the top level interface with the yices library."""
 
-import functools
-
-import time
 
 import yices_api as yapi
 
-from .Profiler import Profiler
+from .Profiler import Profiler, profile
 
 
-def profile(func):
-    """Record the runtime of the decorated function"""
-    @functools.wraps(func)
-    def wrapper_timer(*args, **kwargs):
-        if Profiler.is_enabled():
-            start = time.perf_counter_ns()
-            value = func(*args, **kwargs)
-            stop = time.perf_counter_ns()
-            Profiler.delta(func.__name__, start, stop)
-            return value
-        return func(*args, **kwargs)
-    return wrapper_timer
 
 
 class Yices:

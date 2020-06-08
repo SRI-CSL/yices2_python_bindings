@@ -1,6 +1,23 @@
 """Profiler is for measuring how much time (nanoseconds) spent in the Yices shared library."""
 
+import functools
+
+import time
+
 from .StringBuilder import StringBuilder
+
+def profile(func):
+    """Record the runtime of the decorated function"""
+    @functools.wraps(func)
+    def wrapper_timer(*args, **kwargs):
+        if Profiler.is_enabled():
+            start = time.perf_counter_ns()
+            value = func(*args, **kwargs)
+            stop = time.perf_counter_ns()
+            Profiler.delta(func.__name__, start, stop)
+            return value
+        return func(*args, **kwargs)
+    return wrapper_timer
 
 
 class Profiler:
@@ -46,10 +63,10 @@ class Profiler:
         def pad(fname):
             return ' ' * (Profiler.__max_len - len(fname))
         sb = StringBuilder()
-        sb.append('\n')
+        sb.append('\nYices API Call Profile:\n')
         for fname, cost in Profiler.__line_items.items():
             pc = percent(cost)
             if pc > 0:
-                sb.append(f'{fname}{pad(fname)}\t\t{pc}%\n')
-        sb.append(f'\nTotal:{pad("Total:")}\t\t{int(Profiler.__total / 10e6)} milliseconds\n')
+                sb.append(f'\t{fname}{pad(fname)}\t\t{pc}%\n')
+        sb.append(f'\n\tTotal:{pad("Total:")}\t\t{int(Profiler.__total / 10e6)} milliseconds\n')
         return str(sb)

@@ -31,6 +31,12 @@ class Solver:
     def assert_rules(self, ctx):
         ctx.assert_formulas(self.all_rules)
 
+    def assert_trivial_rules(self, ctx):
+        ctx.assert_formulas(self.trivial_rules)
+
+    def assert_duplicate_rules(self, ctx):
+        ctx.assert_formulas(self.duplicate_rules)
+
     def _equality(self, i, j, val):
         return Terms.arith_eq_atom(self.var(i,j), self.constants[val])
 
@@ -90,7 +96,72 @@ class Solver:
         context.dispose()
         return answer
 
+    def filter_cores(self, solution, cutoff=5):
+        cores = self.compute_cores(solution)
+        if cores is None:
+            return None
+        print('\nCores:\n')
+        smallest = cores.least(cutoff)
+        filtered = Cores(len(self.duplicate_rules))
+        for core in smallest:
+            ncore = self.filter_core(core)
+            filtered.add(*ncore)
+        print('\nFiltered Cores:\n')
+        smallest = filtered.least(5)
+        return smallest
 
+    def compute_cores(self, solution):
+        cores = Cores(len(self.duplicate_rules))
+        if solution is not None:
+            for i in range(9):
+                for j in range(9):
+                    slot = self.puzzle.get_cell(i, j)
+                    if slot is None:
+                        ans = solution.get_cell(i, j)
+                        core = self.compute_core(i, j, ans)
+                        if core is None:
+                            return None
+                        cores.add(*core)
+        return cores
+
+    def compute_core(self, i, j, val):
+        """We compute the unsat core of the duplicate_rules when asserting self.var(i, j) != val w.r.t the puzzle (val is assumed to be the unique solution)."""
+        if not (0 <= i <= 8 and 0 <= j <= 8 and 1 <= val <= 9):
+            raise Exception(f'Index error: {i} {j} {val}')
+        context = Context()
+        self.assert_puzzle(context)
+        self.assert_not_value(context, i, j, val)
+        self.assert_trivial_rules(context)
+        smt_stat = context.check_context_with_assumptions(None, self.duplicate_rules)
+        # a valid puzzle should have a unique solution, so this should not happen, if it does we bail
+        if smt_stat != Status.UNSAT:
+            print(f'Error: {i} {j} {val} - not UNSAT: {Status.name(smt_stat)}')
+            model = Model.from_context(context, 1)
+            answer = self.puzzle_from_model(model)
+            print('Counter example (i.e. origonal puzzle does not have a unique solution):')
+            answer.pprint()
+            model.dispose()
+            context.dispose()
+            return None
+        core = context.get_unsat_core()
+        context.dispose()
+        print(f'Core: {i} {j} {val}   {len(core)} / {len(self.duplicate_rules)}')
+        return (i, j, val, core)
+
+    def filter_core(self, core):
+        i, j, val, terms = core
+        context = Context()
+        self.assert_puzzle(context)
+        self.assert_not_value(context, i, j, val)
+        self.assert_trivial_rules(context)
+        filtered = terms.copy()
+        for term in terms:
+            filtered.remove(term)
+            smt_stat = context.check_context_with_assumptions(None, filtered)
+            if smt_stat != Status.UNSAT:
+                filtered.append(term)
+        context.dispose()
+        return (i, j, val, filtered)
 
     def erasable(self, ctx, i, j, val):
         """erasable returns True if puzzle (with [row, col] = val omitted) implies that [row, col] = val, it returns False otherwise.
@@ -104,71 +175,6 @@ class Solver:
         smt_stat = ctx.check_context(None)
         ctx.pop()
         return smt_stat == Status.UNSAT
-
-
-
-    def investigate(self, i, j, val):
-        """We look at the unsat core of asserting self.var(i, j) != val (val is assumed to be the unique solution)."""
-        if not (0 <= i <= 8 and 0 <= j <= 8 and 1 <= val <= 9):
-            raise Exception(f'Index error: {i} {j} {val}')
-        context = Context()
-        self.assert_puzzle(context)
-        self.assert_not_value(context, i, j, val)
-        context.assert_formulas(self.trivial_rules)
-        smt_stat = context.check_context_with_assumptions(None, self.duplicate_rules)
-        # a valid puzzle should have a unique solution, so this should not happen, if it does we bail
-        if smt_stat != Status.UNSAT:
-            print(f'Error: {i} {j} {val} - not UNSAT: {Status.name(smt_stat)}')
-            model = Model.from_context(context, 1)
-            answer = self.puzzle_from_model(model)
-            print('Counter example (i.e. origonal puzzle does not have a unique solution):')
-            answer.pprint()
-            model.dispose()
-            context.dispose()
-            return None
-        core = context.get_unsat_core()
-        print(f'Core: {i} {j} {val}   {len(core)} / {len(self.duplicate_rules)}')
-        context.dispose()
-        return core
-
-    def filter_cores(self, sln):
-        cores = Cores(len(self.duplicate_rules))
-        if sln is not None:
-            for i in range(9):
-                for j in range(9):
-                    slot = self.puzzle.get_cell(i, j)
-                    if slot is None:
-                        ans = sln.get_cell(i, j)
-                        core = self.investigate(i, j, ans)
-                        if core is None:
-                            return None
-                        cores.add(i, j, ans, core)
-        print('\nCores:\n')
-        smallest = cores.least(5)
-        filtered = Cores(len(self.duplicate_rules))
-        for core in smallest:
-            ncore = self.filter_core(core)
-            filtered.add(*ncore)
-        print('\nFiltered Cores:\n')
-        smallest = filtered.least(5)
-        return smallest
-
-    def filter_core(self, core):
-        i, j, val, terms = core
-        context = Context()
-        self.assert_puzzle(context)
-        self.assert_not_value(context, i, j, val)
-        context.assert_formulas(self.trivial_rules)
-        filtered = terms.copy()
-        for term in terms:
-            filtered.remove(term)
-            smt_stat = context.check_context_with_assumptions(None, filtered)
-            if smt_stat != Status.UNSAT:
-                filtered.append(term)
-        #print(f'Original: {len(terms)} Filtered: {len(filtered)}')
-        context.dispose()
-        return (i, j, val, filtered)
-
 
     def show_hints(self, cores):
         for core in cores:
