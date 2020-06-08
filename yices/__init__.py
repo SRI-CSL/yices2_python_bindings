@@ -6,11 +6,13 @@ import yices_api as yapi
 # ok).
 yapi.yices_init()  # pylint: disable=wrong-import-position
 
+from yices.Census import Census
 from yices.Config import Config
 from yices.Context import Context
 from yices.Constructors import Constructor
 from yices.Delegates import Delegates
 from yices.Model import Model
+from yices.Profiler import Profiler
 from yices.Parameters import Parameters
 from yices.Status import Status
 from yices.Types import Types
@@ -20,12 +22,14 @@ from yices.Yices import Yices
 from yices.Yvals import Yval
 
 
-__all__ = ['Config',
+__all__ = ['Census',
+           'Config',
            'Context',
            'Constructor',
            'Delegates',
            'Model',
            'Parameters',
+           'Profiler',
            'Status',
            'Types',
            'Terms',
