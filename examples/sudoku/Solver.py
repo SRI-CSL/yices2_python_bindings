@@ -110,7 +110,7 @@ class Solver:
         smallest = filtered.least(5)
         return smallest
 
-    def compute_cores(self, solution):
+    def compute_cores(self, solution, reduced=False):
         cores = Cores(len(self.duplicate_rules))
         if solution is not None:
             for i in range(9):
@@ -118,7 +118,7 @@ class Solver:
                     slot = self.puzzle.get_cell(i, j)
                     if slot is None:
                         ans = solution.get_cell(i, j)
-                        core = self.compute_core(i, j, ans)
+                        core = self.compute_reduced_core(i, j, ans) if reduced else self.compute_core(i, j, ans)
                         if core is None:
                             return None
                         cores.add(*core)
@@ -147,6 +147,36 @@ class Solver:
         context.dispose()
         print(f'Core: {i} {j} {val}   {len(core)} / {len(self.duplicate_rules)}')
         return (i, j, val, core)
+
+    def compute_reduced_core(self, i, j, val):
+        """We compute the unsat core then remove any unnecessary terms."""
+        if not (0 <= i <= 8 and 0 <= j <= 8 and 1 <= val <= 9):
+            raise Exception(f'Index error: {i} {j} {val}')
+        context = Context()
+        self.assert_puzzle(context)
+        self.assert_not_value(context, i, j, val)
+        self.assert_trivial_rules(context)
+        smt_stat = context.check_context_with_assumptions(None, self.duplicate_rules)
+        # a valid puzzle should have a unique solution, so this should not happen, if it does we bail
+        if smt_stat != Status.UNSAT:
+            print(f'Error: {i} {j} {val} - not UNSAT: {Status.name(smt_stat)}')
+            model = Model.from_context(context, 1)
+            answer = self.puzzle_from_model(model)
+            print('Counter example (i.e. origonal puzzle does not have a unique solution):')
+            answer.pprint()
+            model.dispose()
+            context.dispose()
+            return None
+        core = context.get_unsat_core()
+        filtered = core.copy()
+        for term in core:
+            filtered.remove(term)
+            smt_stat = context.check_context_with_assumptions(None, filtered)
+            if smt_stat != Status.UNSAT:
+                filtered.append(term)
+        context.dispose()
+        print(f'Core: {i} {j} {val}   {len(filtered)} / {len(self.duplicate_rules)}')
+        return (i, j, val, filtered)
 
     def filter_core(self, core):
         i, j, val, terms = core

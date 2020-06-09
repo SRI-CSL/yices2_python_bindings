@@ -154,7 +154,6 @@ def analyze(rawpuzzle, name):
 
 def main():
     analyze(puzzle_1, "evil")
-    analyze(puzzle_ai_escargot, "escargot")
     analyze(extreme_1, "extreme #1")
     analyze(extreme_2, "extreme #2")
     analyze(extreme_3, "extreme #3")
