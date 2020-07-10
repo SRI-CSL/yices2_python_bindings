@@ -166,10 +166,10 @@ It shows three different ways of solving the same sudoku puzzle using Yices:
 
 - `sudoku_api.py` does it using the low-level `yices_api` module and `ctypes`
 
-### SudokuSolver
+### SudokuSensei
 
 We keep a GUI-based Sudoku solver written using the Yices Python API in a separate
-[repository](https://github.com/SRI-CSL/SudokuSolver).
+[repository](https://github.com/ianamason/SudokuSensei).
 
 #### MC-SAT
 
