@@ -75,6 +75,7 @@ class TestContext(unittest.TestCase):
         param.dispose()
         ctx.dispose()
 
+    # pylint: disable=C0103
     def test_timeout(self):
         cfg = Config()
         cfg.default_config_for_logic('QF_NIA')
