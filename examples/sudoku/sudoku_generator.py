@@ -6,12 +6,13 @@ import sys
 import random
 from datetime import date
 
+from SudokuLib import Puzzle
+from Solver import Solver
+
 from yices.Context import Context
 from yices.Census import Census
 from yices.Yices import Yices
 
-from SudokuLib import Puzzle
-from Solver import Solver
 
 
 def make_solution():

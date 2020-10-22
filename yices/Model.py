@@ -270,9 +270,9 @@ class Model:
                     retval.append(termv.data[i])
             yapi.yices_delete_term_vector(termv)
             return retval
-        except yapi.YicesAPIException:
+        except yapi.YicesAPIException as catastrophy:
             yapi.yices_delete_term_vector(termv)
-            raise YicesException('implicant_for_formula')
+            raise YicesException('implicant_for_formula') from catastrophy
 
 
     def implicant_for_formulas(self, term_array):
@@ -287,9 +287,9 @@ class Model:
                     retval.append(termv.data[i])
             yapi.yices_delete_term_vector(termv)
             return retval
-        except yapi.YicesAPIException:
+        except yapi.YicesAPIException as catastrophy:
             yapi.yices_delete_term_vector(termv)
-            raise YicesException('implicant_for_formulas')
+            raise YicesException('implicant_for_formulas') from catastrophy
 
     def generalize_model(self, term, elim_array, mode):
         var_array = yapi.make_term_array(elim_array)
@@ -334,9 +334,9 @@ class Model:
                     retval.append(termv.data[i])
             yapi.yices_delete_term_vector(termv)
             return retval
-        except yapi.YicesAPIException:
+        except yapi.YicesAPIException as catastrophy:
             yapi.yices_delete_term_vector(termv)
-            raise YicesException('support_for_term')
+            raise YicesException('support_for_term') from catastrophy
 
     # new in 2.6.2
     # term array support
@@ -353,9 +353,9 @@ class Model:
                     retval.append(termv.data[i])
             yapi.yices_delete_term_vector(termv)
             return retval
-        except yapi.YicesAPIException:
+        except yapi.YicesAPIException as catastrophy:
             yapi.yices_delete_term_vector(termv)
-            raise YicesException('support_for_terms')
+            raise YicesException('support_for_terms') from catastrophy
 
 
     # printing

@@ -1,13 +1,11 @@
-from yices.Terms import Terms
-
-from yices.Context import Context
-
-from yices.Status import Status
-
-from yices.Model import Model
-
 from SudokuLib import make_grid
 from SudokuLib import Syntax, Puzzle, Cores
+
+from yices.Terms import Terms
+from yices.Context import Context
+from yices.Status import Status
+from yices.Model import Model
+
 
 
 class Solver:

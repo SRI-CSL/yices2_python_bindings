@@ -103,6 +103,7 @@ def yices_python_info_main():
 # 1.1.1    -  2.6.0    -  10/9/2018      -  tweaks and finish the pythonesque API              #
 # 1.1.2    -  2.6.0    -  11/26/2018     -  ctype string conversions for python 3              #
 # 1.1.3    -  2.6.2    -  05/20/2020     -  new API routines  (not sure where 2.6.1 was?)      #
+# 1.1.4    -  2.6.2    -  07/10/2020     -  Profiling stuff                                    #
 ################################################################################################
 
 #
@@ -110,7 +111,7 @@ def yices_python_info_main():
 # while the bindings are moving so fast we should keep them separate.
 #
 #
-yices_python_version = '1.1.3'
+yices_python_version = '1.1.4'
 
 #
 # 1.0.1 needs yices_has_mcsat
@@ -814,7 +815,7 @@ libyices.yices_tuple_type.restype = type_t
 libyices.yices_tuple_type.argtypes = [c_uint32, POINTER(type_t)]
 @catch_error(-1)
 def yices_tuple_type(n, tau):
-    """Tuple type tau[0] x ... x tau[n-1], requires n> 0 and tau[0] ... tau[n-1] to be well defined types."""
+    """Tuple type tau[0] x ... x tau[n-1], requires n > 0 and tau[0] ... tau[n-1] to be well defined types."""
     return libyices.yices_tuple_type(n, tau)
 
 # type_t yices_tuple_type1(type_t tau1)

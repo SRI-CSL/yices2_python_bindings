@@ -3,11 +3,12 @@
 
 """Using unsat cores to give hints."""
 
+from SudokuLib import Puzzle
+from Solver import Solver
+
 from yices.Yices import Yices
 from yices.Census import Census
 
-from SudokuLib import Puzzle
-from Solver import Solver
 
 
 puzzle_blank = [
