@@ -47,7 +47,7 @@ publish: dist
 	python -m twine upload --repository pypi dist/*
 
 install:
-	pip install
+	pip install .
 
 clean:
 	rm -rf  *.pyc *~ __pycache__ */*.pyc */*~ */__pycache__ */*/*.pyc */*/*~ */*/__pycache_

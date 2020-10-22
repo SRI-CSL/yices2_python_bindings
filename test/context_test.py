@@ -75,6 +75,24 @@ class TestContext(unittest.TestCase):
         param.dispose()
         ctx.dispose()
 
+    def test_timeout(self):
+        cfg = Config()
+        cfg.default_config_for_logic('QF_NIA')
+        ctx = Context(cfg)
+        int_t = Types.int_type()
+        [x, y, z] = [Terms.new_uninterpreted_term(int_t, id) for id in ['x', 'y', 'z']]
+        # x, y, z > 0
+        for var in [x, y, z]:
+            ctx.assert_formula(Terms.arith_gt0_atom(var))
+        # x^3 + y^3 = z3
+        [x3, y3, z3] = [Terms.product([var, var, var]) for var in [x, y, z]]
+        lhs = Terms.sum([x3, y3])
+        eq = Terms.arith_eq_atom(lhs, z3)
+        ctx.assert_formula(eq)
+        status = ctx.check_context(timeout=1)
+        self.assertEqual(status, Status.INTERRUPTED)
+        ctx.dispose()
+        cfg.dispose()
 
 if __name__ == '__main__':
     unittest.main()

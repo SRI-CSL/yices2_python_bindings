@@ -11,6 +11,8 @@ from .YicesException import YicesException
 from .Status import Status
 from .Yices import Yices
 
+import threading
+
 class Context:
 
     __population = 0
@@ -62,12 +64,18 @@ class Context:
         return True
 
 
-    def check_context(self, params=None):
+    def check_context(self, params=None, timeout=None):
         assert self.context is not None
-        #unwrap the params object
+        # unwrap the params object
         if params is not None:
             params = params.params
+        # set the timeout
+        if timeout is not None:
+            timer = threading.Timer(timeout, Context.stop_search, [self])
+            timer.start()
         status = Yices.check_context(self.context, params)
+        if timeout is not None:
+            timer.cancel()
         if status == -1:
             raise YicesException('yices_check_context')
         return status
