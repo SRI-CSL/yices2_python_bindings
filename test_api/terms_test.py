@@ -322,8 +322,8 @@ class TestTerms(unittest.TestCase):
         self.assertEqual(exp1.value, 1)
         # Why is pterm.value needed here?
         self.assertEqual(pterm.value, ivar2)
-        # Note that the next two can change easily
-        self.assertEqual(yapi.yices_num_terms(), 103)
+        # Note that the next two can change easily (iam: and ofetn)
+        self.assertEqual(yapi.yices_num_terms(), 102)
         self.assertEqual(yapi.yices_num_types(), 26)
         self.assertEqual(yapi.yices_incref_term(pterm), 0)
         self.assertEqual(yapi.yices_num_posref_terms(), 1)

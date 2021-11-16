@@ -360,6 +360,7 @@ type_t = c_int32
 term_constructor_t = c_uint # an enum type, in yices_types.h
 ctx_config_t = c_void_p # an opaque type, in yices_types.h
 context_t = c_void_p # an opaque type, in yices_types.h
+interpolation_context_t = c_void_p # an opaque type, in yices_types.h
 smt_status_t = c_uint # an enum type, in yices_types.h
 param_t = c_void_p # an opaque type, in yices_types.h
 model_t = c_void_p # an opaque type, in yices_types.h
@@ -4519,6 +4520,65 @@ def yices_check_context_with_assumptions(ctx, params, n, t):
     assert ctx is not None
     return libyices.yices_check_context_with_assumptions(ctx, params, n, t)
 
+# new in 2.6.4
+# smt_status_t yices_check_context_with_model(context_t *ctx, const param_t *params, model_t *mdl, uint32_t n, const term_t t[]);
+libyices.yices_check_context_with_model.restype = smt_status_t
+libyices.yices_check_context_with_model.argtypes = [context_t, param_t, model_t, c_uint32, POINTER(term_t)]
+@catch_error(-1)
+def yices_check_context_with_model(ctx, params, mdl, n, t):
+    """Check satisfiability modulo a model.
+
+      Check whether the assertions stored in ctx conjoined with a model are satisfiable.
+      - ctx must be a context initialized with support for MCSAT
+        (see yices_new_context, yices_new_config, yices_set_config).
+      - params is an optional structure to store heuristic parameters
+        if params is NULL, default parameter settings are used.
+      - mdl is a model
+      - t is an array of n terms
+      - the terms t[0] ... t[n-1] must all be uninterpreted terms
+
+      This function checks satisfiability of the constraints in ctx conjoined with
+      a conjunction of equalities defined by t[i] and the model, namely,
+
+         t[0] == v_0 and .... and t[n-1] = v_{n-1}
+
+      where v_i is the value of t[i] in mdl.
+    """
+    assert ctx is not None
+    return libyices.yices_check_context_with_model(ctx, params, mdl, n, t)
+
+# new in 2.6.4
+# smt_status_t yices_check_context_with_interpolation(interpolation_context_t *ctx, const param_t *params, int32_t build_model);
+libyices.yices_check_context_with_interpolation.restype = smt_status_t
+libyices.yices_check_context_with_interpolation.argtypes = [interpolation_context_t, param_t, c_int32]
+def yices_check_context_with_interpolation(intctx, params, build_model):
+    """Check satisfiability and compute interpolant.
+
+        Check whether the combined assertions stored in ctx are satisfiable. If they are
+        not, compute an interpolant (whose uninterpreted terms are common to both contexts).
+        - params is an optional structure to store heuristic parameters
+        - if params is NULL, default parameter settings are used.
+
+        The interpolation_context is a structure with four components defined as follows:
+
+         typedef  struct interpolation_context_s {
+            context_t *ctx_A;
+            context_t *ctx_B;
+            term_t interpolant;
+            model_t *model;
+         } interpolation_context_t;
+
+        To call this function:
+        - ctx->ctx_A must be a context initialized with support for MCSAT and interpolation.
+        - ctx->ctx_B can be another context (not necessarily with MCSAT support)
+
+        If this function returns STATUS_UNSAT, then an interpolant is returned in ctx->interpolant.
+
+        If this function returns STATUS_SAT and build_model is true, then
+        a model is returned in ctx->model. This model must be freed when no-longer needed by
+        calling yices_free_model.
+    """
+    return libyices.yices_check_context_with_interpolation(intctx, params, build_model)
 
 # int32_t yices_assert_blocking_clause(context_t *ctx)
 libyices.yices_assert_blocking_clause.restype = c_int32
@@ -4589,12 +4649,40 @@ def yices_get_unsat_core(ctx, v):
     assert ctx is not None
     return libyices.yices_get_unsat_core(ctx, v)
 
+# new in 2.6.4
+# term_t yices_get_model_interpolant(context_t *ctx);
+libyices.yices_get_model_interpolant.restype = c_int32
+libyices.yices_get_model_interpolant.argtypes = [context_t]
+@catch_error(-1)
+def yices_get_model_interpolant(ctx):
+    """ Construct and return a model interpolant.
 
+	 If ctx status is unsat and the ctx was configured with model-interpolation,
+	 this function returns a model interpolant.
+	 Otherwise, it sets an error code and return NULL_TERM.
+
+	 This is intended to be used after a call to
+	 yices_check_context_with_model that returned STATUS_UNSAT. In this
+	 case, the function builds an model interpolant. The model
+	 interpolant is a clause implied by the current context that is
+	 false in the model provides to yices_check_context_with_model.
+    """
+    return libyices.yices_get_model_interpolant(ctx)
 
 ################
 #   MODELS     #
 ################
 
+# new in 2.6.4
+# model_t *yices_new_model(void);
+libyices.yices_get_model.restype = model_t
+libyices.yices_get_model.argtypes = []
+@catch_error(0)
+def yices_new_model():
+    """Build an empty model: no error.
+
+    """
+    return libyices.yices_new_model()
 
 # model_t *yices_get_model(context_t *ctx, int32_t keep_subst)
 libyices.yices_get_model.restype = model_t
@@ -4644,6 +4732,148 @@ def yices_model_from_map(n, var, mp):
     the model is no longer used, it must be deleted by calling yices_free_model.
     """
     return libyices.yices_model_from_map(n, var, mp)
+
+# new in 2.6.4
+# int32_t yices_model_set_bool(model_t *model, term_t var, int32_t val);
+libyices.yices_model_set_bool.restype = c_int32
+libyices.yices_model_set_bool.argtypes = [model_t, term_t, c_int32]
+@catch_error(-1)
+def yices_model_set_bool(mdl, t, val):
+    """Assign a value to a Boolean uninterpreted term.
+
+       - val 0 means false, anything else means true.
+    """
+    return libyices.yices_set_bool(mdl, t, val)
+
+# new in 2.6.4
+# int32_t yices_model_set_int32(model_t *model, term_t var, int32_t val);
+libyices.yices_model_set_int32.restype = c_int32
+libyices.yices_model_set_int32.argtypes = [model_t, term_t, c_int32]
+def yices_model_set_int32(model, var, val):
+    """"Assign a value to an Integer uninterpreted term.
+    """
+    return libyices.yices_model_set_int32(model, var, val)
+
+# new in 2.6.4
+# int32_t yices_model_set_int64(model_t *model, term_t var, int64_t val);
+libyices.yices_model_set_int64.restype = c_int32
+libyices.yices_model_set_int64.argtypes = [model_t, term_t, c_int64]
+def yices_model_set_int64(model, var, val):
+    """Assign a value to an Integer uninterpreted term.
+    """
+    return libyices.yices_model_set_int64(model, var, val)
+
+
+# new in 2.6.4
+# int32_t yices_model_set_rational32(model_t *model, term_t var, int32_t num, uint32_t den);
+libyices.yices_model_set_rational32.restype = c_int32
+libyices.yices_model_set_rational32.argtypes = [model_t, term_t, c_int32, c_uint32]
+def yices_model_set_rational32(model, var, num, den):
+    """Assign a value to an Real uninterpreted term.
+    """
+    return libyices.yices_model_set_rational32(model, var, num, den)
+
+
+# new in 2.6.4
+# int32_t yices_model_set_rational64(model_t *model, term_t var, int64_t num, uint64_t den);
+libyices.yices_model_set_rational64.restype = c_int32
+libyices.yices_model_set_rational64.argtypes = [model_t, term_t, c_int64, c_uint64]
+def yices_model_set_rational64(model, var, num, den):
+    """Assign a value to an Real uninterpreted term.
+    """
+    return libyices.yices_model_set_rational64(model, var, num, den)
+
+
+# new in 2.6.4
+# int32_t yices_model_set_mpz(model_t *model, term_t var, mpz_t val);
+libyices.yices_model_set_mpz.restype = c_int32
+libyices.yices_model_set_mpz.argtypes = [model_t, term_t, mpz_t]
+def yices_model_set_mpz(model, var, val):
+    """Assign a value to an Integer uninterpreted term.
+    """
+    return libyices.yices_model_set_mpz(model, var, val)
+
+
+# new in 2.6.4
+# int32_t yices_model_set_mpq(model_t *model, term_t var, mpq_t val);
+libyices.yices_model_set_mpq.restype = c_int32
+libyices.yices_model_set_mpq.argtypes = [model_t, term_t, mpq_t]
+def yices_model_set_mpq(model, var, val):
+    """Assign a value to an Real uninterpreted term.
+    """
+    return libyices.yices_model_set_mpq(model, var, val)
+
+
+# new in 2.6.4
+# int32_t yices_model_set_algebraic_number(model_t *model, term_t var, const lp_algebraic_number_t *val);
+libyices.yices_model_set_algebraic_number.restype = c_int32
+libyices.yices_model_set_algebraic_number.argtypes = [model_t, term_t, POINTER(lp_algebraic_number_t)]
+def yices_model_set_algebraic_number(model, var, val):
+    """Assign a value to an Real uninterpreted term.
+    """
+    return libyices.yices_model_set_algebraic_number(model, var, val)
+
+
+# new in 2.6.4
+# int32_t yices_model_set_bv_int32(model_t *model, term_t var, int32_t val);
+libyices.yices_model_set_bv_int32.restype = c_int32
+libyices.yices_model_set_bv_int32.argtypes = [model_t, term_t, c_int32]
+def yices_model_set_bv_int32(model, var, val):
+    """Assign an integer value to a bitvector uninterpreted term.
+    """
+    return libyices.yices_model_set_bv_int32(model, var, val)
+
+
+# new in 2.6.4
+# int32_t yices_model_set_bv_int64(model_t *model, term_t var, int64_t val);
+libyices.yices_model_set_bv_int64.restype = c_int32
+libyices.yices_model_set_bv_int64.argtypes = [model_t, term_t, c_int64]
+def yices_model_set_bv_int64(model, var, val):
+    """Assign an integer value to a bitvector uninterpreted term.
+    """
+    return libyices.yices_model_set_bv_int64(model, var, val)
+
+
+# new in 2.6.4
+# int32_t yices_model_set_bv_uint32(model_t *model, term_t var, uint32_t val);
+libyices.yices_model_set_bv_uint32.restype = c_int32
+libyices.yices_model_set_bv_uint32.argtypes = [model_t, term_t, c_uint32]
+def yices_model_set_bv_uint32(model, var, val):
+    """Assign an integer value to a bitvector uninterpreted term.
+    """
+    return libyices.yices_model_set_bv_uint32(model, var, val)
+
+
+# new in 2.6.4
+# int32_t yices_model_set_bv_uint64(model_t *model, term_t var, uint64_t val);
+libyices.yices_model_set_bv_uint64.restype = c_int32
+libyices.yices_model_set_bv_uint64.argtypes = [model_t, term_t, c_uint64]
+def yices_model_set_bv_uint64(model, var, val):
+    """Assign an integer value to a bitvector uninterpreted term.
+    """
+    return libyices.yices_model_set_bv_uint64(model, var, val)
+
+
+# new in 2.6.4
+# int32_t yices_model_set_bv_mpz(model_t *model, term_t var, mpz_t val);
+libyices.yices_model_set_bv_mpz.restype = c_int32
+libyices.yices_model_set_bv_mpz.argtypes = [model_t, term_t, mpz_t]
+def yices_model_set_bv_mpz(model, var, val):
+    """Assign an integer value to a bitvector uninterpreted term.
+    """
+    return libyices.yices_model_set_bv_mpz(model, var, val)
+
+
+# new in 2.6.4
+# int32_t yices_model_set_bv_from_array(model_t *model, term_t var, uint32_t n, const int32_t a[]);
+libyices.yices_model_set_bv_from_array.restype = c_int32
+libyices.yices_model_set_bv_from_array.argtypes = [model_t, term_t, c_uint32, POINTER(c_uint32)]
+def yices_model_set_bv_from_array(model, var, n, a):
+    """Assign an integer value to a bitvector uninterpreted term.
+    """
+    return libyices.yices_model_set_bv_from_array(model, var, n, a)
+
+
 
 #void yices_model_collect_defined_terms(model_t *mdl, term_vector_t *v)
 libyices.yices_model_collect_defined_terms.argtypes = [model_t, POINTER(term_vector_t)]
