@@ -4679,7 +4679,7 @@ def yices_get_model_interpolant(ctx):
 
 # new in 2.6.4
 # model_t *yices_new_model(void);
-libyices.yices_get_model.restype = model_t
+libyices.yices_new_model.restype = model_t
 @catch_error(0)
 def yices_new_model():
     """Build an empty model: no error.

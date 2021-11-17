@@ -562,11 +562,17 @@ class TestModels(unittest.TestCase):
     def test_2_6_4(self):
         mdl = yapi.yices_new_model()
         self.assertNotEqual(mdl, None)
-        print('yices_new_model', mdl)
 
-        #var = define_const('b1', self.bool_t)
-        #val = yapi.yices_true()
-        #code = yapi.yices_model_set_bool(mdl, var, val)
-        #print('code', code)
+        # bool set and then get
+        var = define_const('b1', self.bool_t)
+        val = yapi.yices_true()
+        code = yapi.yices_model_set_bool(mdl, var, val)
+        self.assertEqual(code, 0)
+        bval = c_int32()
+        code = yapi.yices_get_bool_value(mdl, var, bval)
+        self.assertEqual(code, 0)
+        self.assertEqual(bool(bval.value), True)
 
-        #yapi.yices_free_model(mdl)
+
+
+        yapi.yices_free_model(mdl)
