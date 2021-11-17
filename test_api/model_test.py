@@ -533,6 +533,7 @@ class TestModels(unittest.TestCase):
         assert_formula('(and (> i1 2) (< i1 8) (/= i1 4))', self.ctx)
         self.assertEqual(yapi.yices_check_context(self.ctx, self.param), yapi.STATUS_SAT)
         mdl = yapi.yices_get_model(self.ctx, 1)
+        print('yices_get_model', mdl)
         mdlstr = yapi.yices_model_to_string(mdl, 80, 100, 0)
         self.assertEqual(mdlstr, '(= i1 7)')
         fml = yapi.yices_parse_term('(>= i1 3)')
@@ -556,3 +557,16 @@ class TestModels(unittest.TestCase):
         yapi.yices_init_term_vector(tvec3)
         a_arr = yapi.term_t(i1)
         yapi.yices_generalize_model_array(mdl, 2, fmls, 1, a_arr, 0, tvec3)
+
+
+    def test_2_6_4(self):
+        mdl = yapi.yices_new_model()
+        self.assertNotEqual(mdl, None)
+        print('yices_new_model', mdl)
+
+        #var = define_const('b1', self.bool_t)
+        #val = yapi.yices_true()
+        #code = yapi.yices_model_set_bool(mdl, var, val)
+        #print('code', code)
+
+        #yapi.yices_free_model(mdl)

@@ -360,13 +360,9 @@ type_t = c_int32
 term_constructor_t = c_uint # an enum type, in yices_types.h
 ctx_config_t = c_void_p # an opaque type, in yices_types.h
 context_t = c_void_p # an opaque type, in yices_types.h
-interpolation_context_t = c_void_p # an opaque type, in yices_types.h
 smt_status_t = c_uint # an enum type, in yices_types.h
 param_t = c_void_p # an opaque type, in yices_types.h
 model_t = c_void_p # an opaque type, in yices_types.h
-#mpz_t = c_void_p
-#mpq_t = c_void_p
-#yval_t = c_void_p
 yval_tag_t = c_uint
 yices_gen_mode_t = c_void_p
 
@@ -408,6 +404,14 @@ class yval_array(Array):
     """An array of node descriptors."""
     _type_ = yval_t
     _length_ = 2
+
+# new in 2.6.4
+class interpolation_context_t(Structure):
+    """Used in the API for checking satisfiability and computing an interpolant."""
+    _fields_ = [("ctx_A", POINTER(context_t)),
+                ("ctx_B", POINTER(context_t)),
+                ("interpolant", term_t),
+                ("model", POINTER(model_t))]
 
 # gmp types
 
@@ -4676,13 +4680,13 @@ def yices_get_model_interpolant(ctx):
 # new in 2.6.4
 # model_t *yices_new_model(void);
 libyices.yices_get_model.restype = model_t
-libyices.yices_get_model.argtypes = []
 @catch_error(0)
 def yices_new_model():
     """Build an empty model: no error.
 
     """
     return libyices.yices_new_model()
+
 
 # model_t *yices_get_model(context_t *ctx, int32_t keep_subst)
 libyices.yices_get_model.restype = model_t
@@ -4743,7 +4747,7 @@ def yices_model_set_bool(mdl, t, val):
 
        - val 0 means false, anything else means true.
     """
-    return libyices.yices_set_bool(mdl, t, val)
+    return libyices.yices_model_set_bool(mdl, t, val)
 
 # new in 2.6.4
 # int32_t yices_model_set_int32(model_t *model, term_t var, int32_t val);
