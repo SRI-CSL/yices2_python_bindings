@@ -80,6 +80,7 @@ class Context:
             raise YicesException('yices_check_context')
         return status
 
+
     def stop_search(self):
         assert self.context is not None
         #yapi.yices_stop_search(self.context)
@@ -114,11 +115,22 @@ class Context:
 
 
     def check_context_with_assumptions(self, params, python_array_or_tuple):
+        assert self.context is not None
         alen = len(python_array_or_tuple)
         a = yapi.make_term_array(python_array_or_tuple)
         status = Yices.check_context_with_assumptions(self.context, params, alen, a)
         if status == Status.ERROR:
             raise YicesException('check_context_with_assumptions')
+        return status
+
+    def check_context_with_model(self, params, model, python_array_or_tuple):
+        assert self.context is not None
+        assert model is not None
+        alen = len(python_array_or_tuple)
+        a = yapi.make_term_array(python_array_or_tuple)
+        status = yapi.yices_check_context_with_model(self.context, params, model.model, alen, a)
+        if status == Status.ERROR:
+            raise YicesException('check_context_with_model')
         return status
 
 

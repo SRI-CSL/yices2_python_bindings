@@ -151,7 +151,7 @@ class Model:
 
     def set_bv_from_array(self, term, int_array):
         """set the value of an bv term from an array of integers."""
-       iarray = yapi.make_int32_array(int_array)
+        iarray = yapi.make_int32_array(int_array)
         errcode = yapi.yices_model_set_bv_from_array(self.model, term, len(int_array), iarray)
         if errcode == -1:
             raise YicesException('yices_model_set_bv_from_array')
