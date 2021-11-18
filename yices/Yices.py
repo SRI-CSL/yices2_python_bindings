@@ -192,6 +192,13 @@ class Yices:
 
     @staticmethod
     @profile
+    def new_model():
+        """Builds a model from scratch."""
+        return yapi.yices_new_model()
+
+
+    @staticmethod
+    @profile
     def get_model(ctx, keep_subst):
         """Builds a model from the context ctx."""
         return yapi.yices_get_model(ctx, keep_subst)

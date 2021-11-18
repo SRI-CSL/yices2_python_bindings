@@ -29,7 +29,10 @@ class Model:
 
 
     def __init__(self, model=None):
-        self.model =  model
+        if model is not None:
+            self.model =  model
+        else:
+            self.model = Yices.new_model()
         Model.__population += 1
 
 
@@ -111,6 +114,47 @@ class Model:
             raise YicesException('yices_get_scalar_value')
         return ytval.value
 
+
+    def set_bool(self, term, val):
+        """set the value of a boolean term."""
+        yval = ctypes.c_int32()
+        yval.value = 1 if val else 0
+        errcode = yapi.yices_model_set_bool(self.model, term, val)
+        if errcode == -1:
+            raise YicesException('yices_model_set_bool')
+
+    def set_integer(self, term, val):
+        """set the value of an integer term."""
+        yval = ctypes.c_int64()
+        yval.value = val
+        errcode = yapi.yices_model_set_int64(self.model, term, val)
+        if errcode == -1:
+            raise YicesException('yices_model_set_int64')
+
+    def set_fraction(self, term, fraction):
+        """set the value of an real term."""
+        ytnum = ctypes.c_int64()
+        ytnum.value = fraction.numerator
+        ytden = ctypes.c_uint64()
+        ytden.value = fraction.denominator
+        errcode = yapi.yices_model_set_rational64(self.model, term, ytnum, ytden)
+        if errcode == -1:
+            raise YicesException('yices_model_set_rational64')
+
+    def set_bv(self, term, integer):
+        """set the value of an bv term."""
+        ytnum = ctypes.c_int64()
+        ytnum.value = integer
+        errcode = yapi.yices_model_set_bv_int64(self.model, term, ytnum)
+        if errcode == -1:
+            raise YicesException('yices_model_set_bv_int64')
+
+    def set_bv_from_array(self, term, int_array):
+        """set the value of an bv term from an array of integers."""
+       iarray = yapi.make_int32_array(int_array)
+        errcode = yapi.yices_model_set_bv_from_array(self.model, term, len(int_array), iarray)
+        if errcode == -1:
+            raise YicesException('yices_model_set_bv_from_array')
 
     def formula_true_in_model(self, term):
         return yapi.yices_formula_true_in_model(self.model, term) == 1

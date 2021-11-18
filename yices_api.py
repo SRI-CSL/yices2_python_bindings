@@ -4871,7 +4871,7 @@ def yices_model_set_bv_mpz(model, var, val):
 # new in 2.6.4
 # int32_t yices_model_set_bv_from_array(model_t *model, term_t var, uint32_t n, const int32_t a[]);
 libyices.yices_model_set_bv_from_array.restype = c_int32
-libyices.yices_model_set_bv_from_array.argtypes = [model_t, term_t, c_uint32, POINTER(c_uint32)]
+libyices.yices_model_set_bv_from_array.argtypes = [model_t, term_t, c_uint32, POINTER(c_int32)]
 def yices_model_set_bv_from_array(model, var, n, a):
     """Assign an integer value to a bitvector uninterpreted term.
     """

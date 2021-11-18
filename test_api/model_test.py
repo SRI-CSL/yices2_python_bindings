@@ -573,6 +573,7 @@ class TestModels(unittest.TestCase):
         self.assertEqual(code, 0)
         self.assertEqual(bool(bval.value), True)
 
-
+        # can test all the new routines like this, but it might just be easier
+        # to do the equivalent tests in the pythonesque versions.
 
         yapi.yices_free_model(mdl)

@@ -1,5 +1,7 @@
 import unittest
 
+from fractions import Fraction
+
 from yices.Config import Config
 from yices.Context import Context
 from yices.Model import Model
@@ -291,3 +293,24 @@ class TestModels(unittest.TestCase):
         self.assertEqual(support[0], x)
         self.assertEqual(support[1], y)
         self.assertEqual(support[2], z)
+
+    def test_2_6_4(self):
+        mdl = Model()
+        # bool set and then get
+        bt = define_const('bt', bool_t)
+        mdl.set_bool(bt, True)
+        val = mdl.get_bool_value(bt)
+        self.assertEqual(val, True)
+        # integer set and then get
+        it = define_const('it', int_t)
+        mdl.set_integer(it, 123456789)
+        val = mdl.get_integer_value(it)
+        self.assertEqual(val, 123456789)
+        # fraction set and get
+        rt = define_const('rt', real_t)
+        frac = Fraction(1000, 3000)
+        mdl.set_fraction(rt, frac)
+        val = mdl.get_fraction_value(rt)
+        self.assertEqual(val, frac)
+
+        mdl.dispose()
