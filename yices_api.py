@@ -408,10 +408,10 @@ class yval_array(Array):
 # new in 2.6.4
 class interpolation_context_t(Structure):
     """Used in the API for checking satisfiability and computing an interpolant."""
-    _fields_ = [("ctx_A", POINTER(context_t)),
-                ("ctx_B", POINTER(context_t)),
+    _fields_ = [("ctx_A", context_t),
+                ("ctx_B", context_t),
                 ("interpolant", term_t),
-                ("model", POINTER(model_t))]
+                ("model", model_t)]
 
 # gmp types
 
@@ -4554,7 +4554,7 @@ def yices_check_context_with_model(ctx, params, mdl, n, t):
 # new in 2.6.4
 # smt_status_t yices_check_context_with_interpolation(interpolation_context_t *ctx, const param_t *params, int32_t build_model);
 libyices.yices_check_context_with_interpolation.restype = smt_status_t
-libyices.yices_check_context_with_interpolation.argtypes = [interpolation_context_t, param_t, c_int32]
+libyices.yices_check_context_with_interpolation.argtypes = [POINTER(interpolation_context_t), param_t, c_int32]
 def yices_check_context_with_interpolation(intctx, params, build_model):
     """Check satisfiability and compute interpolant.
 

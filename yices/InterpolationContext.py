@@ -1,3 +1,7 @@
+""" The InterpolationContext class mimics, but doesn't wrap the yices interpolation_context_t struct.
+
+It provides access to the yices_check_context_with_interpolation api call in a pythonesque manner.
+"""
 from ctypes import (
     c_int32,
     pointer,
