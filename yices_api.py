@@ -104,6 +104,7 @@ def yices_python_info_main():
 # 1.1.2    -  2.6.0    -  11/26/2018     -  ctype string conversions for python 3              #
 # 1.1.3    -  2.6.2    -  05/20/2020     -  new API routines  (not sure where 2.6.1 was?)      #
 # 1.1.4    -  2.6.2    -  07/10/2020     -  Profiling stuff                                    #
+# 1.1.5    -  2.6.4    -  12/06/2021     -  new 2.6.4 API routines                             #
 ################################################################################################
 
 #
@@ -111,13 +112,13 @@ def yices_python_info_main():
 # while the bindings are moving so fast we should keep them separate.
 #
 #
-yices_python_version = '1.1.4'
+yices_python_version = '1.1.5'
 
 #
 # 1.0.1 needs yices_has_mcsat
 # 1.0.1-7 needs the _fd api additions that appear in 2.5.4
 # 1.1.0 hooks into the new unsat core stuff
-yices_recommended_version = '2.6.2'
+yices_recommended_version = '2.6.4'
 
 #iam: 10/4/2017 try to make the user experience a little more pythony.
 #BD suggests doing this in the loadYices routine; he might be right
