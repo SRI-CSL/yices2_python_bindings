@@ -22,8 +22,8 @@ setup(
     description='Python Bindings for the Yices SMT Solver',
     long_description=long_description,
     url='https://github.com/SRI-CSL/yices2_python_bindings',
-    author='Sam Owre, Ian A. Mason, Bruno Dutertre.',
-    author_email='iam@csl.sri.com',
+    author='Sam Owre, Ian A. Mason, Bruno Dutertre, Ahmed Irfan.',
+    author_email='ahmed.irfan@sri.com',
 
 
     include_package_data=True,

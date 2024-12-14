@@ -105,6 +105,7 @@ def yices_python_info_main():
 # 1.1.3    -  2.6.2    -  05/20/2020     -  new API routines  (not sure where 2.6.1 was?)      #
 # 1.1.4    -  2.6.2    -  07/10/2020     -  Profiling stuff                                    #
 # 1.1.5    -  2.6.4    -  12/06/2021     -  new 2.6.4 API routines                             #
+# 1.1.6    -  2.6.5    -  12/16/2024     -  new 2.6.5 API routines                             #
 ################################################################################################
 
 #
@@ -112,13 +113,13 @@ def yices_python_info_main():
 # while the bindings are moving so fast we should keep them separate.
 #
 #
-yices_python_version = '1.1.5'
+yices_python_version = '1.1.6'
 
 #
 # 1.0.1 needs yices_has_mcsat
 # 1.0.1-7 needs the _fd api additions that appear in 2.5.4
 # 1.1.0 hooks into the new unsat core stuff
-yices_recommended_version = '2.6.4'
+yices_recommended_version = '2.6.5'
 
 #iam: 10/4/2017 try to make the user experience a little more pythony.
 #BD suggests doing this in the loadYices routine; he might be right
@@ -4551,6 +4552,73 @@ def yices_check_context_with_model(ctx, params, mdl, n, t):
     """
     assert ctx is not None
     return libyices.yices_check_context_with_model(ctx, params, mdl, n, t)
+
+# new in 2.6.5
+#smt_status_t yices_check_context_with_model_and_hint(context_t *ctx, const param_t *params, model_t *mdl, uint32_t n, const term_t t[], uint32_t m);
+libyices.yices_check_context_with_model_and_hint.restype = smt_status_t
+libyices.yices_check_context_with_model_and_hint.argtypes = [context_t, param_t, model_t, c_uint32, POINTER(term_t), c_uint32]
+@catch_error(-1)
+def yices_check_context_with_model_and_hint(ctx, params, mdl, n, t, m):
+    """Check satisfiability modulo a model and hints.
+ 
+      Check whether the assertions stored in ctx conjoined with a model are satisfiable.
+      - ctx must be a context initialized with support for MCSAT
+        (see yices_new_context, yices_new_config, yices_set_config).
+      - params is an optional structure to store heuristic parameters
+        if params is NULL, default parameter settings are used.
+      - mdl is a model
+      - t is an array of n terms
+      - the terms t[0] ... t[n-1] must all be uninterpreted terms
+    
+      This function checks statisfiability of the constraints in ctx
+      conjoined with a conjunction of equalities defined by first m terms
+      in t and their model values, namely,
+    
+         t[0] = v_0 /\ .... /\ t[m-1] = v_{m-1}
+    
+      and the remaining n-m terms in t are provided with hints from the
+      model, i.e.
+    
+         t[m], ... , t[n-1] will be given v_{m}, ... , v_{n-1} values when deciding
+    
+      where v_i is the value of t[i] in mdl.
+    """
+    assert ctx is not None
+    return libyices.yices_check_context_with_model_and_hint(ctx, params, mdl, n, t, m)
+
+# new in 2.6.5
+#smt_status_t yices_mcsat_set_fixed_var_order(context_t *ctx, uint32_t n, const term_t t[]);
+libyices.yices_mcsat_set_fixed_var_order.restype = smt_status_t
+libyices.yices_mcsat_set_fixed_var_order.argtypes = [context_t, c_uint32, POINTER(term_t)]
+@catch_error(-1)
+def yices_mcsat_set_fixed_var_order(ctx, n, t):
+    """Set a fixed variable ordering for making mcsat decisions. MCSAT
+      will always first decide these variables in the given order.
+
+      - ctx must be a context initialized with support for MCSAT
+        (see yices_new_context, yices_new_config, yices_set_config).
+      - t is an array of n terms
+ 
+      NOTE: This will overwrite the previously set ordering.
+    """
+    assert ctx is not None
+    return libyices.yices_mcsat_set_fixed_var_order(ctx, n, t)
+
+# new in 2.6.5
+#smt_status_t yices_mcsat_set_initial_var_order(context_t *ctx, uint32_t n, const term_t t[]);
+libyices.yices_mcsat_set_initial_var_order.restype = smt_status_t
+libyices.yices_mcsat_set_initial_var_order.argtypes = [context_t, c_uint32, POINTER(term_t)]
+@catch_error(-1)
+def yices_mcsat_set_initial_var_order(ctx, n, t):
+    """Set initial variable ordering for making mcsat decisions. This is
+      one-time ordering that is done initially in the MCSAT search.
+
+      - ctx must be a context initialized with support for MCSAT
+        (see yices_new_context, yices_new_config, yices_set_config).
+      - t is an array of n terms
+    """
+    assert ctx is not None
+    return libyices.yices_mcsat_set_initial_var_order(ctx, n, t)
 
 # new in 2.6.4
 # smt_status_t yices_check_context_with_interpolation(interpolation_context_t *ctx, const param_t *params, int32_t build_model);
