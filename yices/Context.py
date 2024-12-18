@@ -140,7 +140,7 @@ class Context:
         alist = list(python_array_or_tuple) + list(python_array_or_tuple_hints)
         alen = len(alist)
         a = yapi.make_term_array(alist)
-        status = yapi.yices_check_context_with_model_and_hint(self.context, params, model.model, alen, a, m)
+        status = yapi.yices_check_context_with_model_and_hint(self.context, params, model.model, alen, a, m) # pylint: disable=E1101
         if status == Status.ERROR:
             raise YicesException('check_context_with_model_and_hint')
         return status
@@ -150,7 +150,7 @@ class Context:
         assert self.context is not None
         alen = len(python_array_or_tuple)
         a = yapi.make_term_array(python_array_or_tuple)
-        status = yapi.yices_mcsat_set_fixed_var_order(self.context, alen, a)
+        status = yapi.yices_mcsat_set_fixed_var_order(self.context, alen, a) # pylint: disable=E1101
         if status == Status.ERROR:
             raise YicesException('mcsat_set_fixed_var_order')
         return status
@@ -159,7 +159,7 @@ class Context:
         assert self.context is not None
         alen = len(python_array_or_tuple)
         a = yapi.make_term_array(python_array_or_tuple)
-        status = yapi.yices_mcsat_set_initial_var_order(self.context, alen, a)
+        status = yapi.yices_mcsat_set_initial_var_order(self.context, alen, a) # pylint: disable=E1101
         if status == Status.ERROR:
             raise YicesException('mcsat_set_initial_var_order')
         return status
