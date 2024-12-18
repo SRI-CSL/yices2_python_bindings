@@ -142,7 +142,7 @@ class Context:
         a = yapi.make_term_array(alist)
         status = yapi.yices_check_context_with_model_and_hint(self.context, params, model.model, alen, a, m)
         if status == Status.ERROR:
-            raise YicesException('check_context_with_model')
+            raise YicesException('check_context_with_model_and_hint')
         return status
 
 

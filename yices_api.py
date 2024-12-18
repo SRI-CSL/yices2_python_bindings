@@ -4574,7 +4574,7 @@ def yices_check_context_with_model_and_hint(ctx, params, mdl, n, t, m):
       conjoined with a conjunction of equalities defined by first m terms
       in t and their model values, namely,
     
-         t[0] = v_0 /\ .... /\ t[m-1] = v_{m-1}
+         t[0] = v_0 and .... and t[m-1] = v_{m-1}
     
       and the remaining n-m terms in t are provided with hints from the
       model, i.e.
