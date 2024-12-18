@@ -31,7 +31,7 @@ def define_const(name, ytype, defn=None):
         term = Terms.parse_term(defn)
     else:
         term = defn
-        term_type = Terms.type_of_term(term)
+    term_type = Terms.type_of_term(term)
     if not Types.is_subtype(term_type, ytype):
         raise YicesException(msg='incompatible sort in definition')
     Terms.set_name(term, name)

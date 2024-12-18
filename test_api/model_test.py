@@ -37,7 +37,7 @@ def define_const(name, ytype, defn=None):
         term = yapi.yices_parse_term(defn)
     else:
         term = defn
-        term_type = yapi.yices_type_of_term(term)
+    term_type = yapi.yices_type_of_term(term)
     if not yapi.yices_test_subtype(term_type, ytype):
         raise YicesAPIException('incompatible sort in definition')
     yapi.yices_set_term_name(term, name)
